@@ -63,7 +63,7 @@ body {
 .go {
   margin-left: auto; background: var(--charcoal); color: #fff; border: none; border-radius: 999px;
   font-family: Inter, sans-serif; font-weight: 600; font-size: 13.5px; letter-spacing: 0.02em;
-  padding: 12px 26px; cursor: pointer; transition: 140ms ease;
+  padding: 12px 26px; cursor: pointer; transition: 140ms ease; white-space: nowrap;
 }
 .go::after { content: ' →'; }
 .go:hover:not(:disabled) { background: var(--accent); transform: translateY(-1px); }
@@ -134,9 +134,11 @@ select.resel { appearance: none; -webkit-appearance: none; }
 .ed-actions .mini { white-space: nowrap; }
 .ed-sectitle.sm { margin-top: 12px; }
 .ed-sectitle .cnt { background: var(--line-2); border-radius: 999px; padding: 1px 8px; font-size: 11px; }
-.ed-actions { margin-left: auto; display: flex; gap: 4px; }
-.ed-actions button { border: 1px solid var(--line); background: #fff; border-radius: 7px; width: 26px; height: 24px; font-size: 12px; cursor: pointer; }
+.ed-actions { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.ed-actions button { border: 1px solid var(--line); background: #fff; border-radius: 7px; width: 26px; height: 24px; font-size: 12px; cursor: pointer; flex: 0 0 auto; }
 .ed-actions button:hover { border-color: var(--accent); }
+/* text buttons (Check / Auto-fix) size to their label, never the 26px icon width */
+.ed-actions button.mini { width: auto; height: auto; padding: 5px 12px; font-size: 12px; border-radius: 8px; white-space: nowrap; }
 
 .ed-chatrow { display: flex; gap: 8px; }
 .ed-chatrow input { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font: inherit; font-size: 13px; outline: none; }
