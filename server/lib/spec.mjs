@@ -65,6 +65,15 @@ export function normalizeDesign(raw, brand, preset, opts = {}) {
       }
       case 'charm': {
         const a = pickAsset(brand, 'charm', l.assetId);
+        // tiny source stickers pixelate when blown up — clamp to ~3x natural size
+        if (a?.w && a?.h) {
+          const maxW = a.w * 3, maxH = a.h * 3;
+          if (box.w > maxW || box.h > maxH) {
+            const k = Math.min(maxW / box.w, maxH / box.h);
+            box.w = Math.round(box.w * k);
+            box.h = Math.round(box.h * k);
+          }
+        }
         layers.push({ id, type: 'charm', box, assetId: a?.id, src: a?.src });
         break;
       }

@@ -4,9 +4,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import { useStore, useLog } from './store';
+import type { Score } from './store';
 import { LayerView } from './Layers';
 import { diffSpecs, diffSummary, specOf } from './vc';
-import { editDesign, regenImage } from './api';
+import { editDesign, regenImage, runCritic, runAutofix, runRefresh } from './api';
+import { ScoreBadge } from './App';
 import type { Layer } from './types';
 
 const LAYER_ICON: Record<string, string> = {
@@ -27,6 +29,8 @@ export default function Editor() {
   const [chat, setChat] = useState('');
   const [chatBusy, setChatBusy] = useState(false);
   const [chatErr, setChatErr] = useState('');
+  const [lens, setLens] = useState<Score>();
+  const [lensBusy, setLensBusy] = useState<'' | 'check' | 'fix' | 'refresh'>('');
   const stageRef = useRef<HTMLDivElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
@@ -104,6 +108,45 @@ export default function Editor() {
     }
   }
 
+  // ----- Performance Lens / brand CI ---------------------------------------
+  async function checkLens() {
+    if (lensBusy) return;
+    setLensBusy('check');
+    try {
+      const { score } = await runCritic({ brandId: kit.id, spec: working });
+      setLens(score);
+    } finally {
+      setLensBusy('');
+    }
+  }
+
+  async function autofix() {
+    if (lensBusy) return;
+    setLensBusy('fix');
+    try {
+      const r = await runAutofix({ brandId: kit.id, spec: working });
+      if (r.improved && r.after) {
+        st.getState().replaceWorking(r.spec, 'critic', `Auto-fix · ⚡${Math.round(r.before.total * 100)}→${Math.round(r.after.total * 100)}`);
+        setLens(r.after);
+      } else {
+        setLens(r.before);
+      }
+    } finally {
+      setLensBusy('');
+    }
+  }
+
+  async function refreshConcept() {
+    if (lensBusy) return;
+    setLensBusy('refresh');
+    try {
+      const { specs } = await runRefresh({ brandId: kit.id, spec: working, n: 3 });
+      st.getState().addBranches(specs, 'Refresh');
+    } finally {
+      setLensBusy('');
+    }
+  }
+
   // ----- export -------------------------------------------------------------
   async function exportPng() {
     const node = stageRef.current;
@@ -144,6 +187,9 @@ export default function Editor() {
           ))}
         </div>
         <div className="ed-title">{working.name}</div>
+        <button className="ghost" onClick={refreshConcept} disabled={!!lensBusy} title="Creative fatigue? Generate fresh executions of this concept as new branches">
+          {lensBusy === 'refresh' ? 'Refreshing…' : '⟳ Refresh concept'}
+        </button>
         <button className="go" onClick={exportPng}>Export PNG</button>
       </div>
 
@@ -206,6 +252,31 @@ export default function Editor() {
               <button className="go" onClick={runChat} disabled={chatBusy || !!viewingCommit}>{chatBusy ? '…' : 'Apply'}</button>
             </div>
             {chatErr && <div className="ed-err">{chatErr}</div>}
+          </div>
+
+          <div className="ed-lens">
+            <div className="ed-sectitle">
+              Performance Lens {lens && <ScoreBadge score={lens} />}
+              <span className="ed-actions">
+                <button className="mini" onClick={checkLens} disabled={!!lensBusy}>{lensBusy === 'check' ? '…' : 'Check'}</button>
+                <button className="mini fix" onClick={autofix} disabled={!!lensBusy}>{lensBusy === 'fix' ? 'Fixing…' : '🛡 Auto-fix'}</button>
+              </span>
+            </div>
+            {lens && (
+              <>
+                <div className="ed-dims">
+                  {Object.entries(lens.dimensions).map(([k, v]) => (
+                    <span key={k} className={'dim' + (v < 0.6 ? ' low' : '')} title={`${k}: ${Math.round(v * 100)}`}>
+                      {k} {Math.round(v * 100)}
+                    </span>
+                  ))}
+                </div>
+                {lens.findings.slice(0, 4).map((f, i) => (
+                  <div key={i} className={'ed-finding ' + f.severity}>{f.severity === 'error' ? '●' : '○'} {f.message}</div>
+                ))}
+                {lens.insight && <div className="ed-finding info">💡 {lens.insight}</div>}
+              </>
+            )}
           </div>
 
           {selected ? (

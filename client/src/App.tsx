@@ -11,10 +11,22 @@ const EXAMPLES = [
   'Switch to Xero and be up and running in under 4 hours.',
 ];
 
+export function ScoreBadge({ score, size = 'md' }: { score?: { total: number; pass: boolean; insight?: string }; size?: 'sm' | 'md' }) {
+  if (!score) return null;
+  const pct = Math.round(score.total * 100);
+  const tone = pct >= 70 ? 'good' : pct >= 50 ? 'mid' : 'low';
+  return (
+    <span className={`lens ${tone} ${size}`} title={score.insight || 'Performance Lens score'}>
+      ⚡ {pct}
+    </span>
+  );
+}
+
 export default function App() {
   const kit = useStore((s) => s.kit);
   const view = useStore((s) => s.view);
   const designs = useStore((s) => s.designs);
+  const scores = useStore((s) => s.scores);
   const st = useStore;
 
   const [prompt, setPrompt] = useState('');
@@ -54,6 +66,7 @@ export default function App() {
             setStatus('rendering');
           },
           onImage: ({ specId, layerId, src, error }) => st.getState().patchDesignImage(specId, layerId, src, error),
+          onScore: ({ specId, score }) => st.getState().setScore(specId, score),
           onDone: () => setStatus('idle'),
           onError: (e) => {
             setError(e.error);
@@ -150,8 +163,9 @@ export default function App() {
             <button key={d.id} className="card click" onClick={() => st.getState().openEditor(d)}>
               <DesignView spec={d} kit={kit} width={340} />
               <div className="meta">
-                <b>{d.name}</b>
+                <b>{d.name} <ScoreBadge score={scores[d.id]} /></b>
                 {d.note && <span>{d.note}</span>}
+                {scores[d.id]?.insight && <span className="insight">💡 {scores[d.id].insight}</span>}
                 <span className="open">Open in editor →</span>
               </div>
             </button>

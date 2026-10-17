@@ -122,29 +122,39 @@ function toDesignArray(args) {
   throw new Error('designs not parseable: ' + typeof d);
 }
 
+/** Call the model and extract the designs array — retrying when the model
+ *  comes back without a tool call or with unparseable JSON (it happens). */
+async function callForDesigns(messages, { maxTokens, temperature, tries = 3 }) {
+  let lastErr;
+  for (let i = 0; i < tries; i++) {
+    const r = await withRetry(() => pro.chat.completions.create({
+      model: MODELS.pro,
+      temperature: temperature + i * 0.05,
+      max_tokens: maxTokens,
+      messages,
+      tools: [EMIT_TOOL],
+      tool_choice: { type: 'function', function: { name: 'emit_designs' } },
+    }));
+    const tc = r.choices[0].message.tool_calls?.[0];
+    if (!tc) { lastErr = new Error('agent emitted no designs'); continue; }
+    if (process.env.DEBUG_AGENT) console.error('RAW ARGS >>>', String(tc.function.arguments).slice(0, 900));
+    try {
+      return toDesignArray(JSON.parse(tc.function.arguments));
+    } catch (e) {
+      lastErr = new Error('agent returned malformed design JSON: ' + e.message);
+    }
+  }
+  throw lastErr;
+}
+
 export async function generateDesigns({ brand, prompt, variations = 1, preset }) {
-  const r = await withRetry(() => pro.chat.completions.create({
-    model: MODELS.pro,
-    temperature: 0.9,
-    max_tokens: Math.min(2500 + 1900 * variations, 16000),
-    messages: [
+  const designs = await callForDesigns(
+    [
       { role: 'system', content: systemPrompt(brand) },
       { role: 'user', content: `Brief: ${prompt}\n\nProduce ${variations} distinct design(s) for the ${preset.label} canvas (${preset.w}x${preset.h}).` },
     ],
-    tools: [EMIT_TOOL],
-    tool_choice: { type: 'function', function: { name: 'emit_designs' } },
-  }));
-
-  const tc = r.choices[0].message.tool_calls?.[0];
-  if (!tc) throw new Error('agent emitted no designs');
-  if (process.env.DEBUG_AGENT) console.error('RAW ARGS >>>', String(tc.function.arguments).slice(0, 900));
-  let args;
-  try {
-    args = JSON.parse(tc.function.arguments);
-  } catch (e) {
-    throw new Error('agent returned malformed design JSON: ' + e.message);
-  }
-  const designs = toDesignArray(args);
+    { maxTokens: Math.min(2500 + 1900 * variations, 16000), temperature: 0.9 },
+  );
   const specs = designs.slice(0, variations).map((d) => normalizeDesign(d, brand, preset));
   return { specs, raw: designs };
 }
@@ -158,11 +168,8 @@ export async function editDesign({ brand, spec, instruction }) {
   const preset = brand.presets.find((p) => p.id === spec.canvas.preset) || { id: spec.canvas.preset, label: 'custom', w: spec.canvas.w, h: spec.canvas.h };
   const current = toAgentFormat(spec);
 
-  const r = await withRetry(() => pro.chat.completions.create({
-    model: MODELS.pro,
-    temperature: 0.4,
-    max_tokens: 6000,
-    messages: [
+  const designs = await callForDesigns(
+    [
       { role: 'system', content: systemPrompt(brand) },
       {
         role: 'user',
@@ -176,13 +183,8 @@ export async function editDesign({ brand, spec, instruction }) {
           `- Keep everything else as it is — make the smallest change that fully satisfies the instruction.`,
       },
     ],
-    tools: [EMIT_TOOL],
-    tool_choice: { type: 'function', function: { name: 'emit_designs' } },
-  }));
-
-  const tc = r.choices[0].message.tool_calls?.[0];
-  if (!tc) throw new Error('agent returned no edit');
-  const designs = toDesignArray(JSON.parse(tc.function.arguments));
+    { maxTokens: 6000, temperature: 0.4 },
+  );
   const next = normalizeDesign({ ...designs[0], id: spec.id }, brand, preset, { keepIds: true });
 
   // Carry over rendered imagery for image layers whose prompt didn't change.

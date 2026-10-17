@@ -16,10 +16,31 @@ export async function regenImage(body: { prompt: string; w: number; h: number; t
   return j;
 }
 
+async function post<T>(path: string, body: unknown): Promise<T> {
+  const r = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || path + ' failed');
+  return j;
+}
+
+export const runCritic = (body: { brandId: string; spec: DesignSpec }) => post<{ score: CriticScore }>('/api/critic', body);
+export const runAutofix = (body: { brandId: string; spec: DesignSpec }) =>
+  post<{ improved: boolean; before: CriticScore; after?: CriticScore; spec: DesignSpec }>('/api/autofix', body);
+export const runRefresh = (body: { brandId: string; spec: DesignSpec; n: number }) => post<{ specs: DesignSpec[] }>('/api/refresh', body);
+
+export interface CriticScore {
+  total: number;
+  dimensions: Record<string, number>;
+  findings: { dimension: string; severity: string; message: string; layerId?: string }[];
+  insight?: string;
+  pass: boolean;
+}
+
 interface StreamHandlers {
   onStatus?: (d: { stage: string }) => void;
   onSpecs: (specs: DesignSpec[]) => void;
   onImage: (d: { specId: string; layerId: string; src?: string; error?: boolean }) => void;
+  onScore?: (d: { specId: string; score: CriticScore }) => void;
   onDone?: () => void;
   onError?: (d: { error: string }) => void;
 }
@@ -51,6 +72,7 @@ export async function generateStream(
       const data = JSON.parse(dataLine.slice(6));
       if (ev === 'specs') h.onSpecs(data.specs);
       else if (ev === 'image') h.onImage(data);
+      else if (ev === 'score') h.onScore?.(data);
       else if (ev === 'status') h.onStatus?.(data);
       else if (ev === 'done') h.onDone?.();
       else if (ev === 'error') h.onError?.(data);

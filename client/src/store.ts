@@ -3,10 +3,19 @@ import type { BrandKit, DesignSpec, Layer } from './types';
 import { emptyRepo, commit, log, specOf, newId } from './vc';
 import type { Repo, Author } from './vc';
 
+export interface Score {
+  total: number;
+  dimensions: Record<string, number>;
+  findings: { dimension: string; severity: string; message: string; layerId?: string }[];
+  insight?: string;
+  pass: boolean;
+}
+
 interface State {
   kit?: BrandKit;
   view: 'home' | 'editor';
   designs: DesignSpec[];
+  scores: Record<string, Score>; // design id -> Performance Lens score
   repo: Repo;
   branch: string; // active branch in editor
   working?: DesignSpec; // mutable working copy (the "working tree")
@@ -16,7 +25,9 @@ interface State {
 
   setKit: (k: BrandKit) => void;
   setDesigns: (d: DesignSpec[]) => void;
+  setScore: (specId: string, score: Score) => void;
   patchDesignImage: (specId: string, layerId: string, src?: string, error?: boolean) => void;
+  addBranches: (specs: DesignSpec[], label: string) => void;
 
   openEditor: (design: DesignSpec) => void;
   closeEditor: () => void;
@@ -37,6 +48,7 @@ interface State {
 export const useStore = create<State>((set, get) => ({
   view: 'home',
   designs: [],
+  scores: {},
   repo: emptyRepo(),
   branch: '',
   dirty: false,
@@ -49,8 +61,20 @@ export const useStore = create<State>((set, get) => ({
     designs.forEach((d, i) => {
       repo = commit(repo, `v${i + 1} · ${d.name}`.slice(0, 34), d, 'generator', d.note || d.name);
     });
-    set({ designs, repo, branch: repo.branches[0]?.name || '' });
+    set({ designs, repo, branch: repo.branches[0]?.name || '', scores: {} });
   },
+
+  setScore: (specId, score) => set((s) => ({ scores: { ...s.scores, [specId]: score } })),
+
+  addBranches: (specs, label) =>
+    set((s) => {
+      let repo = s.repo;
+      const base = s.repo.branches.length;
+      specs.forEach((d, i) => {
+        repo = commit(repo, `v${base + i + 1} · ${d.name}`.slice(0, 34), d, 'generator', `${label}: ${d.note || d.name}`);
+      });
+      return { repo, designs: [...s.designs, ...specs] };
+    }),
 
   patchDesignImage: (specId, layerId, src, error) =>
     set((s) => {

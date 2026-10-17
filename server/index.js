@@ -6,6 +6,7 @@ import cors from 'cors';
 import { listBrands, loadBrand } from './lib/brand.mjs';
 import { generateDesigns, editDesign } from './lib/agent.mjs';
 import { generateImage, sizeForCanvas } from './lib/image.mjs';
+import { critique, repairInstruction } from './lib/critic.mjs';
 import { BLOB_DIR } from './lib/store.mjs';
 
 const app = express();
@@ -58,7 +59,15 @@ app.post('/api/generate/stream', async (req, res) => {
     send('status', { stage: 'thinking' });
     const { specs } = await generateDesigns({ brand, prompt, variations, preset });
     send('specs', { specs }); // layout appears immediately; image layers are pending
-    await fillImages(specs, (ev) => send('image', ev));
+    // Performance Lens: critic scores stream in alongside the images
+    const scoring = Promise.all(
+      specs.map((s) =>
+        critique(s, brand)
+          .then((score) => send('score', { specId: s.id, score }))
+          .catch(() => {}),
+      ),
+    );
+    await Promise.all([fillImages(specs, (ev) => send('image', ev)), scoring]);
     send('done', {});
   } catch (e) {
     console.error('generate/stream', e);
@@ -96,6 +105,58 @@ app.post('/api/edit', async (req, res) => {
     res.json({ spec: next });
   } catch (e) {
     console.error('edit', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// Critic on demand (editor's compliance panel).
+app.post('/api/critic', async (req, res) => {
+  try {
+    const { brandId = 'xero', spec } = req.body || {};
+    const brand = loadBrand(brandId);
+    if (!brand || !spec) return res.status(400).json({ error: 'brand and spec required' });
+    res.json({ score: await critique(spec, brand) });
+  } catch (e) {
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// The inner loop: critique → repair → re-critique. Returns the improved spec
+// plus before/after scores, so the UI can show the reward climbing.
+app.post('/api/autofix', async (req, res) => {
+  try {
+    const { brandId = 'xero', spec } = req.body || {};
+    const brand = loadBrand(brandId);
+    if (!brand || !spec) return res.status(400).json({ error: 'brand and spec required' });
+    const before = await critique(spec, brand);
+    if (before.pass) return res.json({ improved: false, before, spec });
+    const { spec: fixed } = await editDesign({ brand, spec, instruction: repairInstruction(before) });
+    await fillImages([fixed]);
+    const after = await critique(fixed, brand);
+    res.json({ improved: true, before, after, spec: fixed });
+  } catch (e) {
+    console.error('autofix', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// Creative fatigue → refresh: N fresh executions of the same concept.
+app.post('/api/refresh', async (req, res) => {
+  try {
+    const { brandId = 'xero', spec, n = 3 } = req.body || {};
+    const brand = loadBrand(brandId);
+    if (!brand || !spec) return res.status(400).json({ error: 'brand and spec required' });
+    const preset = brand.presets.find((p) => p.id === spec.canvas.preset) || brand.presets[0];
+    const headline = spec.layers.find((l) => l.type === 'text' && l.role === 'headline')?.text || spec.name;
+    const cta = spec.layers.find((l) => l.type === 'pill')?.text;
+    const prompt =
+      `This winning ad is fatiguing: concept "${spec.name}", headline "${headline}"${cta ? `, CTA "${cta}"` : ''}. ` +
+      `Create ${n} FRESH executions of the SAME core concept and message — new layouts, new art directions, new copy angles that keep the promise intact.`;
+    const { specs } = await generateDesigns({ brand, prompt, variations: n, preset });
+    await fillImages(specs);
+    res.json({ specs });
+  } catch (e) {
+    console.error('refresh', e);
     res.status(500).json({ error: String(e?.message || e) });
   }
 });
