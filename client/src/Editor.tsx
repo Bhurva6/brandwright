@@ -42,6 +42,15 @@ export default function Editor() {
   const [chatBusy, setChatBusy] = useState(false);
   const [chatErr, setChatErr] = useState('');
   const [lens, setLens] = useState<Score>();
+  interface FixReport {
+    kind: 'pass' | 'improved' | 'nogain';
+    before?: Score;
+    after?: Score;
+    changes?: string;
+    resolved?: string[];
+    dims?: [string, number, number][];
+  }
+  const [fixReport, setFixReport] = useState<FixReport>();
   const [xpMounted, setXpMounted] = useState(false);
   const [xpOpen, setXpOpen] = useState(false);
   const [lensBusy, setLensBusy] = useState<'' | 'check' | 'fix' | 'refresh'>('');
@@ -54,6 +63,25 @@ export default function Editor() {
   const [scale, setScale] = useState(0.5);
 
   const history = useLog();
+  const streamScores = useStore((s) => s.scores);
+
+  // a score is always on screen: seed from generation, else run a silent check
+  useEffect(() => {
+    setFixReport(undefined);
+    const seeded = working && streamScores[working.id];
+    if (seeded) { setLens(seeded as Score); return; }
+    setLens(undefined);
+    let dead = false;
+    (async () => {
+      if (!working || !kit) return;
+      try {
+        const { score } = await runCritic({ brandId: kit.id, spec: working });
+        if (!dead) setLens(score);
+      } catch { /* silent */ }
+    })();
+    return () => { dead = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [branch]);
   const selected = working?.layers.find((l) => l.id === selectedId);
 
   // fit canvas into the available space
@@ -196,14 +224,34 @@ export default function Editor() {
   async function autofix() {
     if (lensBusy) return;
     setLensBusy('fix');
+    setFixReport(undefined);
     try {
-      const r = await runAutofix({ brandId: kit.id, spec: working });
+      const prevSpec = structuredClone(working);
+      const r: any = await runAutofix({ brandId: kit.id, spec: working });
       if (r.improved && r.after) {
-        st.getState().replaceWorking(r.spec, 'critic', `Auto-fix · ⚡${Math.round(r.before.total * 100)}→${Math.round(r.after.total * 100)}`);
+        // receipts: what changed, what got resolved, which dimensions moved
+        const changes = diffSummary(diffSpecs(prevSpec, r.spec), kit);
+        const afterMsgs = new Set((r.after.findings || []).map((f: any) => f.message));
+        const resolved = (r.before.findings || [])
+          .filter((f: any) => f.severity !== 'info' && !afterMsgs.has(f.message))
+          .map((f: any) => f.message);
+        const dims: [string, number, number][] = Object.keys(r.after.dimensions)
+          .map((k): [string, number, number] => [k, Math.round((r.before.dimensions[k] || 0) * 100), Math.round(r.after.dimensions[k] * 100)])
+          .filter(([, b, a]) => a - b >= 5);
+        st.getState().replaceWorking(r.spec, 'critic', `Auto-fix · ${Math.round(r.before.total * 100)}→${Math.round(r.after.total * 100)}`);
         setLens(r.after);
-      } else {
+        setFixReport({ kind: 'improved', before: r.before, after: r.after, changes, resolved, dims });
+      } else if (r.reason === 'already-passing') {
         setLens(r.before);
+        setFixReport({ kind: 'pass', before: r.before });
+      } else {
+        // honest no-gain: nothing was applied
+        setLens(r.before);
+        setFixReport({ kind: 'nogain', before: r.before, after: r.after });
       }
+    } catch (e: any) {
+      useStore.setState({ toast: 'Auto-fix failed: ' + (e?.message || e) });
+      setTimeout(() => useStore.setState({ toast: undefined }), 4000);
     } finally {
       setLensBusy('');
     }

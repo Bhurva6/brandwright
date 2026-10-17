@@ -23,13 +23,13 @@ export function Coachmarks({ steps, storageKey, run, onClose }: Props) {
   const [active, setActive] = useState(false);
   const [rect, setRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
 
-  // start: forced replay, or first visit
+  // start: forced replay, or first visit — wait for entrance animations to settle
   useEffect(() => {
     if (run) {
       setI(0);
       setActive(true);
     } else if (!tourSeen(storageKey)) {
-      const t = setTimeout(() => setActive(true), 600); // let the UI settle
+      const t = setTimeout(() => setActive(true), 1100);
       return () => clearTimeout(t);
     }
   }, [run, storageKey]);
@@ -48,12 +48,20 @@ export function Coachmarks({ steps, storageKey, run, onClose }: Props) {
     while (idx < steps.length && !(el = document.querySelector(steps[idx].target))) idx++;
     if (!el || idx >= steps.length) { close(); return; }
     if (idx !== i) { setI(idx); return; }
-    (el as HTMLElement).scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    if (el.getBoundingClientRect().top < 0 || el.getBoundingClientRect().bottom > window.innerHeight) (el as HTMLElement).scrollIntoView({ block: 'nearest', inline: 'nearest' });
     const r = el.getBoundingClientRect();
     setRect({ x: r.left - 6, y: r.top - 6, w: r.width + 12, h: r.height + 12 });
   }, [active, i, steps, close]);
 
   useLayoutEffect(measure, [measure]);
+  // re-measure a few beats after activation/step changes — targets may still be
+  // animating (canvas scale-in, panel slide) when the first measurement lands
+  useEffect(() => {
+    if (!active) return;
+    const t1 = setTimeout(measure, 300);
+    const t2 = setTimeout(measure, 750);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [active, i, measure]);
   useEffect(() => {
     if (!active) return;
     const onR = () => measure();

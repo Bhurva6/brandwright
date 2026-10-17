@@ -138,10 +138,15 @@ app.post('/api/autofix', async (req, res) => {
     const brand = loadBrand(brandId);
     if (!brand || !spec) return res.status(400).json({ error: 'brand and spec required' });
     const before = await critique(spec, brand);
-    if (before.pass) return res.json({ improved: false, before, spec });
+    if (before.pass) return res.json({ improved: false, reason: 'already-passing', before, spec });
     const { spec: fixed } = await editDesign({ brand, spec, instruction: repairInstruction(before) });
     await fillImages([fixed]);
     const after = await critique(fixed, brand);
+    // honesty guard: a "fix" that doesn't genuinely score better is not applied
+    const beforeErrors = before.findings.filter((f) => f.severity === 'error').length;
+    const afterErrors = after.findings.filter((f) => f.severity === 'error').length;
+    const legit = after.total > before.total + 0.005 || afterErrors < beforeErrors;
+    if (!legit) return res.json({ improved: false, reason: 'no-gain', before, after, spec });
     res.json({ improved: true, before, after, spec: fixed });
   } catch (e) {
     console.error('autofix', e);
