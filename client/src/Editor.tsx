@@ -13,6 +13,7 @@ import { LayerView } from './Layers';
 import { diffSpecs, diffSummary, specOf } from './vc';
 import { editDesign, regenImage, runCritic, runAutofix, runRefresh, runAdapt, runReskin, getBrand } from './api';
 import { ScoreBadge } from './App';
+import { Coachmarks, EDITOR_STEPS } from './Coachmarks';
 import type { Layer } from './types';
 
 const LAYER_ICON: Record<string, string> = {
@@ -253,10 +254,12 @@ export default function Editor() {
   const swatches = kit.colors;
 
   const toast = useStore((s) => s.toast);
+  const [replayTour, setReplayTour] = useState(0);
 
   return (
     <div className="ed">
       {toast && <div className="toast">{toast}</div>}
+      <Coachmarks key={replayTour} steps={EDITOR_STEPS} storageKey="bw_tour_editor" run={replayTour > 0} onClose={() => setReplayTour(0)} />
       {/* ===== top bar ===== */}
       <div className="ed-top">
         <button className="ghost" onClick={() => st.getState().closeEditor()}>← Gallery</button>
@@ -287,6 +290,7 @@ export default function Editor() {
           📦 Export pack
         </button>
         <button className="go" onClick={exportPng}>Export PNG</button>
+        <button className="helpbtn" title="Replay the editor tour" onClick={() => setReplayTour((n) => n + 1)}>?</button>
       </div>
 
       {viewingCommit && (

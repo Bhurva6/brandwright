@@ -3,6 +3,7 @@ import { DesignView, FluidDesignView } from './DesignView';
 import { getBrand, generateStream, runRemix } from './api';
 import { useStore } from './store';
 import Editor from './Editor';
+import { Coachmarks, HOME_STEPS } from './Coachmarks';
 
 interface RefAd { id: string; src: string; label: string; structure: string }
 
@@ -156,16 +157,21 @@ export default function App() {
   }
 
   const toast = useStore((s) => s.toast);
+  const [replayTour, setReplayTour] = useState(0);
 
   if (view === 'editor') return <Editor />;
 
   return (
     <div className="app">
       {toast && <div className="toast">{toast}</div>}
+      {kit && (
+        <Coachmarks key={replayTour} steps={HOME_STEPS} storageKey="bw_tour_home" run={replayTour > 0} onClose={() => setReplayTour(0)} />
+      )}
       <header className="top">
         <div className="brandmark">
           Brandwright
           <span className="tag">version control for brand design</span>
+          <button className="helpbtn" title="Replay the tour" onClick={() => setReplayTour((n) => n + 1)}>?</button>
         </div>
         {kit && (
           <div className="genome">
