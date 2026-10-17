@@ -109,6 +109,7 @@ const EMIT_TOOL = {
 // trailing junk), sometimes as a real array. Extract robustly either way.
 function toDesignArray(args) {
   let d = args?.designs ?? args;
+  if (typeof d === 'string') d = d.replace(/^\s*```(?:json)?/i, '').replace(/```\s*$/, '').trim();
   if (Array.isArray(d)) return d;
   if (d && typeof d === 'object') return Object.values(d);
   if (typeof d === 'string') {
@@ -129,25 +130,38 @@ function toDesignArray(args) {
 }
 
 /** Call the model and extract the designs array — retrying when the model
- *  comes back without a tool call or with unparseable JSON (it happens). */
+ *  comes back without a tool call or with unparseable JSON. A truncated
+ *  response (finish_reason=length → unbalanced JSON) retries with a BIGGER
+ *  token budget, since retrying at the same cap just truncates again. */
 async function callForDesigns(messages, { maxTokens, temperature, tries = 3 }) {
   let lastErr;
+  let budget = maxTokens;
   for (let i = 0; i < tries; i++) {
     const r = await withRetry(() => pro.chat.completions.create({
       model: MODELS.pro,
       temperature: temperature + i * 0.05,
-      max_tokens: maxTokens,
+      max_tokens: budget,
       messages,
       tools: [EMIT_TOOL],
       tool_choice: { type: 'function', function: { name: 'emit_designs' } },
     }));
-    const tc = r.choices[0].message.tool_calls?.[0];
-    if (!tc) { lastErr = new Error('agent emitted no designs'); continue; }
-    if (process.env.DEBUG_AGENT) console.error('RAW ARGS >>>', String(tc.function.arguments).slice(0, 900));
+    const choice = r.choices[0];
+    const truncated = choice.finish_reason === 'length';
+    const tc = choice.message.tool_calls?.[0];
+    if (!tc) {
+      lastErr = new Error('agent emitted no designs');
+      if (truncated) budget = Math.min(Math.floor(budget * 2), 16000);
+      continue;
+    }
+    if (process.env.DEBUG_AGENT) console.error(`RAW ARGS (finish=${choice.finish_reason}) >>>`, String(tc.function.arguments).slice(0, 900));
     try {
       return toDesignArray(JSON.parse(tc.function.arguments));
     } catch (e) {
       lastErr = new Error('agent returned malformed design JSON: ' + e.message);
+      if (truncated) {
+        budget = Math.min(Math.floor(budget * 2), 16000);
+        console.error(`agent response truncated at ${choice.usage?.completion_tokens ?? '?'} tokens — retrying with ${budget}`);
+      }
     }
   }
   throw lastErr;
@@ -189,7 +203,8 @@ export async function editDesign({ brand, spec, instruction }) {
           `- Keep everything else as it is — make the smallest change that fully satisfies the instruction.`,
       },
     ],
-    { maxTokens: 6000, temperature: 0.4 },
+    // full layer list round-trips: budget scales with design size
+    { maxTokens: Math.min(5000 + spec.layers.length * 600, 16000), temperature: 0.4 },
   );
   const next = normalizeDesign({ ...designs[0], id: spec.id }, brand, preset, { keepIds: true });
 

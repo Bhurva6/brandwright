@@ -10,11 +10,13 @@ import type { DesignSpec, BrandKit } from './types';
 import { useStore, useLog } from './store';
 import type { Score } from './store';
 import { LayerView } from './Layers';
-import { diffSpecs, diffSummary, specOf } from './vc';
+import { diffSpecs, diffSummary, specOf, newId } from './vc';
 import { editDesign, regenImage, runCritic, runAutofix, runRefresh, runAdapt, runReskin, getBrand } from './api';
 import { ScoreBadge } from './App';
 import { Coachmarks, EDITOR_STEPS } from './Coachmarks';
 import type { Layer } from './types';
+
+let layerClipboard: Layer | null = null; // copy/paste buffer (survives branch switches)
 
 const LAYER_ICON: Record<string, string> = {
   background: '▦', image: '🖼', text: 'T', shape: '◆', bloom: '❋', charm: '✦', logo: '™', pill: '⬭', featureList: '☑',
@@ -65,6 +67,61 @@ export default function Editor() {
     const t = setTimeout(() => st.getState().commitWorking('human', 'Edited design'), 900);
     return () => clearTimeout(t);
   }, [dirty, working]);
+
+  // ----- keyboard shortcuts -------------------------------------------------
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement;
+      if (t?.matches?.('input, textarea, select, [contenteditable]')) return; // never hijack typing
+      const s = st.getState();
+      if (!s.working || s.viewingCommit) return;
+      const mod = e.metaKey || e.ctrlKey;
+      const sel = s.working.layers.find((l) => l.id === s.selectedId);
+
+      if (mod && e.key.toLowerCase() === 'c' && sel && sel.type !== 'background') {
+        layerClipboard = structuredClone(sel);
+        e.preventDefault();
+      } else if (mod && e.key.toLowerCase() === 'v' && layerClipboard) {
+        const copy = structuredClone(layerClipboard);
+        copy.id = newId('l');
+        copy.box = { ...copy.box, x: copy.box.x + 24, y: copy.box.y + 24 };
+        st.setState({ working: { ...s.working, layers: [...s.working.layers, copy] }, selectedId: copy.id, dirty: false });
+        s.commitWorking('human', `Pasted ${copy.type}`);
+        e.preventDefault();
+      } else if (mod && e.key.toLowerCase() === 'd' && sel && sel.type !== 'background') {
+        const copy = structuredClone(sel);
+        copy.id = newId('l');
+        copy.box = { ...copy.box, x: copy.box.x + 24, y: copy.box.y + 24 };
+        st.setState({ working: { ...s.working, layers: [...s.working.layers, copy] }, selectedId: copy.id, dirty: false });
+        s.commitWorking('human', `Duplicated ${copy.type}`);
+        e.preventDefault();
+      } else if (mod && e.key.toLowerCase() === 'z') {
+        // undo = step the working tree back one commit
+        const br = s.repo.branches.find((b) => b.name === s.branch);
+        const parent = br && s.repo.commits[br.head]?.parents[0];
+        const prev = parent && specOf(s.repo, parent);
+        if (prev) s.replaceWorking(structuredClone(prev), 'human', 'Undo');
+        e.preventDefault();
+      } else if ((e.key === 'Delete' || e.key === 'Backspace') && sel && sel.type !== 'background') {
+        s.removeLayer(sel.id);
+        s.commitWorking('human', `Removed ${sel.type}`);
+        e.preventDefault();
+      } else if (e.key.startsWith('Arrow') && sel) {
+        const step = e.shiftKey ? 24 : 3;
+        const b = { ...sel.box };
+        if (e.key === 'ArrowLeft') b.x -= step;
+        if (e.key === 'ArrowRight') b.x += step;
+        if (e.key === 'ArrowUp') b.y -= step;
+        if (e.key === 'ArrowDown') b.y += step;
+        s.updateLayer(sel.id, { box: b }); // debounced auto-commit picks this up
+        e.preventDefault();
+      } else if (e.key === 'Escape') {
+        s.select(undefined);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   if (!working || !kit) return null;
 
@@ -481,7 +538,11 @@ export default function Editor() {
           ) : (
             <div className="ed-props">
               <div className="ed-sectitle">Canvas</div>
-              <div className="ed-hint">Click any element to edit it. Drag to move, corners to resize.</div>
+              <div className="ed-hint">
+                Click any element to edit it. Drag to move, corners to resize.
+                <br />
+                <kbd>⌘C</kbd> copy · <kbd>⌘V</kbd> paste · <kbd>⌘D</kbd> duplicate · <kbd>⌫</kbd> delete · <kbd>←↑↓→</kbd> nudge (<kbd>⇧</kbd> = more) · <kbd>⌘Z</kbd> undo
+              </div>
               <div className="ed-sectitle sm">Background</div>
               <div className="ed-swatches">
                 {swatches.map((c) => (

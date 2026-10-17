@@ -144,7 +144,8 @@ select.resel { appearance: none; -webkit-appearance: none; }
 .ed-chatrow input { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font: inherit; font-size: 13px; outline: none; }
 .ed-chatrow input:focus { border-color: var(--accent); }
 .ed-err { color: #a12626; font-size: 12.5px; margin-top: 8px; }
-.ed-hint { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.ed-hint { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+.ed-hint kbd { background: var(--line-2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; font-size: 10.5px; font-family: ui-monospace, monospace; color: var(--ink); }
 
 .ed-textedit { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; font: inherit; font-size: 13.5px; resize: vertical; outline: none; }
 .ed-textedit:focus { border-color: var(--accent); }
