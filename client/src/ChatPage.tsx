@@ -33,8 +33,10 @@ async function post<T>(path: string, body: unknown): Promise<T> {
 }
 
 // shrink any attached reference to a chat-friendly jpeg — big Retina
-// screenshots would otherwise blow the hosted request-size limit
-function toRefDataUrl(file: File): Promise<string> {
+// screenshots would otherwise blow the hosted request-size limit. Keeps the
+// natural dimensions so generation can match the reference's aspect ratio.
+interface RefAttachment { url: string; w: number; h: number }
+function toRefDataUrl(file: File): Promise<RefAttachment> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
@@ -46,11 +48,22 @@ function toRefDataUrl(file: File): Promise<string> {
       c.height = Math.max(1, Math.round(img.height * sc));
       c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(url);
-      resolve(c.toDataURL('image/jpeg', 0.85));
+      resolve({ url: c.toDataURL('image/jpeg', 0.85), w: img.width, h: img.height });
     };
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('could not read image')); };
     img.src = url;
   });
+}
+
+// the brand preset whose aspect ratio sits closest to the reference's
+function pickPreset(kit: BrandKit, w: number, h: number): string | undefined {
+  const presets: any[] = (kit as any).presets || [];
+  if (!presets.length || !w || !h) return undefined;
+  const ar = w / h;
+  return presets.reduce((best, p) => {
+    const d = Math.abs(Math.log((p.w / p.h) / ar));
+    return !best || d < best.d ? { d, id: p.id } : best;
+  }, null as any)?.id;
 }
 
 const BRAND_WORDS: [RegExp, string][] = [
@@ -71,7 +84,7 @@ export default function ChatPage() {
   const [chatId, setChatId] = useState<string>(() => sessionStorage.getItem('bw_chat_cur') || mid());
   const [sideOpen, setSideOpen] = useState(false);
   const [text, setText] = useState('');
-  const [attach, setAttach] = useState<string[]>([]);
+  const [attach, setAttach] = useState<RefAttachment[]>([]);
   const [busy, setBusy] = useState(false);
   const [demoKit, setDemoKit] = useState<BrandKit | null>(null);
   const [chatBrandId, setChatBrandId] = useState('demo');
@@ -158,7 +171,8 @@ export default function ChatPage() {
     setBusy(true);
     try {
       if (attach.length) {
-        const images = attach;
+        const atts = attach;
+        const images = atts.map((a) => a.url);
         setAttach([]);
         push({ role: 'user', text: t || undefined, images });
 
@@ -182,7 +196,8 @@ export default function ChatPage() {
         for (let i = 0; i < refs.length; i++) {
           const gid = push({ role: 'bot', title: `Reference ${i + 1} — ${n} layered takes`, text: 'designing…', status: 'busy' });
           try {
-            const { specs } = await post<{ specs: DesignSpec[] }>('/api/remix', { brandId, structure: refs[i].structure, n });
+            const presetId = pickPreset(kit, atts[i]?.w || 0, atts[i]?.h || 0);
+            const { specs } = await post<{ specs: DesignSpec[] }>('/api/remix', { brandId, structure: refs[i].structure, n, presetId });
             total += specs.length;
             patch(gid, { text: undefined, designs: specs, status: 'ok' });
           } catch (e: any) {
@@ -284,7 +299,7 @@ export default function ChatPage() {
         {attach.length > 0 && (
           <div className="cattach">
             {attach.map((a, i) => (
-              <span key={i}><img src={a} alt="" /><button onClick={() => setAttach((x) => x.filter((_, j) => j !== i))}>×</button></span>
+              <span key={i}><img src={a.url} alt="" /><button onClick={() => setAttach((x) => x.filter((_, j) => j !== i))}>×</button></span>
             ))}
           </div>
         )}
