@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DesignView } from './DesignView';
-import { getBrand, generateStream } from './api';
+import { getBrand, generateStream, runRemix } from './api';
 import { useStore } from './store';
 import Editor from './Editor';
+
+interface RefAd { id: string; src: string; label: string; structure: string }
 
 interface BrandListing { id: string; name: string; colors: { token: string; value: string }[] }
 
@@ -38,11 +40,28 @@ export default function App() {
   const [status, setStatus] = useState<'idle' | 'thinking' | 'rendering'>('idle');
   const [error, setError] = useState('');
   const [brands, setBrands] = useState<BrandListing[]>([]);
+  const [refs, setRefs] = useState<RefAd[]>([]);
+  const [remixing, setRemixing] = useState('');
 
   useEffect(() => {
     fetch('/api/brands').then((r) => r.json()).then(setBrands).catch(() => {});
+    fetch('/refs/manifest.json').then((r) => r.json()).then((j) => setRefs(j.refs)).catch(() => {});
     switchBrand('xero');
   }, []);
+
+  async function remix(ref: RefAd) {
+    if (busy || remixing || !kit) return;
+    setRemixing(ref.id);
+    setError('');
+    try {
+      const { specs } = await runRemix({ brandId: kit.id, refId: ref.id, n: 3, presetId });
+      st.getState().setDesigns(specs);
+    } catch (e: any) {
+      setError(e?.message || String(e));
+    } finally {
+      setRemixing('');
+    }
+  }
 
   function switchBrand(id: string) {
     getBrand(id)
@@ -154,7 +173,30 @@ export default function App() {
         </div>
       </section>
 
+      {refs.length > 0 && (
+        <section className="refstrip">
+          <div className="refstrip-title">
+            Reference remix <span>— recreate any reference's structure in {kit?.name || 'your brand'}'s DNA</span>
+          </div>
+          <div className="refstrip-row">
+            {refs.map((r) => (
+              <button key={r.id} className={'refcard' + (remixing === r.id ? ' busy' : '')} title={r.structure} disabled={busy || !!remixing} onClick={() => remix(r)}>
+                <img src={r.src} alt={r.label} loading="lazy" />
+                <span>{remixing === r.id ? 'Remixing…' : r.label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       {error && <div className="err">{error}</div>}
+      {remixing && (
+        <div className="gallery">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="card"><div className="dv-shimmer" style={{ width: 340, height: 340, borderRadius: 16 }} /></div>
+          ))}
+        </div>
+      )}
 
       {status === 'thinking' && (
         <div className="gallery">

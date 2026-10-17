@@ -161,6 +161,57 @@ app.post('/api/refresh', async (req, res) => {
   }
 });
 
+// Competitor / reference remix: recreate a reference ad's STRUCTURE in the
+// active brand — the structured-spec superpower, cross-brand.
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+const __dirnameX = path.dirname(fileURLToPath(import.meta.url));
+const REFS = JSON.parse(readFileSync(path.join(__dirnameX, '../client/public/refs/manifest.json'), 'utf8')).refs;
+
+app.post('/api/remix', async (req, res) => {
+  try {
+    const { brandId = 'xero', refId, n = 3, presetId } = req.body || {};
+    const brand = loadBrand(brandId);
+    const ref = REFS.find((r) => r.id === refId);
+    if (!brand || !ref) return res.status(400).json({ error: 'brand and refId required' });
+    const preset = brand.presets.find((p) => p.id === presetId) || brand.presets[0];
+    const prompt =
+      `REFERENCE REMIX. Recreate the STRUCTURE of this reference ad for ${brand.name}, fully on-brand:\n` +
+      `"${ref.structure}"\n` +
+      `Keep the same layout skeleton and visual rhythm, but use OUR brand colours, type roles, voice and assets, with fresh on-brand copy for ${brand.name}. Produce ${n} takes: one faithful to the structure, the rest progressively freer riffs on it.`;
+    const { specs } = await generateDesigns({ brand, prompt, variations: n, preset });
+    await fillImages(specs);
+    res.json({ specs, ref });
+  } catch (e) {
+    console.error('remix', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// Multi-placement adapt: re-layout one design for another canvas preset.
+app.post('/api/adapt', async (req, res) => {
+  try {
+    const { brandId = 'xero', spec, presetId } = req.body || {};
+    const brand = loadBrand(brandId);
+    const preset = brand?.presets.find((p) => p.id === presetId);
+    if (!brand || !spec || !preset) return res.status(400).json({ error: 'brand, spec, presetId required' });
+    const resized = { ...spec, canvas: { ...spec.canvas, w: preset.w, h: preset.h, preset: preset.id } };
+    const { spec: adapted } = await editDesign({
+      brand,
+      spec: resized,
+      instruction:
+        `Re-layout this exact design for a ${preset.label} canvas (${preset.w}x${preset.h}). ` +
+        `Keep every piece of content, colour and imagery; rearrange and rescale the layers so the composition works natively at this aspect ratio. Keep the logo and CTA fully inside safe margins (>=4% from edges).`,
+    });
+    await fillImages([adapted]);
+    res.json({ spec: adapted });
+  } catch (e) {
+    console.error('adapt', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
 // Per-layer image (re)generation — used by the editor's re-roll + candidates.
 app.post('/api/image', async (req, res) => {
   try {

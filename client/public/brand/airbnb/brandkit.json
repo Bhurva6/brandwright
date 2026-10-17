@@ -103,32 +103,22 @@
     {
       "id": "logo-00",
       "category": "logo",
-      "label": "Wordmark · rausch",
+      "label": "Logo \u00b7 rausch",
       "variant": "rausch",
-      "text": "airbnb",
-      "fontFamily": "'Nunito Sans', sans-serif",
-      "fontWeight": 800,
-      "color": "#FF385C"
+      "src": "/brand/airbnb/assets/logo-orig.png",
+      "w": 1000,
+      "h": 312,
+      "hasAlpha": true
     },
     {
       "id": "logo-01",
       "category": "logo",
-      "label": "Wordmark · white",
+      "label": "Logo \u00b7 white",
       "variant": "white",
-      "text": "airbnb",
-      "fontFamily": "'Nunito Sans', sans-serif",
-      "fontWeight": 800,
-      "color": "#FFFFFF"
-    },
-    {
-      "id": "logo-02",
-      "category": "logo",
-      "label": "Wordmark · ink",
-      "variant": "ink",
-      "text": "airbnb",
-      "fontFamily": "'Nunito Sans', sans-serif",
-      "fontWeight": 800,
-      "color": "#222222"
+      "src": "/brand/airbnb/assets/logo-white.png",
+      "w": 1000,
+      "h": 312,
+      "hasAlpha": true
     },
     {
       "id": "bloom-000",
@@ -242,7 +232,7 @@
     },
     {
       "id": "human",
-      "text": "Copy is human and hosted — about belonging, never about “inventory”.",
+      "text": "Copy is human and hosted \u2014 about belonging, never about \u201cinventory\u201d.",
       "severity": "error"
     }
   ],
@@ -278,7 +268,7 @@
   "learned": [],
   "examples": [
     "Summer escapes: book a lakeside cabin for the long weekend.",
-    "Promote Airbnb Experiences — cook pasta with a nonna in Rome.",
+    "Promote Airbnb Experiences \u2014 cook pasta with a nonna in Rome.",
     "Host your spare room and earn while you travel."
   ]
 }

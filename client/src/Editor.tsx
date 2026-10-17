@@ -2,12 +2,16 @@
 // reorder / delete / re-roll images) + conversational edits + version history.
 // Every change becomes a commit on the active branch.
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { toPng } from 'html-to-image';
+import JSZip from 'jszip';
+import { DesignView } from './DesignView';
+import type { DesignSpec, BrandKit } from './types';
 import { useStore, useLog } from './store';
 import type { Score } from './store';
 import { LayerView } from './Layers';
 import { diffSpecs, diffSummary, specOf } from './vc';
-import { editDesign, regenImage, runCritic, runAutofix, runRefresh } from './api';
+import { editDesign, regenImage, runCritic, runAutofix, runRefresh, runAdapt } from './api';
 import { ScoreBadge } from './App';
 import type { Layer } from './types';
 
@@ -147,6 +151,55 @@ export default function Editor() {
     }
   }
 
+  // ----- launch-ready pack --------------------------------------------------
+  async function exportPack() {
+    if (lensBusy) return;
+    setLensBusy('refresh');
+    try {
+      const otherPresets = kit.presets.filter((p) => p.id !== working.canvas.preset).slice(0, 3);
+      // adapt to every other placement in parallel (agent re-layouts each)
+      const adapted = await Promise.all(
+        otherPresets.map((p) =>
+          runAdapt({ brandId: kit.id, spec: working, presetId: p.id }).then((r) => ({ preset: p, spec: r.spec })).catch(() => null),
+        ),
+      );
+      const all: { name: string; spec: DesignSpec }[] = [
+        { name: working.canvas.preset, spec: working },
+        ...adapted.filter(Boolean).map((a) => ({ name: a!.preset.id, spec: a!.spec })),
+      ];
+
+      const zip = new JSZip();
+      for (const item of all) {
+        const png = await renderSpecPng(item.spec, kit);
+        zip.file(`${slug(working.name)}-${item.name}.png`, png.split(',')[1], { base64: true });
+      }
+      // copy sheet
+      const texts = working.layers
+        .filter((l) => ['text', 'pill', 'featureList'].includes(l.type))
+        .map((l) => (l.type === 'featureList' ? `features: ${(l.items || []).join(', ')}` : `${l.role || l.type}: ${l.text}`));
+      zip.file('copy-sheet.txt', `${working.name}\nBrand: ${kit.name}\n\n${texts.join('\n')}\n`);
+      // compliance report
+      try {
+        const { score } = await runCritic({ brandId: kit.id, spec: working });
+        zip.file(
+          'brand-compliance.txt',
+          `Brand CI report — ${kit.name}\nScore: ${Math.round(score.total * 100)}/100  (${score.pass ? 'PASS' : 'NEEDS WORK'})\n\n` +
+            Object.entries(score.dimensions).map(([k, v]) => `${k}: ${Math.round((v as number) * 100)}`).join('\n') +
+            (score.findings.length ? `\n\nFindings:\n${score.findings.map((f) => `[${f.severity}] ${f.message}`).join('\n')}` : '\n\nNo findings.'),
+        );
+      } catch { /* report is best-effort */ }
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.download = `${slug(working.name)}-pack.zip`;
+      a.href = URL.createObjectURL(blob);
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } finally {
+      setLensBusy('');
+    }
+  }
+
   // ----- export -------------------------------------------------------------
   async function exportPng() {
     const node = stageRef.current;
@@ -188,7 +241,10 @@ export default function Editor() {
         </div>
         <div className="ed-title">{working.name}</div>
         <button className="ghost" onClick={refreshConcept} disabled={!!lensBusy} title="Creative fatigue? Generate fresh executions of this concept as new branches">
-          {lensBusy === 'refresh' ? 'Refreshing…' : '⟳ Refresh concept'}
+          {lensBusy === 'refresh' ? 'Working…' : '⟳ Refresh concept'}
+        </button>
+        <button className="ghost" onClick={exportPack} disabled={!!lensBusy} title="Zip with every placement size + copy sheet + brand-compliance report">
+          📦 Export pack
         </button>
         <button className="go" onClick={exportPng}>Export PNG</button>
       </div>
@@ -410,6 +466,25 @@ export default function Editor() {
       </div>
     </div>
   );
+}
+
+const slug = (s: string) => s.replace(/\W+/g, '-').toLowerCase();
+
+/** Render a spec to a full-resolution PNG offscreen (fonts + images included). */
+async function renderSpecPng(spec: DesignSpec, kit: BrandKit): Promise<string> {
+  const host = document.createElement('div');
+  host.style.cssText = 'position:fixed;left:-100000px;top:0;';
+  document.body.appendChild(host);
+  const root = createRoot(host);
+  root.render(<DesignView spec={spec} kit={kit} width={spec.canvas.w} />);
+  await new Promise((r) => setTimeout(r, 60));
+  await Promise.all(Array.from(host.querySelectorAll('img')).map((im) => (im.complete ? null : new Promise((r) => { im.onload = im.onerror = r; }))));
+  await new Promise((r) => setTimeout(r, 120)); // autosize text settle
+  const stage = host.querySelector('.dv-stage') as HTMLElement;
+  const png = await toPng(stage, { width: spec.canvas.w, height: spec.canvas.h, style: { transform: 'none' }, pixelRatio: 1 });
+  root.unmount();
+  host.remove();
+  return png;
 }
 
 // Re-roll an image layer; every take is kept as a clickable candidate.

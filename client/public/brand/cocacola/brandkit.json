@@ -106,22 +106,22 @@
     {
       "id": "logo-00",
       "category": "logo",
-      "label": "Wordmark · white",
-      "variant": "white",
-      "text": "Coca-Cola",
-      "fontFamily": "'Pacifico', cursive",
-      "fontWeight": 400,
-      "color": "#FFFFFF"
+      "label": "Wordmark \u00b7 red",
+      "variant": "red",
+      "src": "/brand/cocacola/assets/logo-orig.png",
+      "w": 1000,
+      "h": 314,
+      "hasAlpha": true
     },
     {
       "id": "logo-01",
       "category": "logo",
-      "label": "Wordmark · red",
-      "variant": "red",
-      "text": "Coca-Cola",
-      "fontFamily": "'Pacifico', cursive",
-      "fontWeight": 400,
-      "color": "#F40009"
+      "label": "Wordmark \u00b7 white",
+      "variant": "white",
+      "src": "/brand/cocacola/assets/logo-white.png",
+      "w": 1000,
+      "h": 314,
+      "hasAlpha": true
     },
     {
       "id": "bloom-000",
@@ -230,7 +230,7 @@
     },
     {
       "id": "joy",
-      "text": "Imagery radiates togetherness, refreshment and joy — never clinical or corporate.",
+      "text": "Imagery radiates togetherness, refreshment and joy \u2014 never clinical or corporate.",
       "severity": "warn"
     },
     {
@@ -271,7 +271,7 @@
   "learned": [],
   "examples": [
     "A summer campaign: ice-cold Coke with friends on a rooftop at sunset.",
-    "Festive season sharing ad — togetherness over a family dinner.",
+    "Festive season sharing ad \u2014 togetherness over a family dinner.",
     "Launch Coke Zero to gamers pulling an all-nighter."
   ]
 }

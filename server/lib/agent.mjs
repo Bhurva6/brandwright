@@ -51,6 +51,10 @@ GUIDELINES:
   - Add a CTA pill when it fits the brief; charms and blooms are accents, used sparingly.
   - LAYOUT SPACING: give each text layer its own vertical band with a clear gap. NEVER overlap text boxes with each other or with the logo. Make every text box tall enough for its words.
   - COPY LENGTH: headlines 3 to 6 words; body one short sentence. Short and punchy beats long.
+  - BE DARING: you are an award-winning art director, not a template engine. Use dramatic scale
+    contrast (one HUGE element), asymmetry, full-bleed imagery, rotated accents (rotation: -8..8),
+    unexpected-but-on-brand colour blocking, and negative space with confidence. Every design
+    should have ONE memorable move. Safe, centred, evenly-spaced layouts are the failure mode.
   - Image layers are backgrounds / photography ONLY — describe the scene; the generated image must contain NO text or logos, because your text layers provide every word.
   - Produce the requested number of DISTINCT designs, each a different creative direction (e.g. bold-typographic, photo-led, illustration/shape-led, product-led).`;
 }
@@ -81,6 +85,7 @@ const EMIT_TOOL = {
                     id: { type: 'string', description: 'keep the existing layer id when editing; omit for new layers' },
                     type: { type: 'string', enum: ['background', 'image', 'text', 'shape', 'bloom', 'charm', 'logo', 'pill', 'featureList'] },
                     x: { type: 'number' }, y: { type: 'number' }, w: { type: 'number' }, h: { type: 'number' },
+                    rotation: { type: 'number', description: 'degrees, -15..15' },
                     text: { type: 'string' }, role: { type: 'string' }, color: { type: 'string' }, align: { type: 'string' }, size: { type: 'number' },
                     prompt: { type: 'string' }, fit: { type: 'string' },
                     shapeKind: { type: 'string' }, fill: { type: 'string' }, radius: { type: 'number' },

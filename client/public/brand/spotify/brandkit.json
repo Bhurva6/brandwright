@@ -114,35 +114,22 @@
     {
       "id": "logo-00",
       "category": "logo",
-      "label": "Wordmark · white",
-      "variant": "white",
-      "text": "Spotify",
-      "fontFamily": "'Montserrat', sans-serif",
-      "fontWeight": 800,
-      "color": "#FFFFFF",
-      "letterSpacing": "-0.02em"
+      "label": "Logo \u00b7 green",
+      "variant": "green",
+      "src": "/brand/spotify/assets/logo-orig.png",
+      "w": 1000,
+      "h": 301,
+      "hasAlpha": true
     },
     {
       "id": "logo-01",
       "category": "logo",
-      "label": "Wordmark · green",
-      "variant": "green",
-      "text": "Spotify",
-      "fontFamily": "'Montserrat', sans-serif",
-      "fontWeight": 800,
-      "color": "#1ED760",
-      "letterSpacing": "-0.02em"
-    },
-    {
-      "id": "logo-02",
-      "category": "logo",
-      "label": "Wordmark · black",
-      "variant": "black",
-      "text": "Spotify",
-      "fontFamily": "'Montserrat', sans-serif",
-      "fontWeight": 800,
-      "color": "#121212",
-      "letterSpacing": "-0.02em"
+      "label": "Logo \u00b7 white",
+      "variant": "white",
+      "src": "/brand/spotify/assets/logo-white.png",
+      "w": 1000,
+      "h": 301,
+      "hasAlpha": true
     },
     {
       "id": "bloom-000",
@@ -292,7 +279,7 @@
   "learned": [],
   "examples": [
     "Promote a 3-months-free Premium offer to students.",
-    "Launch a true-crime podcast exclusive — dark and intriguing.",
+    "Launch a true-crime podcast exclusive \u2014 dark and intriguing.",
     "Wrapped-style year-in-review hype ad."
   ]
 }

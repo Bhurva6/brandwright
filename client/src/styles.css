@@ -173,6 +173,18 @@ body {
 .ed-commit .msg small { color: var(--muted); font-size: 11.3px; }
 .ed-commit .sha { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--muted); padding-top: 2px; }
 
+/* Reference remix strip */
+.refstrip { margin-top: 18px; }
+.refstrip-title { font-family: var(--display); font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink); margin: 0 2px 10px; }
+.refstrip-title span { color: var(--muted); font-family: Inter, sans-serif; font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 12.5px; }
+.refstrip-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+.refcard { flex: 0 0 auto; width: 108px; border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: 5px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: 130ms ease; }
+.refcard img { width: 100%; height: 108px; object-fit: cover; border-radius: 8px; display: block; }
+.refcard span { font-size: 10.5px; font-weight: 600; color: var(--muted); font-family: Inter, sans-serif; line-height: 1.25; text-align: left; }
+.refcard:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+.refcard:disabled { opacity: 0.55; cursor: default; }
+.refcard.busy { border-color: var(--accent); }
+
 /* Performance Lens */
 .lens { display: inline-flex; align-items: center; gap: 3px; font-family: Inter, sans-serif; font-weight: 700; font-size: 12px; border-radius: 999px; padding: 2px 9px; vertical-align: middle; }
 .lens.good { background: #e4f4e9; color: #19774a; }
