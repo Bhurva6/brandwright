@@ -244,6 +244,11 @@
       "id": "warm",
       "text": "Warm grounds (orange/cream); ink text on light, white text on orange.",
       "severity": "error"
+    },
+    {
+      "id": "learned-edited-design",
+      "text": "Use sentence case for design labels; never capitalize \"design.",
+      "severity": "warn"
     }
   ],
   "voice": "Warm, gentle, lightly playful. Permission-giving, never preachy: 'Less overthinking. More you.' 'Meditation made simple.' Breathes between words.",
@@ -275,7 +280,15 @@
     "hierarchy": 0.07,
     "voice": 0.07
   },
-  "learned": [],
+  "learned": [
+    {
+      "id": "learned-0",
+      "key": "edited design",
+      "text": "Use sentence case for design labels; never capitalize \"design.",
+      "origin": "learned",
+      "confirmations": 3
+    }
+  ],
   "examples": [
     "Encourage stressed professionals to try a 10-minute sleep meditation.",
     "New-year reset: be kind to your mind.",

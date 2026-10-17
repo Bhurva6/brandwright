@@ -2,7 +2,8 @@
 // bounded concurrency, and retry/backoff. Parallel-friendly by design.
 import { image, MODELS } from './openai.mjs';
 import { createLimiter, withRetry } from './queue.mjs';
-import { hashKey, hasBlob, putBlob, blobUrl } from './store.mjs';
+import { hashKey, hasBlob, putBlob, blobUrl, blobPath } from './store.mjs';
+import fs from 'fs';
 
 const limit = createLimiter(Number(process.env.IMAGE_CONCURRENCY || 4));
 
@@ -21,7 +22,12 @@ export async function generateImage({ prompt, size = '1024x1024', model = MODELS
   const cleanPrompt = `${prompt}. Clean, clear, high-quality advertising photography/illustration. Absolutely no text, no words, no letters, no numbers, no logos, no watermarks, no captions, no signage.`;
   const recipe = { model, prompt: cleanPrompt, size };
   const hash = hashKey(recipe);
-  if (hasBlob(hash)) return { url: blobUrl(hash), hash, cached: true, recipe: { ...recipe, assetHash: hash } };
+  if (hasBlob(hash)) {
+    const url = process.env.VERCEL
+      ? 'data:image/png;base64,' + fs.readFileSync(blobPath(hash)).toString('base64')
+      : blobUrl(hash);
+    return { url, hash, cached: true, recipe: { ...recipe, assetHash: hash } };
+  }
 
   const buf = await limit(() => withRetry(async () => {
     const r = await image.images.generate({ model, prompt: cleanPrompt, size });
@@ -33,6 +39,14 @@ export async function generateImage({ prompt, size = '1024x1024', model = MODELS
     }
     throw new Error('image response had no data');
   }));
+
+  // Hosted (Vercel): functions are stateless, so a /assets/blobs path written by
+  // one invocation may not exist for the next. Inline the image as a data URL.
+  if (process.env.VERCEL) {
+    try { putBlob(hash, buf); } catch { /* ephemeral best-effort */ }
+    const dataUrl = 'data:image/png;base64,' + buf.toString('base64');
+    return { url: dataUrl, hash, cached: false, recipe: { ...recipe, assetHash: hash } };
+  }
 
   putBlob(hash, buf);
   return { url: blobUrl(hash), hash, cached: false, recipe: { ...recipe, assetHash: hash } };

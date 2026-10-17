@@ -44,8 +44,10 @@ export default function App() {
   const [refs, setRefs] = useState<RefAd[]>([]); // xero: curated image refs
   const [specRefs, setSpecRefs] = useState<any[]>([]); // other brands: live spec refs
   const [remixing, setRemixing] = useState('');
+  const [hosted, setHosted] = useState(false); // Vercel demo: read-only fs, no live ingest
 
   useEffect(() => {
+    fetch('/api/health').then((r) => r.json()).then((h) => setHosted(!!h.hosted)).catch(() => {});
     fetch('/api/brands').then((r) => r.json()).then(setBrands).catch(() => {});
     switchBrand('xero');
   }, []);
@@ -195,7 +197,7 @@ export default function App() {
               {(brands.length ? brands : [{ id: kit.id, name: kit.name, colors: [] }]).map((b) => (
                 <option key={b.id} value={b.id}>{b.name}</option>
               ))}
-              <option value="__ingest__">＋ Ingest new brand…</option>
+              {!hosted && <option value="__ingest__">＋ Ingest new brand…</option>}
             </select>
             <span>{ingesting ? 'learning the brand…' : <>genome · {kit.assets.length} assets · {kit.colors.length} colours</>}</span>
             <input

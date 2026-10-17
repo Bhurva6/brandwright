@@ -60,11 +60,13 @@ export function normalizeDesign(raw, brand, preset, opts = {}) {
         break;
       case 'bloom': {
         const a = pickAsset(brand, 'bloom', l.assetId);
-        layers.push({ id, type: 'bloom', box, assetId: a?.id, src: a?.src, fill: resolveColor(l.fill, cmap, undefined) });
+        if (!a) break; // no bloom assets in this genome — drop rather than ghost
+        layers.push({ id, type: 'bloom', box, assetId: a.id, src: a.src, fill: resolveColor(l.fill, cmap, undefined) });
         break;
       }
       case 'charm': {
         const a = pickAsset(brand, 'charm', l.assetId);
+        if (!a) break; // brand has no charms — drop the layer rather than render a ghost
         // tiny source stickers pixelate when blown up — clamp to ~3x natural size
         if (a?.w && a?.h) {
           const maxW = a.w * 3, maxH = a.h * 3;

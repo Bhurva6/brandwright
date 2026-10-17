@@ -105,7 +105,7 @@ body {
 .ghost { background: none; border: 1px solid var(--line); border-radius: 9px; padding: 7px 12px; font: inherit; font-size: 13px; color: var(--ink); cursor: pointer; }
 select.resel { appearance: none; -webkit-appearance: none; }
 .ghost:hover { border-color: var(--accent); color: var(--accent); }
-.ed-branches { display: flex; gap: 6px; overflow-x: auto; max-width: 46vw; }
+.ed-branches { display: flex; gap: 6px; overflow-x: auto; flex: 1 1 0; min-width: 0; scrollbar-width: thin; padding: 2px 0; }
 .bchip { border: 1px solid var(--line); background: #fffdfa; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-family: Inter, sans-serif; color: var(--muted); cursor: pointer; white-space: nowrap; }
 .bchip.on { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, #fff); font-weight: 600; }
 

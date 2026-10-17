@@ -182,6 +182,18 @@ export default function Editor() {
     if (lensBusy) return;
     setLensBusy('refresh');
     try {
+      await exportPackInner();
+    } catch (e: any) {
+      console.error('export pack failed', e);
+      useStore.setState({ toast: '📦 Export pack failed: ' + (e?.message || e) });
+      setTimeout(() => useStore.setState({ toast: undefined }), 6000);
+    } finally {
+      setLensBusy('');
+    }
+  }
+
+  async function exportPackInner() {
+    {
       const otherPresets = kit.presets.filter((p) => p.id !== working.canvas.preset).slice(0, 3);
       // adapt to every other placement in parallel (agent re-layouts each)
       const adapted = await Promise.all(
@@ -196,8 +208,12 @@ export default function Editor() {
 
       const zip = new JSZip();
       for (const item of all) {
-        const png = await renderSpecPng(item.spec, kit);
-        zip.file(`${slug(working.name)}-${item.name}.png`, png.split(',')[1], { base64: true });
+        try {
+          const png = await renderSpecPng(item.spec, kit);
+          zip.file(`${slug(working.name)}-${item.name}.png`, png.split(',')[1], { base64: true });
+        } catch (e) {
+          console.error('pack: render failed for', item.name, e); // skip a bad size, keep the pack
+        }
       }
       // copy sheet
       const texts = working.layers
@@ -221,8 +237,6 @@ export default function Editor() {
       a.href = URL.createObjectURL(blob);
       a.click();
       URL.revokeObjectURL(a.href);
-    } finally {
-      setLensBusy('');
     }
   }
 

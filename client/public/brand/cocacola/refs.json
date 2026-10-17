@@ -120,7 +120,7 @@
      "fit": "cover",
      "radius": 0,
      "status": "ready",
-     "src": "/assets/blobs/229aea833359c0794314fa8d.png"
+     "src": "/refimg/229aea833359c0794314fa8d.jpg"
     },
     {
      "id": "l_e90f5e39",
@@ -246,7 +246,7 @@
      "fit": "contain",
      "radius": 0,
      "status": "ready",
-     "src": "/assets/blobs/1e3d6522da9288ec45ffcb4f.png"
+     "src": "/refimg/1e3d6522da9288ec45ffcb4f.jpg"
     },
     {
      "id": "l_fe95ad07",

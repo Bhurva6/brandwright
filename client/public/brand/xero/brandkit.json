@@ -1057,6 +1057,11 @@
       "id": "learned-moved-shape",
       "text": "Keep brand shapes in their original position; never move or reposition them.",
       "severity": "warn"
+    },
+    {
+      "id": "learned-edited-design",
+      "text": "Use \"edited\" alone; never pair it with \"design\" in Xero communications.",
+      "severity": "warn"
     }
   ],
   "voice": "Friendly, plain-spoken and encouraging. Short active sentences that talk to small-business owners like a helpful partner. Confident, never jargon-y. Examples: 'Get a Xero Coach. Get ahead.' / 'Up and running in under 4 hours.' / 'Other software holds you back. Xero holds your hand.'",
@@ -1253,6 +1258,13 @@
       "id": "learned-1",
       "key": "moved shape",
       "text": "Keep brand shapes in their original position; never move or reposition them.",
+      "origin": "learned",
+      "confirmations": 3
+    },
+    {
+      "id": "learned-2",
+      "key": "edited design",
+      "text": "Use \"edited\" alone; never pair it with \"design\" in Xero communications.",
       "origin": "learned",
       "confirmations": 3
     }

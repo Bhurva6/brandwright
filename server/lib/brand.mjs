@@ -24,8 +24,10 @@ export function loadBrand(id) {
 }
 
 export function saveBrand(kit) {
-  const dir = path.join(BRANDS_DIR, kit.id);
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, 'brandkit.json'), JSON.stringify(kit, null, 2));
+  try {
+    const dir = path.join(BRANDS_DIR, kit.id);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'brandkit.json'), JSON.stringify(kit, null, 2));
+  } catch { /* hosted: read-only fs — the kit still applies in-memory for this run */ }
   return kit;
 }
