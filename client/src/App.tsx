@@ -393,7 +393,7 @@ export default function App() {
           Brandwright
           <span className="tag">studio</span>
           <button className="helpbtn" title="Replay the tour" onClick={(e) => { e.stopPropagation(); setReplayTour((n) => n + 1); }}>?</button>
-          <button className="libbtn" title="Your exported designs" onClick={() => st.getState().setView('library')}>
+          <button className="libbtn" title="Your exported designs" onClick={(e) => { e.stopPropagation(); st.getState().setView('library'); }}>
             <Icon name="folder" size={13} /> Library{lib.length ? ` · ${lib.length}` : ''}
           </button>
         </div>
