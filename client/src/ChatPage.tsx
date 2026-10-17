@@ -6,6 +6,7 @@ import { getBrand, editDesign } from './api';
 import { useStore } from './store';
 import { DesignView } from './DesignView';
 import { Icon } from './Icon';
+import { saveChat, getChat, listChats, removeChat, type StoredChat } from './library';
 
 type Msg = {
   id: string;
@@ -58,11 +59,17 @@ const BRAND_WORDS: [RegExp, string][] = [
 ];
 const detectBrand = (t: string) => BRAND_WORDS.find(([re]) => re.test(t))?.[1] || 'demo';
 
+const GREETING: Msg = {
+  id: 'greet', role: 'bot', status: 'ok',
+  text: 'Drop reference ads and tell me what to make — I’ll read them, build the brand kit, and design in editable layers. Click any result to keep editing it right here.',
+};
+
 export default function ChatPage() {
   const st = useStore;
-  const [msgs, setMsgs] = useState<Msg[]>([
-    { id: mid(), role: 'bot', text: 'Drop reference ads and tell me what to make — I’ll read them, build the brand kit, and design in editable layers. Click any result to keep editing it right here.', status: 'ok' },
-  ]);
+  const [msgs, setMsgs] = useState<Msg[]>([GREETING]);
+  const [chats, setChats] = useState<StoredChat[]>([]);
+  const [chatId, setChatId] = useState<string>(() => sessionStorage.getItem('bw_chat_cur') || mid());
+  const [sideOpen, setSideOpen] = useState(false);
   const [text, setText] = useState('');
   const [attach, setAttach] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -73,6 +80,60 @@ export default function ChatPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [msgs]);
+
+  // history: load the chat list, restore the current thread after refresh/navigation
+  useEffect(() => {
+    listChats().then(setChats).catch(() => {});
+    const cur = sessionStorage.getItem('bw_chat_cur');
+    if (cur) {
+      getChat(cur).then((c) => {
+        if (!c) return;
+        setMsgs(c.msgs as Msg[]);
+        setChatBrandId(c.brandId);
+        const kitMsg = (c.msgs as Msg[]).slice().reverse().find((m) => m.kitCard);
+        if (kitMsg?.kitCard) { setDemoKit(kitMsg.kitCard); st.getState().setKit(kitMsg.kitCard); }
+      }).catch(() => {});
+    }
+  }, []);
+
+  // persist the thread as it grows (debounced), ChatGPT-style
+  useEffect(() => {
+    if (msgs.length <= 1) return;
+    sessionStorage.setItem('bw_chat_cur', chatId);
+    const t = setTimeout(() => {
+      const firstUser = msgs.find((m) => m.role === 'user');
+      const title = (firstUser?.text || (firstUser?.images ? `${firstUser.images.length} reference${firstUser.images.length > 1 ? 's' : ''}` : 'New chat')).slice(0, 46);
+      saveChat({ id: chatId, title, at: Date.now(), brandId: chatBrandId, msgs })
+        .then(() => listChats().then(setChats))
+        .catch(() => {});
+    }, 500);
+    return () => clearTimeout(t);
+  }, [msgs, chatId, chatBrandId]);
+
+  const newChat = () => {
+    const id = mid();
+    setChatId(id);
+    sessionStorage.setItem('bw_chat_cur', id);
+    setMsgs([GREETING]);
+    setReplyTo(null);
+    setAttach([]);
+    setSideOpen(false);
+  };
+  const openChat = (c: StoredChat) => {
+    setChatId(c.id);
+    sessionStorage.setItem('bw_chat_cur', c.id);
+    setMsgs(c.msgs as Msg[]);
+    setChatBrandId(c.brandId);
+    setReplyTo(null);
+    setAttach([]);
+    setSideOpen(false);
+    const kitMsg = (c.msgs as Msg[]).slice().reverse().find((m) => m.kitCard);
+    if (kitMsg?.kitCard) { setDemoKit(kitMsg.kitCard); st.getState().setKit(kitMsg.kitCard); }
+  };
+  const dropChat = (id: string) => {
+    removeChat(id).then(() => listChats().then(setChats));
+    if (id === chatId) newChat();
+  };
 
   const push = (m: Omit<Msg, 'id'>) => { const id = mid(); setMsgs((s) => [...s, { id, ...m }]); return id; };
   const patch = (id: string, p: Partial<Msg>) => setMsgs((s) => s.map((m) => (m.id === id ? { ...m, ...p } : m)));
@@ -149,13 +210,32 @@ export default function ChatPage() {
   return (
     <div className="chatpage">
       <nav className="land-nav chat-nav">
-        <div className="brandmark" onClick={() => st.getState().setView('landing')}>Brandwright</div>
+        <div className="chat-navleft">
+          <button className="cside-toggle" title="Chat history" onClick={() => setSideOpen((o) => !o)}><Icon name="listChecks" size={15} /></button>
+          <div className="brandmark" onClick={() => st.getState().setView('landing')}>Brandwright</div>
+        </div>
         <div className="land-links">
           <button className="ghost" onClick={() => st.getState().setView('home')}>Studio</button>
           <button className="ghost" onClick={() => st.getState().setView('library')}><Icon name="folder" size={13} /> Drafts</button>
         </div>
       </nav>
 
+      <div className="chat-shell">
+        <aside className={'chat-side' + (sideOpen ? ' open' : '')}>
+          <button className="cside-new" onClick={newChat}>＋ New chat</button>
+          <div className="cside-list">
+            {chats.map((c) => (
+              <div key={c.id} className={'cside-row' + (c.id === chatId ? ' cur' : '')} onClick={() => openChat(c)}>
+                <span className="cside-title">{c.title}</span>
+                <span className="cside-date">{new Date(c.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}</span>
+                <button className="cside-del" title="Delete chat" onClick={(e) => { e.stopPropagation(); dropChat(c.id); }}>×</button>
+              </div>
+            ))}
+            {!chats.length && <div className="cside-empty">No chats yet</div>}
+          </div>
+        </aside>
+
+        <div className="chat-main">
       <div className="chat-thread">
         {msgs.map((m) => (
           <div key={m.id} className={'cmsg ' + m.role + (m.status === 'err' ? ' err' : '')}>
@@ -220,6 +300,8 @@ export default function ChatPage() {
             disabled={busy}
           />
           <button className="go csend" onClick={send} disabled={busy || (!text.trim() && !attach.length)}>{busy ? 'Working…' : 'Send'}</button>
+        </div>
+      </div>
         </div>
       </div>
     </div>

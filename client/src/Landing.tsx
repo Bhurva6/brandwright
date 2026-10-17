@@ -102,6 +102,7 @@ export default function Landing() {
         <p className="rv hero-rv d2">Learns any brand. Designs in layers, never pixels. Checks its own work. Remembers everything.</p>
         <div className="land-cta rv hero-rv d3">
           <button className="go big" onClick={openEditor}>{hasSession ? 'Continue in the editor' : 'Open the editor'}</button>
+          <button className="ghost big2" onClick={() => st.getState().setView('chat')}><Icon name="sparkles" size={14} /> Chat copilot</button>
           <button className="ghost big2" onClick={() => st.getState().setView('library')}><Icon name="folder" size={14} /> Drafts</button>
         </div>
         <div className="land-brands rv hero-rv d4">

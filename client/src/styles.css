@@ -782,3 +782,33 @@ button .icx, label .icx, .mini .icx { margin-right: 2px; }
 .cinput:focus { outline: none; border-color: var(--accent); }
 .csend { height: 44px; }
 @media (max-width: 640px) { .cbody { max-width: 94%; } .cimgs img { height: 76px; } }
+
+/* ===================== chat history sidebar ===================== */
+.chat-shell { flex: 1; display: grid; grid-template-columns: 236px 1fr; min-height: 0; }
+.chat-main { display: flex; flex-direction: column; min-width: 0; }
+.chat-navleft { display: flex; align-items: center; gap: 10px; }
+.cside-toggle { display: none; width: 34px; height: 34px; border-radius: 9px; border: 1.5px solid #e5d9cc; background: #fff; cursor: pointer; color: #6b6156; place-items: center; }
+.chat-side { border-right: 1px solid #eee3d8; background: #fdfaf6; padding: 14px 10px; display: flex; flex-direction: column; gap: 10px; position: sticky; top: 58px; height: calc(100vh - 58px); overflow-y: auto; }
+.cside-new { border: 1.5px dashed #d8c9b8; background: #fff; border-radius: 10px; padding: 10px; font-family: inherit; font-size: 13.5px; font-weight: 700; color: #6b6156; cursor: pointer; text-align: left; }
+.cside-new:hover { border-color: var(--accent); color: var(--accent); }
+.cside-list { display: flex; flex-direction: column; gap: 4px; }
+.cside-row { position: relative; display: flex; flex-direction: column; gap: 2px; padding: 9px 26px 9px 10px; border-radius: 9px; cursor: pointer; }
+.cside-row:hover { background: #f4ece2; }
+.cside-row.cur { background: #f8e9df; }
+.cside-row.cur .cside-title { color: var(--accent); }
+.cside-title { font-size: 13px; font-weight: 600; color: #3c352d; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cside-date { font-size: 11px; color: #a3978a; }
+.cside-del { position: absolute; top: 8px; right: 7px; width: 17px; height: 17px; border: none; border-radius: 50%; background: transparent; color: #a3978a; cursor: pointer; font-size: 13px; line-height: 1; display: none; }
+.cside-row:hover .cside-del { display: block; }
+.cside-del:hover { background: #e8d9ca; color: #17141a; }
+.cside-empty { font-size: 12.5px; color: #a3978a; padding: 8px 10px; }
+
+/* composer sits inside the main column, clear of the sidebar */
+.chat-main .chat-composer { position: sticky; left: auto; right: auto; }
+
+@media (max-width: 860px) {
+  .chat-shell { grid-template-columns: 1fr; }
+  .cside-toggle { display: grid; }
+  .chat-side { position: fixed; left: 0; top: 58px; bottom: 0; width: 250px; z-index: 40; transform: translateX(-105%); transition: transform 220ms ease; box-shadow: 14px 0 30px rgba(23,20,26,0.12); height: auto; }
+  .chat-side.open { transform: translateX(0); }
+}
