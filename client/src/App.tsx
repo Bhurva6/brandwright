@@ -56,30 +56,30 @@ export function GenLoader({ count }: { count: number }) {
   );
 }
 
-function LibraryPage({ lib, onBack, onDelete, onFav }: { lib: LibraryItem[]; onBack: () => void; onDelete: (id: string) => void; onFav: (id: string) => void }) {
-  const [favOnly, setFavOnly] = useState(false);
+function LibraryPage({ lib, onBack, onDelete, onFav, favOnly }: { lib: LibraryItem[]; onBack: () => void; onDelete: (id: string) => void; onFav: (id: string) => void; favOnly?: boolean }) {
+  const st = useStore;
   const shown = favOnly ? lib.filter((x) => x.fav) : lib;
   return (
     <div className="app">
       <header className="top">
         <div className="brandmark">
           Brandwright
-          <span className="tag">drafts</span>
+          <span className="tag">{favOnly ? 'favourites' : 'drafts'}</span>
         </div>
         <button className="ghost" onClick={onBack}><Icon name="back" /> Studio</button>
       </header>
       <section className="libview">
         <div className="refstrip-title" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          Your drafts <span>— saved drafts and every export, kept on this device</span>
+          {favOnly ? 'Your favourites' : 'Your drafts'} <span>— {favOnly ? 'the keepers' : 'saved drafts and every export'}, kept on this device</span>
           <span style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-            <button className={'mini' + (!favOnly ? ' on' : '')} onClick={() => setFavOnly(false)}>All</button>
-            <button className={'mini' + (favOnly ? ' on' : '')} onClick={() => setFavOnly(true)}><Icon name="heart" size={11} /> Favourites</button>
+            <button className={'mini' + (!favOnly ? ' on' : '')} onClick={() => st.getState().setView('library')}>All drafts</button>
+            <button className={'mini favtog' + (favOnly ? ' on' : '')} onClick={() => st.getState().setView('favs')}><Icon name="heart" size={11} /> Favourites</button>
           </span>
         </div>
         {shown.length === 0 ? (
           <div className="empty" style={{ padding: '48px 20px' }}>
-            <h1 style={{ fontSize: 'clamp(20px,3vw,28px)' }}>Nothing here yet.</h1>
-            <p>Hit “Save draft” in the editor — exports land here automatically too.</p>
+            <h1 style={{ fontSize: 'clamp(20px,3vw,28px)' }}>{favOnly ? 'No favourites yet.' : 'Nothing here yet.'}</h1>
+            <p>{favOnly ? 'Tap the heart in the editor, or on any draft, to keep the best ones here.' : 'Hit “Save draft” in the editor — exports land here automatically too.'}</p>
           </div>
         ) : (
           <div className="libgrid">
@@ -373,8 +373,8 @@ export default function App() {
 
   if (view === 'landing') return <Landing />;
   if (view === 'editor') return <Editor />;
-  if (view === 'library')
-    return <LibraryPage lib={lib} onBack={() => st.getState().setView('home')} onDelete={(id) => removeExport(id).then(() => listExports().then(setLib))} onFav={(id) => toggleFav(id).then(() => listExports().then(setLib))} />;
+  if (view === 'library' || view === 'favs')
+    return <LibraryPage favOnly={view === 'favs'} lib={lib} onBack={() => st.getState().setView('home')} onDelete={(id) => removeExport(id).then(() => listExports().then(setLib))} onFav={(id) => toggleFav(id).then(() => listExports().then(setLib))} />;
 
   return (
     <div className="app">

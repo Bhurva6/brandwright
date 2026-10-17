@@ -124,6 +124,26 @@ function toDesignArray(args) {
       else if (c === '[') depth++;
       else if (c === ']' && --depth === 0) return JSON.parse(d.slice(start, i + 1));
     }
+    // truncated mid-array: SALVAGE every complete top-level object
+    const salvaged = [];
+    let objStart = -1; depth = 0; inStr = false; esc = false;
+    for (let i = start + 1; i < d.length; i++) {
+      const c = d[i];
+      if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; continue; }
+      if (c === '"') inStr = true;
+      else if (c === '{') { if (depth === 0) objStart = i; depth++; }
+      else if (c === '}') {
+        depth--;
+        if (depth === 0 && objStart >= 0) {
+          try { salvaged.push(JSON.parse(d.slice(objStart, i + 1))); } catch { /* skip */ }
+          objStart = -1;
+        }
+      }
+    }
+    if (salvaged.length) {
+      console.error(`agent: salvaged ${salvaged.length} complete design(s) from a truncated response`);
+      return salvaged;
+    }
     throw new Error('unbalanced designs array');
   }
   throw new Error('designs not parseable: ' + typeof d);
@@ -168,6 +188,15 @@ async function callForDesigns(messages, { maxTokens, temperature, tries = 3 }) {
 }
 
 export async function generateDesigns({ brand, prompt, variations = 1, preset }) {
+  // big batches split into parallel calls — responses stay small enough to never truncate
+  if (variations > 4) {
+    const a = Math.ceil(variations / 2), b = variations - a;
+    const [r1, r2] = await Promise.all([
+      generateDesigns({ brand, prompt, variations: a, preset }),
+      generateDesigns({ brand, prompt: prompt + ' (explore different creative directions than your first instinct)', variations: b, preset }),
+    ]);
+    return { specs: [...r1.specs, ...r2.specs], raw: [...r1.raw, ...r2.raw] };
+  }
   const designs = await callForDesigns(
     [
       { role: 'system', content: systemPrompt(brand) },

@@ -23,6 +23,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/favourites",
+      "destination": "/index.html"
+    },
+    {
       "source": "/library",
       "destination": "/index.html"
     }

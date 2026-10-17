@@ -13,11 +13,14 @@ export interface Score {
 
 /** Keep the URL in step with the app's view — real pages: /, /studio, /editor, /library */
 export const nav = (path: string) => {
-  if (typeof window !== 'undefined' && window.location.pathname !== path) window.history.pushState({}, '', path);
+  if (typeof window !== 'undefined' && window.location.pathname !== path) {
+    try { sessionStorage.setItem('bw_nav', path + ' @' + Date.now() + '\n' + (new Error().stack || '').split('\n').slice(2, 6).join('\n')); } catch { /* debug breadcrumb */ }
+    window.history.pushState({}, '', path);
+  }
 };
 
-export type View = 'landing' | 'home' | 'editor' | 'library';
-export const PATHS: Record<View, string> = { landing: '/', home: '/studio', editor: '/editor', library: '/drafts' };
+export type View = 'landing' | 'home' | 'editor' | 'library' | 'favs';
+export const PATHS: Record<View, string> = { landing: '/', home: '/studio', editor: '/editor', library: '/drafts', favs: '/favourites' };
 
 interface State {
   kit?: BrandKit;
