@@ -485,3 +485,21 @@ button .icx, label .icx, .mini .icx { margin-right: 2px; }
 }
 .favbtn:hover, .favtog:hover { color: #d6336c; border-color: #d6336c; }
 .favtog.on { color: #d6336c; border-color: #d6336c; background: #fdeef4; }
+
+/* ===================== ingest page ===================== */
+.ingest-hero { padding: 10px 2px 22px; max-width: 70ch; }
+.ingest-hero h1 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(26px, 4.6vw, 44px); margin: 0 0 10px; }
+.ingest-hero p { color: var(--muted); font-size: 15.5px; line-height: 1.65; margin: 0; }
+.ingest-form { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.ingest-name { display: flex; flex-direction: column; gap: 7px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-family: var(--display); max-width: 360px; }
+.ingest-name input { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font: 500 15px Inter, sans-serif; outline: none; }
+.ingest-name input:focus { border-color: var(--accent); }
+.dropzone {
+  border: 2px dashed var(--line); border-radius: 14px; padding: 36px 20px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer;
+  color: var(--muted); transition: border-color 150ms ease, background 150ms ease;
+}
+.dropzone:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 4%, #fff); color: var(--accent-ink); }
+.dropzone.has { border-style: solid; border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+.dropzone b { color: var(--ink); font-size: 15px; }
+.dropzone span { font-size: 12.5px; }

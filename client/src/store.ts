@@ -19,8 +19,8 @@ export const nav = (path: string) => {
   }
 };
 
-export type View = 'landing' | 'home' | 'editor' | 'library' | 'favs';
-export const PATHS: Record<View, string> = { landing: '/', home: '/studio', editor: '/editor', library: '/drafts', favs: '/favourites' };
+export type View = 'landing' | 'home' | 'editor' | 'library' | 'favs' | 'ingest';
+export const PATHS: Record<View, string> = { landing: '/', home: '/studio', editor: '/editor', library: '/drafts', favs: '/favourites', ingest: '/ingest' };
 
 interface State {
   kit?: BrandKit;

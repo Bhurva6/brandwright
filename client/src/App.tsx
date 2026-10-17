@@ -7,6 +7,7 @@ import type { View } from './store';
 import { newId } from './vc';
 import Editor from './Editor';
 import Landing from './Landing';
+import Ingest from './Ingest';
 import { Coachmarks, HOME_STEPS } from './Coachmarks';
 import { Icon } from './Icon';
 import { listExports, removeExport, toggleFav } from './library';
@@ -18,7 +19,7 @@ interface BrandListing { id: string; name: string; colors: { token: string; valu
 
 // The app keeps GetCrux's own identity; the active genome's colour only tints
 // scoped elements (genome chip) via --brand.
-function applyBrandChrome(k: { colors: { value: string; roles?: string[] }[] }) {
+export function applyBrandChrome(k: { colors: { value: string; roles?: string[] }[] }) {
   const accent = k.colors.find((c) => c.roles?.includes('cta')) || k.colors.find((c) => c.roles?.includes('accent'));
   if (accent) document.documentElement.style.setProperty('--brand', accent.value);
 }
@@ -151,6 +152,11 @@ export default function App() {
       .catch(() => setError('Could not reach the server. Is it running on :8787?'));
   }
 
+  // keep the brand list fresh (a new genome may have just been ingested)
+  useEffect(() => {
+    fetch('/api/brands').then((r) => r.json()).then(setBrands).catch(() => {});
+  }, [kit?.id]);
+
   // each brand brings its own reference library
   useEffect(() => {
     setRefs([]);
@@ -163,38 +169,7 @@ export default function App() {
     }
   }, [kit?.id]);
 
-  const [ingesting, setIngesting] = useState(false);
-  const fileInputRef = useMemo(() => ({ current: null as HTMLInputElement | null }), []);
-
-  async function ingestFolderFiles(list: FileList) {
-    const imgs = Array.from(list)
-      .filter((f) => /\.(png|jpe?g|svg|webp)$/i.test(f.name) && f.size < 3_000_000)
-      .slice(0, 60);
-    if (!imgs.length) { setError('No usable images in that folder.'); return; }
-    const folderName = (imgs[0] as any).webkitRelativePath?.split('/')[0] || 'New Brand';
-    const name = window.prompt('Brand name for this genome:', folderName.replace(/[-_]/g, ' '));
-    if (!name) return;
-    setIngesting(true);
-    setError('');
-    try {
-      const files = await Promise.all(
-        imgs.map(async (f) => ({
-          path: (f as any).webkitRelativePath || f.name,
-          data: btoa(new Uint8Array(await f.arrayBuffer()).reduce((s, b) => s + String.fromCharCode(b), '')),
-        })),
-      );
-      const r = await fetch('/api/ingest', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name, files }) });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.error || 'ingest failed');
-      const bs = await fetch('/api/brands').then((x) => x.json());
-      setBrands(bs);
-      switchBrand(j.kit.id);
-    } catch (e: any) {
-      setError(e?.message || String(e));
-    } finally {
-      setIngesting(false);
-    }
-  }
+  const ingesting = false;
 
   // ----- blank canvas / import / campaign ----------------------------------
   function activePreset() {
@@ -372,6 +347,7 @@ export default function App() {
   }, []);
 
   if (view === 'landing') return <Landing />;
+  if (view === 'ingest') return <Ingest hosted={hosted} />;
   if (view === 'editor') return <Editor />;
   if (view === 'library' || view === 'favs')
     return <LibraryPage favOnly={view === 'favs'} lib={lib} onBack={() => st.getState().setView('home')} onDelete={(id) => removeExport(id).then(() => listExports().then(setLib))} onFav={(id) => toggleFav(id).then(() => listExports().then(setLib))} />;
@@ -420,7 +396,7 @@ export default function App() {
               className="brandsel"
               value={kit.id}
               onChange={(e) => {
-                if (e.target.value === '__ingest__') { fileInputRef.current?.click(); e.target.value = kit.id; return; }
+                if (e.target.value === '__ingest__') { e.target.value = kit.id; st.getState().setView('ingest'); return; }
                 switchBrand(e.target.value);
               }}
               disabled={busy || ingesting}
@@ -432,15 +408,6 @@ export default function App() {
               {!hosted && <option value="__ingest__">＋ Ingest new brand…</option>}
             </select>
             <span>{ingesting ? 'learning the brand…' : <>genome · {kit.assets.length} assets · {kit.colors.length} colours</>}</span>
-            <input
-              ref={(el) => { fileInputRef.current = el; }}
-              type="file"
-              style={{ display: 'none' }}
-              // @ts-expect-error non-standard folder upload
-              webkitdirectory=""
-              multiple
-              onChange={(e) => e.target.files && ingestFolderFiles(e.target.files)}
-            />
           </div>
         )}
       </header>

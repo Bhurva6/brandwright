@@ -27,6 +27,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/ingest",
+      "destination": "/index.html"
+    },
+    {
       "source": "/library",
       "destination": "/index.html"
     }
