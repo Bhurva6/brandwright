@@ -347,16 +347,25 @@ export default function Editor() {
       ['pill', 'featureList', 'logo'],
     ];
     useStore.setState({ toast: 'Rendering motion…' });
-    // cumulative stage frames
+    // cumulative stage frames — a failed stage is skipped, never fatal
     const frames: HTMLImageElement[] = [];
     for (let g = 0; g < groups.length; g++) {
-      const allowed = new Set(groups.slice(0, g + 1).flat());
-      const partial = { ...working, layers: working.layers.filter((l) => allowed.has(l.type)) };
-      const url = await renderSpecPng(partial, kit);
-      const img = new Image();
-      img.src = url;
-      await img.decode();
-      frames.push(img);
+      try {
+        const allowed = new Set(groups.slice(0, g + 1).flat());
+        const partial = { ...working, layers: working.layers.filter((l) => allowed.has(l.type)) };
+        const url = await renderSpecPng(partial, kit);
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        if (img.width > 0) frames.push(img);
+      } catch (e) {
+        console.error('motion: stage frame failed', g, e);
+      }
+    }
+    if (frames.length === 0) {
+      useStore.setState({ toast: 'Motion export failed — could not render the design' });
+      setTimeout(() => useStore.setState({ toast: undefined }), 4000);
+      return;
     }
     const canvas = document.createElement('canvas');
     canvas.width = W; canvas.height = H;
@@ -372,21 +381,30 @@ export default function Editor() {
     const STAGE_MS = 650, HOLD_MS = 1200;
     const ease = (t: number) => 1 - Math.pow(1 - t, 3);
     const t0 = performance.now();
-    const total = groups.length * STAGE_MS + HOLD_MS;
+    const total = frames.length * STAGE_MS + HOLD_MS;
     await new Promise<void>((resolve) => {
       const tick = (now: number) => {
-        const t = now - t0;
-        const stage = Math.min(Math.floor(t / STAGE_MS), frames.length - 1);
-        const p = stage === frames.length - 1 && t > frames.length * STAGE_MS ? 1 : Math.min((t - stage * STAGE_MS) / STAGE_MS, 1);
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, W, H);
-        if (stage > 0) ctx.drawImage(frames[stage - 1], 0, 0);
-        ctx.globalAlpha = ease(p);
-        const k = 1.015 - 0.015 * ease(p); // subtle settle
-        ctx.drawImage(frames[stage], (W - W * k) / 2, (H - H * k) / 2 + (1 - ease(p)) * 14, W * k, H * k);
-        ctx.globalAlpha = 1;
-        if (t < total) requestAnimationFrame(tick);
-        else resolve();
+        try {
+          const t = now - t0;
+          const stage = Math.max(0, Math.min(Math.floor(t / STAGE_MS), frames.length - 1));
+          const p = stage === frames.length - 1 && t > frames.length * STAGE_MS ? 1 : Math.min(Math.max((t - stage * STAGE_MS) / STAGE_MS, 0), 1);
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, W, H);
+          const prev = frames[stage - 1];
+          const cur = frames[stage];
+          if (prev instanceof HTMLImageElement) ctx.drawImage(prev, 0, 0, W, H);
+          if (cur instanceof HTMLImageElement) {
+            ctx.globalAlpha = ease(p);
+            const k = 1.015 - 0.015 * ease(p); // subtle settle
+            ctx.drawImage(cur, (W - W * k) / 2, (H - H * k) / 2 + (1 - ease(p)) * 14, W * k, H * k);
+            ctx.globalAlpha = 1;
+          }
+          if (t < total) requestAnimationFrame(tick);
+          else resolve();
+        } catch (e) {
+          console.error('motion tick', e);
+          resolve(); // finish the recording rather than crash
+        }
       };
       requestAnimationFrame(tick);
     });
