@@ -575,3 +575,6 @@ button .icx, label .icx, .mini .icx { margin-right: 2px; }
 .fr-dims { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
 .fr-dim { background: #fff; border: 1px solid #bfe3cc; border-radius: 6px; padding: 2.5px 8px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
 .fr-dim i { font-style: normal; opacity: 0.5; margin: 0 2px; }
+.ingest-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.ingest-desc { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font: 500 14.5px Inter, sans-serif; outline: none; resize: vertical; width: 100%; text-transform: none; letter-spacing: 0; }
+.ingest-desc:focus { border-color: var(--accent); }

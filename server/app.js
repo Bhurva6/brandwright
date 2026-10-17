@@ -357,6 +357,82 @@ app.post('/api/ingest', async (req, res) => {
   }
 });
 
+// GENERATE A BRAND KIT from a description — no assets needed: DeepSeek invents
+// the palette, type pairing, voice, rules and briefs; logos are styled text
+// wordmarks; shared recolourable blooms come along as shape assets.
+app.post('/api/generate-brand', async (req, res) => {
+  try {
+    if (process.env.VERCEL) return res.status(501).json({ error: 'Brand generation needs the local build — the hosted demo filesystem is read-only.' });
+    const { name, description } = req.body || {};
+    if (!name?.trim() || !description?.trim()) return res.status(400).json({ error: 'name and description required' });
+    const id = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24) || 'brand';
+
+    const FACES = { headline: ['Archivo', 'Montserrat', 'Oswald', 'Baloo 2', 'DM Sans', 'Nunito Sans'], body: ['Inter', 'Quicksand', 'Nunito Sans', 'DM Sans'] };
+    const { pro, MODELS } = await import('./lib/openai.mjs');
+    const r = await pro.chat.completions.create({
+      model: MODELS.pro,
+      temperature: 0.8,
+      max_tokens: 1600,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: `You invent complete, coherent brand identities. Reply ONLY JSON:\n{"colors":[{"token":"<short>","value":"<hex>","name":"<label>","roles":["background"|"text"|"accent"|"cta"]} x5-7, ALWAYS include a near-white and a dark ink],"fonts":{"headline":"<one of ${FACES.headline.join('|')}>","body":"<one of ${FACES.body.join('|')}>"},"voice":"<2-3 sentences with 2 example taglines>","rules":[{"id":"<slug>","text":"<concrete visual rule>","severity":"error"|"warn"} x4],"examples":["<ad brief>" x4],"logoCase":"lowercase"|"uppercase"|"title"}` },
+        { role: 'user', content: `Brand name: ${name}\nDescription: ${description}` },
+      ],
+    });
+    const j = JSON.parse(r.choices[0].message.content);
+    const headline = FACES.headline.includes(j.fonts?.headline) ? j.fonts.headline : 'Archivo';
+    const body = FACES.body.includes(j.fonts?.body) ? j.fonts.body : 'Inter';
+    const colors = (j.colors || []).slice(0, 8);
+    const ink = colors.find((c) => c.roles?.includes('text'))?.value || '#161616';
+    const accent = colors.find((c) => c.roles?.includes('cta'))?.value || colors.find((c) => c.roles?.includes('accent'))?.value || ink;
+    const logoText = j.logoCase === 'uppercase' ? name.trim().toUpperCase() : j.logoCase === 'lowercase' ? name.trim().toLowerCase() : name.trim();
+
+    // shared recolourable blooms
+    const bloomsDir = path.join(BRANDS_DIR, 'common/blooms');
+    const blooms = fs.existsSync(bloomsDir)
+      ? fs.readdirSync(bloomsDir).map((f, i) => ({ id: `bloom-${String(i).padStart(3, '0')}`, category: 'bloom', label: 'Shape', src: `/brand/common/blooms/${f}`, recolorable: true }))
+      : [];
+
+    const kit = {
+      id,
+      name: name.trim(),
+      colors,
+      fonts: [
+        { role: 'headline', family: headline, weights: [700, 800], stack: `'${headline}', system-ui, sans-serif` },
+        { role: 'body', family: body, weights: [400, 600], stack: `'${body}', system-ui, sans-serif` },
+        { role: 'eyebrow', family: body, weights: [600], stack: `'${body}', system-ui, sans-serif` },
+      ],
+      presets: [
+        { id: 'square_1080', label: 'Square 1:1', w: 1080, h: 1080 },
+        { id: 'story_1080x1920', label: 'Story 9:16', w: 1080, h: 1920 },
+        { id: 'meta_feed_1200x1200', label: 'Meta feed', w: 1200, h: 1200 },
+        { id: 'banner_1200x628', label: 'Banner 1.91:1', w: 1200, h: 628 },
+      ],
+      assets: [
+        { id: 'logo-00', category: 'logo', label: 'Wordmark · ink', variant: 'ink', text: logoText, fontFamily: `'${headline}', sans-serif`, fontWeight: 800, color: ink },
+        { id: 'logo-01', category: 'logo', label: 'Wordmark · white', variant: 'white', text: logoText, fontFamily: `'${headline}', sans-serif`, fontWeight: 800, color: '#FFFFFF' },
+        { id: 'logo-02', category: 'logo', label: 'Wordmark · accent', variant: 'accent', text: logoText, fontFamily: `'${headline}', sans-serif`, fontWeight: 800, color: accent },
+        ...blooms,
+      ],
+      rules: (j.rules || []).slice(0, 6),
+      voice: j.voice || 'Confident and distinct.',
+      archetypes: [
+        { id: 'headline-card', label: 'Card with bold headline + CTA pill, wordmark bottom-left', regions: [] },
+        { id: 'photo-hero', label: 'Full-bleed photo, headline top, CTA + wordmark bottom', regions: [] },
+        { id: 'type-poster', label: 'Typographic poster on a flat brand ground', regions: [] },
+      ],
+      rewardWeights: { palette: 0.14, contrast: 0.18, safezone: 0.14, archetype: 0.06, hook: 0.14, cta: 0.12, thumbstop: 0.08, hierarchy: 0.07, voice: 0.07 },
+      learned: [],
+      examples: (j.examples || []).slice(0, 4),
+    };
+    saveBrand(kit);
+    res.json({ kit });
+  } catch (e) {
+    console.error('generate-brand', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
 // Re-skin (the "rebase"): replay a design's structure onto a DIFFERENT brand.
 // Same layout skeleton; colours, fonts, logo, voice and product all retarget.
 app.post('/api/reskin', async (req, res) => {

@@ -27,7 +27,9 @@ function classify(name: string): string {
 
 export default function Ingest({ hosted }: { hosted: boolean }) {
   const st = useStore;
+  const [mode, setMode] = useState<'upload' | 'describe'>('upload');
   const [name, setName] = useState('');
+  const [desc, setDesc] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
   const [stage, setStage] = useState(0);
@@ -51,6 +53,31 @@ export default function Ingest({ hosted }: { hosted: boolean }) {
     if (!name) {
       const folder = (imgs[0] as any).webkitRelativePath?.split('/')[0];
       if (folder) setName(folder.replace(/[-_]/g, ' '));
+    }
+  }
+
+  async function buildFromDescription() {
+    if (!name.trim() || !desc.trim() || busy || hosted) return;
+    setBusy(true);
+    setError('');
+    const ticker = setInterval(() => setStage((s) => Math.min(s + 1, STAGES.length - 1)), 2200);
+    try {
+      setStage(3); // jumps straight to inference
+      const r = await fetch('/api/generate-brand', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: name.trim(), description: desc.trim() }) });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || 'generation failed');
+      const kit = await getBrand(j.kit.id);
+      st.getState().setKit(kit);
+      applyBrandChrome(kit);
+      st.getState().setDesigns([]);
+      useStore.setState({ toast: `Genome invented — say hello to ${kit.name}` });
+      setTimeout(() => useStore.setState({ toast: undefined }), 4000);
+      st.getState().setView('home');
+    } catch (e: any) {
+      setError(e?.message || String(e));
+    } finally {
+      clearInterval(ticker);
+      setBusy(false);
     }
   }
 
@@ -98,7 +125,7 @@ export default function Ingest({ hosted }: { hosted: boolean }) {
 
       <section className="ingest-hero">
         <h1>Teach it your brand.</h1>
-        <p>Drop a folder of brand assets and Brandwright learns the palette, classifies every asset, and infers the fonts, voice and rules — a living genome it designs inside from then on.</p>
+        <p>Drop a folder of brand assets and Brandwright learns the palette, classifies every asset, and infers the fonts, voice and rules — or just describe a brand and it invents the whole kit. Either way: a living genome it designs inside from then on.</p>
       </section>
 
       {hosted && (
@@ -117,12 +144,32 @@ export default function Ingest({ hosted }: { hosted: boolean }) {
         ))}
       </section>
 
+      <div className="ingest-tabs">
+        <button className={'mini' + (mode === 'upload' ? ' on' : '')} onClick={() => setMode('upload')} disabled={busy}><Icon name="upload" size={12} /> Upload assets</button>
+        <button className={'mini' + (mode === 'describe' ? ' on' : '')} onClick={() => setMode('describe')} disabled={busy}><Icon name="sparkles" size={12} /> Generate from a description</button>
+      </div>
+
       <section className="ingest-form">
         <label className="ingest-name">
           Brand name
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Acme Coffee" disabled={busy} />
         </label>
 
+        {mode === 'describe' && (
+          <label className="ingest-name" style={{ maxWidth: 'none' }}>
+            Describe the brand
+            <textarea
+              className="ingest-desc"
+              rows={3}
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              placeholder="e.g. A third-wave coffee roastery for slow mornings — warm, unhurried, a little playful. Espresso browns and cream with one bold citrus accent."
+              disabled={busy}
+            />
+          </label>
+        )}
+
+        {mode === 'upload' && (
         <div
           className={'dropzone' + (files.length ? ' has' : '')}
           onClick={() => dirInput.current?.click()}
@@ -152,12 +199,17 @@ export default function Ingest({ hosted }: { hosted: boolean }) {
             onChange={(e) => e.target.files && takeFiles(e.target.files)}
           />
         </div>
+        )}
 
         {error && <div className="err">{error}</div>}
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
-          <button className="go" disabled={busy || hosted || !name.trim() || !files.length} onClick={build}>
-            {busy ? STAGES[stage] : 'Build my genome'}
+          <button
+            className="go"
+            disabled={busy || hosted || !name.trim() || (mode === 'upload' ? !files.length : !desc.trim())}
+            onClick={mode === 'upload' ? build : buildFromDescription}
+          >
+            {busy ? STAGES[stage] : mode === 'upload' ? 'Build my genome' : 'Invent my genome'}
           </button>
           {busy && <span className="genspin" style={{ color: 'var(--accent)' }}>❋</span>}
         </div>
