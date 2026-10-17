@@ -29,7 +29,7 @@ function pickLogo(brand, variant) {
   return logos.find((a) => a.variant === variant) || logos[0] || null;
 }
 
-export function normalizeDesign(raw, brand, preset) {
+export function normalizeDesign(raw, brand, preset, opts = {}) {
   const cmap = colorMap(brand);
   const W = preset.w;
   const H = preset.h;
@@ -43,7 +43,7 @@ export function normalizeDesign(raw, brand, preset) {
 
   const layers = [];
   for (const l of raw.layers || []) {
-    const id = sid();
+    const id = (opts.keepIds && l.id) || sid();
     const box = toBox(l);
     switch (l.type) {
       case 'background':
@@ -85,10 +85,29 @@ export function normalizeDesign(raw, brand, preset) {
   }
 
   return {
-    id: sid('d'),
+    id: (opts.keepIds && raw.id) || sid('d'),
     name: raw.name || 'Design',
     note: raw.note || raw.strategy || '',
     canvas: { w: W, h: H, preset: preset.id, background: resolveColor(raw.background, cmap, '#FFFFFF') },
     layers,
+  };
+}
+
+/** Convert a px DesignSpec back to the agent's fractional format (keeps ids). */
+export function toAgentFormat(spec) {
+  const W = spec.canvas.w, H = spec.canvas.h;
+  const r4 = (v) => Math.round(v * 1000) / 1000;
+  return {
+    id: spec.id,
+    name: spec.name,
+    background: spec.canvas.background,
+    layers: spec.layers.map((l) => {
+      const o = { id: l.id, type: l.type, x: r4(l.box.x / W), y: r4(l.box.y / H), w: r4(l.box.w / W), h: r4(l.box.h / H) };
+      for (const f of ['text', 'role', 'color', 'align', 'fill', 'textColor', 'variant', 'items', 'markColor', 'prompt', 'fit', 'radius']) {
+        if (l[f] !== undefined) o[f] = l[f];
+      }
+      if (l.type === 'shape') o.shapeKind = l.kind;
+      return o;
+    }),
   };
 }

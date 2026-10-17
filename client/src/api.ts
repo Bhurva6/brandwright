@@ -2,6 +2,20 @@ import type { DesignSpec, BrandKit } from './types';
 
 export const getBrand = (id: string): Promise<BrandKit> => fetch(`/api/brand/${id}`).then((r) => r.json());
 
+export async function editDesign(body: { brandId: string; spec: DesignSpec; instruction: string }): Promise<DesignSpec> {
+  const r = await fetch('/api/edit', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || 'edit failed');
+  return j.spec;
+}
+
+export async function regenImage(body: { prompt: string; w: number; h: number; take?: number }): Promise<{ url: string }> {
+  const r = await fetch('/api/image', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || 'image failed');
+  return j;
+}
+
 interface StreamHandlers {
   onStatus?: (d: { stage: string }) => void;
   onSpecs: (specs: DesignSpec[]) => void;

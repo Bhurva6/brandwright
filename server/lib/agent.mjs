@@ -2,7 +2,7 @@
 // DeepSeek tool-calling to emit complete, on-brand layouts as structured layers.
 import { pro, MODELS } from './openai.mjs';
 import { withRetry } from './queue.mjs';
-import { normalizeDesign } from './spec.mjs';
+import { normalizeDesign, toAgentFormat } from './spec.mjs';
 
 function systemPrompt(brand) {
   const colors = brand.colors.map((c) => `  ${c.token} = ${c.value}  (${c.name}; roles: ${(c.roles || []).join('/') || 'any'})`).join('\n');
@@ -77,6 +77,7 @@ const EMIT_TOOL = {
                 items: {
                   type: 'object',
                   properties: {
+                    id: { type: 'string', description: 'keep the existing layer id when editing; omit for new layers' },
                     type: { type: 'string', enum: ['background', 'image', 'text', 'shape', 'bloom', 'charm', 'logo', 'pill', 'featureList'] },
                     x: { type: 'number' }, y: { type: 'number' }, w: { type: 'number' }, h: { type: 'number' },
                     text: { type: 'string' }, role: { type: 'string' }, color: { type: 'string' }, align: { type: 'string' }, size: { type: 'number' },
@@ -125,7 +126,7 @@ export async function generateDesigns({ brand, prompt, variations = 1, preset })
   const r = await withRetry(() => pro.chat.completions.create({
     model: MODELS.pro,
     temperature: 0.9,
-    max_tokens: 6000,
+    max_tokens: Math.min(2500 + 1900 * variations, 16000),
     messages: [
       { role: 'system', content: systemPrompt(brand) },
       { role: 'user', content: `Brief: ${prompt}\n\nProduce ${variations} distinct design(s) for the ${preset.label} canvas (${preset.w}x${preset.h}).` },
@@ -146,4 +147,55 @@ export async function generateDesigns({ brand, prompt, variations = 1, preset })
   const designs = toDesignArray(args);
   const specs = designs.slice(0, variations).map((d) => normalizeDesign(d, brand, preset));
   return { specs, raw: designs };
+}
+
+/**
+ * Conversational edit: the agent receives the CURRENT design (with layer ids)
+ * and an instruction, and returns the full edited design. Unchanged image
+ * layers keep their rendered src; only genuinely new prompts regenerate.
+ */
+export async function editDesign({ brand, spec, instruction }) {
+  const preset = brand.presets.find((p) => p.id === spec.canvas.preset) || { id: spec.canvas.preset, label: 'custom', w: spec.canvas.w, h: spec.canvas.h };
+  const current = toAgentFormat(spec);
+
+  const r = await withRetry(() => pro.chat.completions.create({
+    model: MODELS.pro,
+    temperature: 0.4,
+    max_tokens: 6000,
+    messages: [
+      { role: 'system', content: systemPrompt(brand) },
+      {
+        role: 'user',
+        content:
+          `Here is the CURRENT design on the canvas (fractional coordinates, layers back-to-front, each with its id):\n\n` +
+          JSON.stringify(current) +
+          `\n\nEDIT INSTRUCTION: ${instruction}\n\n` +
+          `Apply the instruction. Return ONE design containing the FULL edited layer list.\n` +
+          `- KEEP the same id for every layer you keep (edited or not); omit a layer to delete it; new layers get no id.\n` +
+          `- Do NOT change an image layer's prompt unless the instruction asks for different imagery.\n` +
+          `- Keep everything else as it is — make the smallest change that fully satisfies the instruction.`,
+      },
+    ],
+    tools: [EMIT_TOOL],
+    tool_choice: { type: 'function', function: { name: 'emit_designs' } },
+  }));
+
+  const tc = r.choices[0].message.tool_calls?.[0];
+  if (!tc) throw new Error('agent returned no edit');
+  const designs = toDesignArray(JSON.parse(tc.function.arguments));
+  const next = normalizeDesign({ ...designs[0], id: spec.id }, brand, preset, { keepIds: true });
+
+  // Carry over rendered imagery for image layers whose prompt didn't change.
+  const oldById = new Map(spec.layers.map((l) => [l.id, l]));
+  for (const l of next.layers) {
+    if (l.type !== 'image') continue;
+    const old = oldById.get(l.id);
+    if (old && old.src && (!l.prompt || l.prompt === old.prompt)) {
+      l.src = old.src;
+      l.status = 'ready';
+      l.recipe = old.recipe;
+      l.prompt = old.prompt;
+    }
+  }
+  return { spec: next };
 }

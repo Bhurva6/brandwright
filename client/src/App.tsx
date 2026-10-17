@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DesignView } from './DesignView';
 import { getBrand, generateStream } from './api';
-import type { BrandKit, DesignSpec } from './types';
+import { useStore } from './store';
+import Editor from './Editor';
 
 const EXAMPLES = [
   'Promote Xero as easy accounting for small businesses — get paid faster.',
@@ -11,16 +12,29 @@ const EXAMPLES = [
 ];
 
 export default function App() {
-  const [kit, setKit] = useState<BrandKit>();
+  const kit = useStore((s) => s.kit);
+  const view = useStore((s) => s.view);
+  const designs = useStore((s) => s.designs);
+  const st = useStore;
+
   const [prompt, setPrompt] = useState('');
   const [variations, setVariations] = useState(4);
   const [presetId, setPresetId] = useState('square_1080');
-  const [designs, setDesigns] = useState<DesignSpec[]>([]);
   const [status, setStatus] = useState<'idle' | 'thinking' | 'rendering'>('idle');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    getBrand('xero').then(setKit).catch(() => setError('Could not reach the server. Is it running on :8787?'));
+    getBrand('xero')
+      .then((k) => {
+        st.getState().setKit(k);
+        // brand-adaptive chrome: the editor takes its accent from the active genome
+        const accent = k.colors.find((c) => c.roles?.includes('cta')) || k.colors.find((c) => c.roles?.includes('accent'));
+        if (accent) {
+          document.documentElement.style.setProperty('--accent', accent.value);
+          document.documentElement.style.setProperty('--accent-ink', accent.value);
+        }
+      })
+      .catch(() => setError('Could not reach the server. Is it running on :8787?'));
   }, []);
 
   const busy = status !== 'idle';
@@ -29,24 +43,17 @@ export default function App() {
   async function run(p = prompt) {
     if (!p.trim() || busy) return;
     setError('');
-    setDesigns([]);
+    st.getState().setDesigns([]);
     setStatus('thinking');
     try {
       await generateStream(
         { brandId: 'xero', prompt: p, variations, presetId },
         {
           onSpecs: (specs) => {
-            setDesigns(specs);
+            st.getState().setDesigns(specs);
             setStatus('rendering');
           },
-          onImage: ({ specId, layerId, src, error }) =>
-            setDesigns((prev) =>
-              prev.map((d) =>
-                d.id !== specId
-                  ? d
-                  : { ...d, layers: d.layers.map((l) => (l.id === layerId ? { ...l, src, status: error ? 'error' : 'ready' } : l)) },
-              ),
-            ),
+          onImage: ({ specId, layerId, src, error }) => st.getState().patchDesignImage(specId, layerId, src, error),
           onDone: () => setStatus('idle'),
           onError: (e) => {
             setError(e.error);
@@ -59,6 +66,8 @@ export default function App() {
       setStatus('idle');
     }
   }
+
+  if (view === 'editor') return <Editor />;
 
   return (
     <div className="app">
@@ -97,7 +106,7 @@ export default function App() {
           <label>
             Variations
             <select value={variations} onChange={(e) => setVariations(+e.target.value)}>
-              {[1, 2, 3, 4, 6].map((n) => (
+              {[1, 2, 3, 4, 6, 8].map((n) => (
                 <option key={n} value={n}>{n}</option>
               ))}
             </select>
@@ -131,20 +140,21 @@ export default function App() {
       {status === 'idle' && !designs.length && !error && (
         <div className="empty">
           <h1>Make on-brand ads in seconds.</h1>
-          <p>Type a brief or tap an example above. Brandwright designs editable, on-brand variations — every colour, font, logo and shape pulled from the live brand genome.</p>
+          <p>Type a brief or tap an example above. Brandwright designs editable, on-brand variations — every colour, font, logo and shape pulled from the live brand genome. Click any result to open it in the editor.</p>
         </div>
       )}
 
       {designs.length > 0 && (
         <div className="gallery">
           {designs.map((d) => (
-            <div key={d.id} className="card">
+            <button key={d.id} className="card click" onClick={() => st.getState().openEditor(d)}>
               <DesignView spec={d} kit={kit} width={340} />
               <div className="meta">
                 <b>{d.name}</b>
                 {d.note && <span>{d.note}</span>}
+                <span className="open">Open in editor →</span>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}

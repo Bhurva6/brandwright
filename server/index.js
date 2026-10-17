@@ -4,7 +4,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { listBrands, loadBrand } from './lib/brand.mjs';
-import { generateDesigns } from './lib/agent.mjs';
+import { generateDesigns, editDesign } from './lib/agent.mjs';
 import { generateImage, sizeForCanvas } from './lib/image.mjs';
 import { BLOB_DIR } from './lib/store.mjs';
 
@@ -79,6 +79,38 @@ app.post('/api/generate', async (req, res) => {
     res.json({ specs });
   } catch (e) {
     console.error('generate', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// Conversational edit of the current design. Returns the edited spec with any
+// new image layers filled (unchanged images are carried over, not regenerated).
+app.post('/api/edit', async (req, res) => {
+  try {
+    const { brandId = 'xero', spec, instruction } = req.body || {};
+    const brand = loadBrand(brandId);
+    if (!brand) return res.status(404).json({ error: 'brand not found' });
+    if (!spec || !instruction?.trim()) return res.status(400).json({ error: 'spec and instruction required' });
+    const { spec: next } = await editDesign({ brand, spec, instruction });
+    await fillImages([next]);
+    res.json({ spec: next });
+  } catch (e) {
+    console.error('edit', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// Per-layer image (re)generation — used by the editor's re-roll + candidates.
+app.post('/api/image', async (req, res) => {
+  try {
+    const { prompt, w = 1080, h = 1080, take } = req.body || {};
+    if (!prompt?.trim()) return res.status(400).json({ error: 'prompt required' });
+    // `take` varies the recipe so each re-roll is a fresh render (and its own cached blob)
+    const p = take ? `${prompt} (take ${take})` : prompt;
+    const { url, recipe, cached } = await generateImage({ prompt: p, size: sizeForCanvas(w, h) });
+    res.json({ url, recipe, cached });
+  } catch (e) {
+    console.error('image', e);
     res.status(500).json({ error: String(e?.message || e) });
   }
 });
