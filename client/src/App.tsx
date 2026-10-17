@@ -34,17 +34,27 @@ const GEN_STAGES = [
   'Scoring with the Performance Lens…',
 ];
 
-export function GenLoader({ count }: { count: number }) {
+const REMIX_LINES = [
+  'Cooking something refreshing…',
+  'Borrowing the structure, returning the style…',
+  'Asking the genome for permission…',
+  'Convincing the logo to behave…',
+  'Re-seasoning the layout to taste…',
+  'Teaching old pixels new tricks…',
+  'Stealing like an artist…',
+];
+
+export function GenLoader({ count, lines = GEN_STAGES }: { count: number; lines?: string[] }) {
   const [i, setI] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setI((x) => (x + 1) % GEN_STAGES.length), 2200);
+    const t = setInterval(() => setI((x) => (x + 1) % lines.length), 2000);
     return () => clearInterval(t);
-  }, []);
+  }, [lines.length]);
   return (
     <div className="genwrap">
       <div className="genstatus">
         <span className="genspin">❋</span>
-        <span key={i} className="genmsg">{GEN_STAGES[i]}</span>
+        <span key={i} className="genmsg">{lines[i]}</span>
       </div>
       <div className="gallery">
         {Array.from({ length: count }).map((_, k) => (
@@ -288,6 +298,7 @@ export default function App() {
   }
 
   const busy = status !== 'idle';
+  const centered = status === 'idle' && !designs.length && !remixing && !campaignBusy && !error;
   const EXAMPLES: string[] = (kit as any)?.examples || [];
   // header chip sits on a white ground — never show the white logo variant there
   const logo = useMemo(() => {
@@ -413,6 +424,93 @@ export default function App() {
         )}
       </header>
 
+      <div className={'studio-body' + (centered ? ' centered' : '')}>
+      <div className="empty hero">
+        <h1>Make on-brand ads in seconds.</h1>
+        <p>Pick a reference to remix, or type a brief below. Brandwright designs editable, on-brand variations — every colour, font, logo and shape pulled from the live brand genome. Click any result to open it in the editor.</p>
+      </div>
+
+      {(refs.length > 0 || specRefs.length > 0) && (
+        <section className="refstrip">
+          <div className="refstrip-title">
+            Reference remix <span>— recreate any reference's structure in {kit?.name || 'your brand'}'s DNA</span>
+          </div>
+          <div className={'refstrip-row deck' + (remixing ? ' has-loading' : '')}>
+            {refs.map((r) => (
+              <button key={r.id} className={'refcard' + (remixing === r.id ? ' busy' : '')} title={r.structure} disabled={busy || !!remixing} onClick={() => remix({ refId: r.id, key: r.id })}>
+                <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'img', src: r.src, label: r.label }); }}>
+                  <svg className="icx" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
+                </span>
+                <img src={r.src} alt={r.label} loading="lazy" />
+                {remixing === r.id && <span className="refspin">❋</span>}
+                <span>{remixing === r.id ? 'Remixing…' : r.label}</span>
+              </button>
+            ))}
+            {specRefs.map((s) => (
+              <button key={s.id} className={'refcard' + (remixing === s.id ? ' busy' : '')} title={s.note || s.name} disabled={busy || !!remixing} onClick={() => remix({ spec: s, key: s.id })}>
+                <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'spec', spec: s }); }}>
+                  <svg className="icx" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
+                </span>
+                <DesignView spec={s} kit={kit} width={98} />
+                {remixing === s.id && <span className="refspin">❋</span>}
+                <span>{remixing === s.id ? 'Remixing…' : s.name}</span>
+              </button>
+            ))}
+            <button
+              className={'refcard upload' + (remixing === '__upload__' ? ' busy' : '')}
+              disabled={busy || !!remixing}
+              title="Remix any ad you've seen — describe its structure and Brandwright rebuilds it in your brand"
+              onClick={() => {
+                const desc = window.prompt('Describe the reference ad\'s structure in one line\n(e.g. "big stat top-left, product photo right, dark footer with CTA and logo"):');
+                if (desc?.trim()) remix({ structure: desc.trim(), key: '__upload__' } as any);
+              }}
+            >
+              <span className="upface">＋</span>
+              <span>{remixing === '__upload__' ? 'Remixing…' : 'Your reference'}</span>
+            </button>
+          </div>
+        </section>
+      )}
+
+      {remixing && <GenLoader count={3} lines={REMIX_LINES} />}
+
+      {status === 'thinking' && <GenLoader count={variations} />}
+
+      {designs.length > 0 && (
+        <div className="gallery">
+          {designs.map((d) => (
+            <button key={d.id} className="card click" onClick={() => st.getState().openEditor(d)}>
+              <span
+                className="expbtn favspot"
+                title="Save to Favourites"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  try {
+                    const url = await renderSpecDataUrl(d, kit);
+                    await saveExport({ id: newId('x'), name: d.name, brand: kit?.name || '', preset: d.canvas.preset, at: Date.now(), dataUrl: url, fav: true });
+                    useStore.setState({ toast: 'Saved to Favourites' });
+                    listExports().then(setLib);
+                  } catch { useStore.setState({ toast: 'Could not save favourite' }); }
+                  setTimeout(() => useStore.setState({ toast: undefined }), 2500);
+                }}
+              >
+                <Icon name="heart" size={12} />
+              </span>
+              <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'spec', spec: d }); }}>
+                <Icon name="chevUp" size={0} /><svg className="icx" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
+              </span>
+              <FluidDesignView spec={d} kit={kit} />
+              <div className="meta">
+                <b>{d.name} <ScoreBadge score={scores[d.id]} /></b>
+                {d.note && <span>{d.note}</span>}
+                {scores[d.id]?.insight && <span className="insight"><Icon name="bulb" size={12} /> {scores[d.id].insight}</span>}
+                <span className="open">Open in editor →</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
       <section className="composer">
         <textarea
           value={prompt}
@@ -461,99 +559,17 @@ export default function App() {
           </button>
         </div>
       </section>
+      </div>
 
-      {(refs.length > 0 || specRefs.length > 0) && (
-        <section className="refstrip">
-          <div className="refstrip-title">
-            Reference remix <span>— recreate any reference's structure in {kit?.name || 'your brand'}'s DNA</span>
-          </div>
-          <div className="refstrip-row">
-            {refs.map((r) => (
-              <button key={r.id} className={'refcard' + (remixing === r.id ? ' busy' : '')} title={r.structure} disabled={busy || !!remixing} onClick={() => remix({ refId: r.id, key: r.id })}>
-                <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'img', src: r.src, label: r.label }); }}>
-                  <svg className="icx" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
-                </span>
-                <img src={r.src} alt={r.label} loading="lazy" />
-                <span>{remixing === r.id ? 'Remixing…' : r.label}</span>
-              </button>
-            ))}
-            {specRefs.map((s) => (
-              <button key={s.id} className={'refcard' + (remixing === s.id ? ' busy' : '')} title={s.note || s.name} disabled={busy || !!remixing} onClick={() => remix({ spec: s, key: s.id })}>
-                <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'spec', spec: s }); }}>
-                  <svg className="icx" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
-                </span>
-                <DesignView spec={s} kit={kit} width={98} />
-                <span>{remixing === s.id ? 'Remixing…' : s.name}</span>
-              </button>
-            ))}
-            <button
-              className={'refcard upload' + (remixing === '__upload__' ? ' busy' : '')}
-              disabled={busy || !!remixing}
-              title="Remix any ad you've seen — describe its structure and Brandwright rebuilds it in your brand"
-              onClick={() => {
-                const desc = window.prompt('Describe the reference ad\'s structure in one line\n(e.g. "big stat top-left, product photo right, dark footer with CTA and logo"):');
-                if (desc?.trim()) remix({ structure: desc.trim(), key: '__upload__' } as any);
-              }}
-            >
-              <span className="upface">＋</span>
-              <span>{remixing === '__upload__' ? 'Remixing…' : 'Your reference'}</span>
-            </button>
-          </div>
-        </section>
-      )}
+
+
 
       {error && <div className="err">{error}</div>}
-      {remixing && (
-        <div className="gallery">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="card"><div className="dv-shimmer" style={{ width: '100%', aspectRatio: '1', borderRadius: 16 }} /></div>
-          ))}
-        </div>
-      )}
 
-      {status === 'thinking' && <GenLoader count={variations} />}
 
-      {status === 'idle' && !designs.length && !error && (
-        <div className="empty">
-          <h1>Make on-brand ads in seconds.</h1>
-          <p>Type a brief or tap an example above. Brandwright designs editable, on-brand variations — every colour, font, logo and shape pulled from the live brand genome. Click any result to open it in the editor.</p>
-        </div>
-      )}
 
-      {designs.length > 0 && (
-        <div className="gallery">
-          {designs.map((d) => (
-            <button key={d.id} className="card click" onClick={() => st.getState().openEditor(d)}>
-              <span
-                className="expbtn favspot"
-                title="Save to Favourites"
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  try {
-                    const url = await renderSpecDataUrl(d, kit);
-                    await saveExport({ id: newId('x'), name: d.name, brand: kit?.name || '', preset: d.canvas.preset, at: Date.now(), dataUrl: url, fav: true });
-                    useStore.setState({ toast: 'Saved to Favourites' });
-                    listExports().then(setLib);
-                  } catch { useStore.setState({ toast: 'Could not save favourite' }); }
-                  setTimeout(() => useStore.setState({ toast: undefined }), 2500);
-                }}
-              >
-                <Icon name="heart" size={12} />
-              </span>
-              <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'spec', spec: d }); }}>
-                <Icon name="chevUp" size={0} /><svg className="icx" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
-              </span>
-              <FluidDesignView spec={d} kit={kit} />
-              <div className="meta">
-                <b>{d.name} <ScoreBadge score={scores[d.id]} /></b>
-                {d.note && <span>{d.note}</span>}
-                {scores[d.id]?.insight && <span className="insight"><Icon name="bulb" size={12} /> {scores[d.id].insight}</span>}
-                <span className="open">Open in editor →</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
+
+
     </div>
   );
 }
