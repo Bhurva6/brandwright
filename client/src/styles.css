@@ -503,3 +503,21 @@ button .icx, label .icx, .mini .icx { margin-right: 2px; }
 .dropzone.has { border-style: solid; border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
 .dropzone b { color: var(--ink); font-size: 15px; }
 .dropzone span { font-size: 12.5px; }
+
+/* ===================== exploded layers ===================== */
+.xp-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; perspective: 1700px; cursor: grab; z-index: 5; }
+.xp-wrap:active { cursor: grabbing; }
+.xp-stack { position: relative; transform-style: preserve-3d; transition: transform 720ms cubic-bezier(0.3, 0.8, 0.3, 1); transform-origin: center center; }
+.xp-plane { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 720ms cubic-bezier(0.3, 0.8, 0.3, 1); }
+.xp-outline { position: absolute; inset: 0; border: 1.5px dashed color-mix(in srgb, var(--accent) 45%, transparent); opacity: 0; transition: opacity 500ms ease 250ms; pointer-events: none; }
+.open .xp-outline { opacity: 1; }
+.xp-label {
+  position: absolute; top: -34px; left: 0; transform: translateZ(2px);
+  background: var(--charcoal); color: #fff; font: 600 20px Inter, sans-serif;
+  padding: 4px 14px; border-radius: 999px; white-space: nowrap;
+  opacity: 0; animation: fade-in 400ms ease 350ms both; pointer-events: none;
+}
+.xp-hint { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 5px 13px; animation: fade-in 400ms ease 500ms both; }
+.ed-canvas { position: relative; }
+.expbtn.favspot { right: 40px; }
+.expbtn.favspot:hover { color: #d6336c; border-color: #d6336c; }

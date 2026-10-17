@@ -89,7 +89,7 @@ export default function Ingest({ hosted }: { hosted: boolean }) {
     <div className="app">
       {useStore((s) => s.toast) && <div className="toast">{useStore.getState().toast}</div>}
       <header className="top">
-        <div className="brandmark">
+        <div className="brandmark click" onClick={() => st.getState().setView('landing')} title="About Brandwright" role="link">
           Brandwright
           <span className="tag">new genome</span>
         </div>

@@ -17,6 +17,7 @@ import { ScoreBadge } from './App';
 import { Coachmarks, EDITOR_STEPS } from './Coachmarks';
 import { saveExport } from './library';
 import { Icon } from './Icon';
+import Exploded from './Exploded';
 import { renderSpecToCanvas, renderSpecDataUrl } from './rasterize';
 import type { Layer } from './types';
 
@@ -41,6 +42,8 @@ export default function Editor() {
   const [chatBusy, setChatBusy] = useState(false);
   const [chatErr, setChatErr] = useState('');
   const [lens, setLens] = useState<Score>();
+  const [xpMounted, setXpMounted] = useState(false);
+  const [xpOpen, setXpOpen] = useState(false);
   const [lensBusy, setLensBusy] = useState<'' | 'check' | 'fix' | 'refresh'>('');
   const [brandList, setBrandList] = useState<{ id: string; name: string }[]>([]);
   useEffect(() => {
@@ -524,6 +527,16 @@ export default function Editor() {
           onBlur={(e) => renameWorking(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
         />
+        <button
+          className="ghost"
+          title="See the design split into its true layers — drag to orbit"
+          onClick={() => {
+            if (!xpMounted) { setXpMounted(true); setXpOpen(true); }
+            else { setXpOpen(false); setTimeout(() => setXpMounted(false), 760); }
+          }}
+        >
+          <Icon name="layers" /> {xpMounted && xpOpen ? 'Compact' : 'Show layers'}
+        </button>
         <button className="ghost" onClick={refreshConcept} disabled={!!lensBusy} title="Creative fatigue? Generate fresh executions of this concept as new branches">
           {lensBusy === 'refresh' ? 'Working…' : <><Icon name="refresh" /> Refresh</>}
         </button>
@@ -774,8 +787,10 @@ export default function Editor() {
         </aside>
         {/* ===== canvas ===== */}
         <div className="ed-canvas" ref={wrapRef} onPointerDown={() => st.getState().select(undefined)}>
+          {xpMounted && <Exploded spec={working} kit={kit} scale={scale} open={xpOpen} />}
           <div
             className="ed-stagewrap"
+            hidden={xpMounted}
             style={{ width: working.canvas.w * scale, height: working.canvas.h * scale }}
           >
             <div

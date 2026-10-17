@@ -10,7 +10,8 @@ import Landing from './Landing';
 import Ingest from './Ingest';
 import { Coachmarks, HOME_STEPS } from './Coachmarks';
 import { Icon } from './Icon';
-import { listExports, removeExport, toggleFav } from './library';
+import { listExports, removeExport, toggleFav, saveExport } from './library';
+import { renderSpecDataUrl } from './rasterize';
 import type { LibraryItem } from './library';
 
 interface RefAd { id: string; src: string; label: string; structure: string }
@@ -63,7 +64,7 @@ function LibraryPage({ lib, onBack, onDelete, onFav, favOnly }: { lib: LibraryIt
   return (
     <div className="app">
       <header className="top">
-        <div className="brandmark">
+        <div className="brandmark click" onClick={() => st.getState().setView('landing')} title="About Brandwright" role="link">
           Brandwright
           <span className="tag">{favOnly ? 'favourites' : 'drafts'}</span>
         </div>
@@ -523,6 +524,22 @@ export default function App() {
         <div className="gallery">
           {designs.map((d) => (
             <button key={d.id} className="card click" onClick={() => st.getState().openEditor(d)}>
+              <span
+                className="expbtn favspot"
+                title="Save to Favourites"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  try {
+                    const url = await renderSpecDataUrl(d, kit);
+                    await saveExport({ id: newId('x'), name: d.name, brand: kit?.name || '', preset: d.canvas.preset, at: Date.now(), dataUrl: url, fav: true });
+                    useStore.setState({ toast: 'Saved to Favourites' });
+                    listExports().then(setLib);
+                  } catch { useStore.setState({ toast: 'Could not save favourite' }); }
+                  setTimeout(() => useStore.setState({ toast: undefined }), 2500);
+                }}
+              >
+                <Icon name="heart" size={12} />
+              </span>
               <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'spec', spec: d }); }}>
                 <Icon name="chevUp" size={0} /><svg className="icx" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
               </span>
