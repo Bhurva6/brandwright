@@ -10,3 +10,5 @@ client/.env
 .vite
 server/scripts/*.png
 server/.assets
+.vercel
+.env*
