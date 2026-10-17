@@ -407,6 +407,60 @@ export default function Editor() {
     st.getState().commitWorking('human', `Renamed to “${clean.slice(0, 30)}”`);
   }
 
+  // ----- add layers by hand (blank-canvas workflow) -------------------------
+  function addLayer(type: string) {
+    const W = working.canvas.w, H = working.canvas.h;
+    const ink = kit.colors.find((c) => (c as any).roles?.includes('text'))?.value || '#111111';
+    const accent = kit.colors.find((c) => (c as any).roles?.includes('cta'))?.value || kit.colors.find((c) => (c as any).roles?.includes('accent'))?.value || '#333333';
+    const mid = (w: number, h: number) => ({ x: Math.round((W - w) / 2), y: Math.round((H - h) / 2), w, h });
+    const asset = (cat: string) => kit.assets.find((a) => a.category === cat);
+    let l: any = null;
+    if (type === 'text') l = { type, box: mid(W * 0.8, H * 0.14), text: 'New text', role: 'headline', size: Math.round(H * 0.07), color: ink, align: 'left' };
+    if (type === 'body') l = { type: 'text', box: mid(W * 0.7, H * 0.08), text: 'Supporting line goes here.', role: 'body', size: Math.round(H * 0.032), color: ink, align: 'left' };
+    if (type === 'shape') l = { type, box: mid(W * 0.5, H * 0.3), kind: 'rect', fill: accent, radius: 0.06 };
+    if (type === 'bloom') { const a = asset('bloom'); if (!a) return; l = { type, box: mid(W * 0.4, H * 0.4), assetId: a.id, src: a.src, fill: accent }; }
+    if (type === 'charm') { const a = asset('charm'); if (!a) return; l = { type, box: mid(W * 0.18, H * 0.18), assetId: a.id, src: a.src }; }
+    if (type === 'pill') l = { type, box: { x: Math.round(W * 0.08), y: Math.round(H * 0.8), w: Math.round(W * 0.34), h: Math.round(H * 0.075) }, text: 'Call to action', fill: accent, textColor: '#FFFFFF' };
+    if (type === 'featureList') l = { type, box: mid(W * 0.5, H * 0.2), items: ['FEATURE ONE', 'FEATURE TWO'], color: ink, markColor: '#4FB985', columns: 1 };
+    if (type === 'logo') { const a: any = asset('logo'); if (!a) return; l = { type, box: { x: Math.round(W * 0.08), y: Math.round(H * 0.9), w: Math.round(W * 0.22), h: Math.round(H * 0.06) }, assetId: a.id, variant: a.variant, src: a.src, text: a.text, fontFamily: a.fontFamily, fontWeight: a.fontWeight, color: a.color }; }
+    if (type === 'image') l = { type, box: mid(W * 0.7, H * 0.5), prompt: '', fit: 'cover', status: 'pending' };
+    if (!l) return;
+    l.id = newId('l');
+    st.setState({ working: { ...working, layers: [...working.layers, l] }, selectedId: l.id, dirty: false });
+    st.getState().commitWorking('human', `Added ${l.type}`);
+  }
+
+  // ----- CMYK print check ---------------------------------------------------
+  const [printPrev, setPrintPrev] = useState<{ screen: string; print: string } | null>(null);
+  async function printCheck() {
+    useStore.setState({ toast: '🖨 Simulating print…' });
+    const screen = await renderSpecPng(working, kit);
+    const img = new Image();
+    img.src = screen;
+    await img.decode();
+    const c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height;
+    const ctx = c.getContext('2d')!;
+    ctx.drawImage(img, 0, 0);
+    const d = ctx.getImageData(0, 0, c.width, c.height);
+    const px = d.data;
+    for (let i = 0; i < px.length; i += 4) {
+      // naive RGB -> CMYK -> RGB round-trip approximates coated-stock gamut loss
+      const r = px[i] / 255, g = px[i + 1] / 255, b = px[i + 2] / 255;
+      const k = 1 - Math.max(r, g, b);
+      const den = 1 - k || 1;
+      const cy = (1 - r - k) / den, m = (1 - g - k) / den, y = (1 - b - k) / den;
+      // ink-limit squeeze: very saturated colours dull slightly
+      const limit = Math.min(1, 3.2 / (cy + m + y + k + 0.0001));
+      px[i] = Math.round(255 * (1 - Math.min(1, cy * limit)) * (1 - k * 0.96));
+      px[i + 1] = Math.round(255 * (1 - Math.min(1, m * limit)) * (1 - k * 0.96));
+      px[i + 2] = Math.round(255 * (1 - Math.min(1, y * limit)) * (1 - k * 0.96));
+    }
+    ctx.putImageData(d, 0, 0);
+    setPrintPrev({ screen, print: c.toDataURL('image/png') });
+    useStore.setState({ toast: undefined });
+  }
+
   // ----- selected-commit diff ----------------------------------------------
   const diffFor = (cid: string) => {
     const c = repo.commits[cid];
@@ -471,6 +525,19 @@ export default function Editor() {
         <button className="go" onClick={exportPng}>Export</button>
         <button className="helpbtn" title="Replay the editor tour" onClick={() => setReplayTour((n) => n + 1)}>?</button>
       </div>
+
+      {printPrev && (
+        <div className="printprev" onClick={() => setPrintPrev(null)}>
+          <div className="printprev-card" onClick={(e) => e.stopPropagation()}>
+            <div className="ed-sectitle">🖨 Print check — screen (RGB) vs simulated print (CMYK)</div>
+            <div className="printprev-row">
+              <figure><img src={printPrev.screen} alt="screen" /><figcaption>Screen</figcaption></figure>
+              <figure><img src={printPrev.print} alt="print" /><figcaption>Print (simulated)</figcaption></figure>
+            </div>
+            <div className="ed-hint">Saturated brand colours dull slightly on press — if the two look far apart, pick tokens that survive ink limits. Click outside to close.</div>
+          </div>
+        </div>
+      )}
 
       {viewingCommit && (
         <div className="ed-banner">
@@ -660,6 +727,20 @@ export default function Editor() {
             </div>
           )}
 
+          {/* add layers */}
+          <div>
+            <div className="ed-sectitle">Add</div>
+            <div className="ed-row">
+              {[
+                ['text', 'T Headline'], ['body', '¶ Body'], ['image', '🖼 Image'], ['shape', '◆ Shape'],
+                ['bloom', '❋ Bloom'], ['charm', '✦ Charm'], ['pill', '⬭ CTA'], ['featureList', '☑ Features'], ['logo', '™ Logo'],
+              ].filter(([t]) => !['bloom', 'charm'].includes(t) || kit.assets.some((a) => a.category === t)).map(([t, label]) => (
+                <button key={t} className="mini" disabled={!!viewingCommit} onClick={() => addLayer(t)}>{label}</button>
+              ))}
+            </div>
+            <button className="mini" style={{ marginTop: 8 }} onClick={printCheck} title="Simulate how the inks will shift in CMYK print">🖨 Print check</button>
+          </div>
+
           {/* layers */}
           <div className="ed-layers">
             <div className="ed-sectitle">Layers</div>
@@ -737,8 +818,18 @@ function ImageTools({ l, onCommit, w, h }: { l: Layer; onCommit: (m: string) => 
 
   return (
     <div>
-      <div className="ed-hint" style={{ marginBottom: 8 }}>{l.prompt}</div>
-      <button className="go wide" onClick={reroll} disabled={busy}>{busy ? 'Generating…' : '🎲 Re-roll image'}</button>
+      <div className="ed-sectitle sm">Image prompt</div>
+      <textarea
+        className="ed-textedit"
+        rows={3}
+        placeholder="Describe the imagery… e.g. “sunlit flat-lay of fresh coffee beans, warm tones”"
+        value={l.prompt || ''}
+        onChange={(e) => st.getState().updateLayer(l.id, { prompt: e.target.value })}
+        onBlur={() => onCommit('Edited image prompt')}
+      />
+      <button className="go wide" style={{ marginTop: 8 }} onClick={reroll} disabled={busy || !l.prompt}>
+        {busy ? 'Generating…' : l.src ? '🎲 Re-roll image' : '✨ Generate image'}
+      </button>
       {candidates.length > 1 && (
         <>
           <div className="ed-sectitle sm">Takes — every good render is kept</div>

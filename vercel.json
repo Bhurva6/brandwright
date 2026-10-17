@@ -3,7 +3,9 @@
   "outputDirectory": "client/dist",
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index" },
-    { "source": "/assets/blobs/:path*", "destination": "/api/index" }
+    { "source": "/assets/blobs/:path*", "destination": "/api/index" },
+    { "source": "/editor", "destination": "/index.html" },
+    { "source": "/library", "destination": "/index.html" }
   ],
   "functions": {
     "api/index.js": {

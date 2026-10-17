@@ -11,9 +11,14 @@ export interface Score {
   pass: boolean;
 }
 
+/** Keep the URL in step with the app's view — real pages: /, /editor, /library */
+export const nav = (path: string) => {
+  if (typeof window !== 'undefined' && window.location.pathname !== path) window.history.pushState({}, '', path);
+};
+
 interface State {
   kit?: BrandKit;
-  view: 'home' | 'editor';
+  view: 'home' | 'editor' | 'library';
   designs: DesignSpec[];
   scores: Record<string, Score>; // design id -> Performance Lens score
   repo: Repo;
@@ -32,6 +37,7 @@ interface State {
 
   openEditor: (design: DesignSpec) => void;
   closeEditor: () => void;
+  setView: (v: 'home' | 'editor' | 'library') => void;
   switchBranch: (name: string) => void;
   select: (id?: string) => void;
 
@@ -93,6 +99,7 @@ export const useStore = create<State>((set, get) => ({
   openEditor: (design) => {
     const s = get();
     const br = s.repo.branches.find((b) => specOf(s.repo, b.head)?.id === design.id);
+    nav('/editor');
     set({
       view: 'editor',
       branch: br?.name || s.repo.branches[0]?.name || '',
@@ -103,7 +110,15 @@ export const useStore = create<State>((set, get) => ({
     });
   },
 
-  closeEditor: () => set({ view: 'home', working: undefined, selectedId: undefined, viewingCommit: undefined, dirty: false }),
+  closeEditor: () => {
+    nav('/');
+    set({ view: 'home', working: undefined, selectedId: undefined, viewingCommit: undefined, dirty: false });
+  },
+
+  setView: (v) => {
+    nav(v === 'home' ? '/' : '/' + v);
+    set({ view: v });
+  },
 
   switchBranch: (name) => {
     const s = get();
@@ -197,3 +212,43 @@ export const useLog = () => {
   const branch = useStore((s) => s.branch);
   return log(repo, branch);
 };
+
+// ---------------------------------------------------------------------------
+// Session persistence: repo + designs + scores survive a refresh (IndexedDB).
+// ---------------------------------------------------------------------------
+import { kvGet, kvSet } from './library';
+
+interface SessionSnap {
+  brandId: string;
+  designs: DesignSpec[];
+  scores: Record<string, Score>;
+  repo: Repo;
+  branch: string;
+}
+
+let persistTimer: ReturnType<typeof setTimeout> | undefined;
+let restoring = true;
+
+useStore.subscribe((s) => {
+  if (restoring || !s.kit) return;
+  clearTimeout(persistTimer);
+  persistTimer = setTimeout(() => {
+    const snap: SessionSnap = { brandId: s.kit!.id, designs: s.designs, scores: s.scores, repo: s.repo, branch: s.branch };
+    kvSet('session', JSON.parse(JSON.stringify(snap))).catch(() => {});
+  }, 800);
+});
+
+/** Called once on boot (after the kit loads) — restores the last session. */
+export async function restoreSession(currentBrandId: string): Promise<string | null> {
+  try {
+    const snap = await kvGet<SessionSnap>('session');
+    restoring = false;
+    if (!snap || !snap.designs?.length) return null;
+    useStore.setState({ designs: snap.designs, scores: snap.scores || {}, repo: snap.repo, branch: snap.branch });
+    return snap.brandId !== currentBrandId ? snap.brandId : null; // caller may switch kit
+  } catch {
+    restoring = false;
+    return null;
+  }
+}
+export const markRestored = () => { restoring = false; };

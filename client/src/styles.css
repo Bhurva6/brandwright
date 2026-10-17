@@ -220,6 +220,40 @@ select.resel { appearance: none; -webkit-appearance: none; }
   .top { flex-direction: column; align-items: flex-start; }
 }
 
+/* ===================== loaders & effects ===================== */
+.genwrap { animation: fade-in 260ms ease both; }
+.genstatus {
+  display: flex; align-items: center; gap: 10px; justify-content: center;
+  margin: 22px auto 2px; width: fit-content; background: var(--charcoal); color: #fff;
+  border-radius: 999px; padding: 10px 22px; font-size: 13.5px; font-weight: 600;
+  box-shadow: 0 8px 28px rgba(29,24,19,0.22);
+}
+.genspin { display: inline-block; color: var(--accent); font-size: 16px; animation: spin-bloom 2.4s cubic-bezier(0.6, 0.1, 0.4, 0.9) infinite; }
+@keyframes spin-bloom { 0% { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(1.25); } 100% { transform: rotate(360deg) scale(1); } }
+.genmsg { animation: msg-in 420ms ease both; }
+@keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.go:active:not(:disabled) { transform: scale(0.97); }
+.ghost:active, .mini:active, .chip:active { transform: scale(0.96); }
+.refcard.upload { align-items: center; justify-content: center; border-style: dashed; }
+.refcard.upload .upface { font-size: 34px; color: var(--muted); line-height: 1; padding: 28px 0 6px; }
+.refcard.upload:hover .upface { color: var(--accent); }
+.importbtn { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+
+.ed-stagewrap { animation: stage-in 340ms cubic-bezier(0.2, 0.9, 0.3, 1.05) both; }
+@keyframes stage-in { from { opacity: 0; transform: scale(0.965); } to { opacity: 1; transform: scale(1); } }
+.ed-side { animation: side-in 300ms ease both; }
+@keyframes side-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: translateX(0); } }
+.lens, .dim { animation: fade-in 300ms ease both; }
+
+/* print preview modal */
+.printprev { position: fixed; inset: 0; background: rgba(29,24,19,0.5); z-index: 80; display: flex; align-items: center; justify-content: center; animation: fade-in 180ms ease both; }
+.printprev-card { background: var(--panel); border-radius: 16px; padding: 18px 20px; max-width: min(92vw, 880px); max-height: 90vh; overflow: auto; box-shadow: 0 24px 70px rgba(0,0,0,0.35); animation: cm-in 240ms cubic-bezier(0.2,0.9,0.3,1.1) both; }
+.printprev-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.printprev-row figure { margin: 0; flex: 1 1 280px; }
+.printprev-row img { width: 100%; border-radius: 10px; border: 1px solid var(--line); display: block; }
+.printprev-row figcaption { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 6px; text-align: center; }
+
 /* ===================== library ===================== */
 .libbtn { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px; padding: 6px 13px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .libbtn:hover, .libbtn.on { border-color: var(--accent); color: var(--accent); }

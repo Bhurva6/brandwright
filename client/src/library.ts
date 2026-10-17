@@ -12,16 +12,41 @@ export interface LibraryItem {
 
 const DB = 'brandwright';
 const STORE = 'exports';
+const KV = 'kv';
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 1);
+    const req = indexedDB.open(DB, 2);
     req.onupgradeneeded = () => {
       if (!req.result.objectStoreNames.contains(STORE)) req.result.createObjectStore(STORE, { keyPath: 'id' });
+      if (!req.result.objectStoreNames.contains(KV)) req.result.createObjectStore(KV);
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
   });
+}
+
+// simple key-value persistence (session survives refresh)
+export function kvSet(key: string, value: unknown): Promise<void> {
+  return openDb().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const t = db.transaction(KV, 'readwrite');
+        t.objectStore(KV).put(value, key);
+        t.oncomplete = () => resolve();
+        t.onerror = () => reject(t.error);
+      }),
+  );
+}
+export function kvGet<T>(key: string): Promise<T | undefined> {
+  return openDb().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const req = db.transaction(KV, 'readonly').objectStore(KV).get(key);
+        req.onsuccess = () => resolve(req.result as T);
+        req.onerror = () => reject(req.error);
+      }),
+  );
 }
 
 function tx<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> {

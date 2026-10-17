@@ -178,9 +178,12 @@ app.post('/api/remix', async (req, res) => {
     if (!brand) return res.status(400).json({ error: 'brand required' });
     const preset = brand.presets.find((p) => p.id === presetId) || brand.presets[0];
 
-    // structure source: a curated text description (refId) or a live spec
+    // structure source: a curated text description (refId), a live spec, or a
+    // designer-described uploaded reference
     let structure;
-    if (refId) {
+    if (req.body.structure) {
+      structure = `"${String(req.body.structure).slice(0, 600)}"`;
+    } else if (refId) {
       const ref = REFS.find((r) => r.id === refId);
       if (!ref) return res.status(400).json({ error: 'unknown refId' });
       structure = `"${ref.structure}"`;

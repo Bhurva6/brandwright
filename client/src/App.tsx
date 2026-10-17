@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DesignView, FluidDesignView } from './DesignView';
-import { getBrand, generateStream, runRemix } from './api';
-import { useStore } from './store';
+import { getBrand, generateStream, runRemix, runAdapt } from './api';
+import type { DesignSpec } from './types';
+import { useStore, restoreSession } from './store';
+import { newId } from './vc';
 import Editor from './Editor';
 import { Coachmarks, HOME_STEPS } from './Coachmarks';
 import { listExports, removeExport } from './library';
@@ -17,6 +19,78 @@ function applyBrandChrome(k: { colors: { value: string; roles?: string[] }[] }) 
     document.documentElement.style.setProperty('--accent', accent.value);
     document.documentElement.style.setProperty('--accent-ink', accent.value);
   }
+}
+
+const GEN_STAGES = [
+  'Briefing the copilot…',
+  'Reading the brand genome…',
+  'Composing layouts…',
+  'Writing on-brand copy…',
+  'Painting imagery…',
+  'Scoring with the Performance Lens…',
+];
+
+export function GenLoader({ count }: { count: number }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((x) => (x + 1) % GEN_STAGES.length), 2200);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="genwrap">
+      <div className="genstatus">
+        <span className="genspin">❋</span>
+        <span key={i} className="genmsg">{GEN_STAGES[i]}</span>
+      </div>
+      <div className="gallery">
+        {Array.from({ length: count }).map((_, k) => (
+          <div key={k} className="card">
+            <div className="dv-shimmer" style={{ width: '100%', aspectRatio: '1', borderRadius: 16 }} />
+            <div className="meta"><div className="dv-shimmer" style={{ width: '60%', height: 14, borderRadius: 6 }} /></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LibraryPage({ lib, onBack, onDelete }: { lib: LibraryItem[]; onBack: () => void; onDelete: (id: string) => void }) {
+  return (
+    <div className="app">
+      <header className="top">
+        <div className="brandmark">
+          Brandwright
+          <span className="tag">library</span>
+        </div>
+        <button className="ghost" onClick={onBack}>← Studio</button>
+      </header>
+      <section className="libview">
+        <div className="refstrip-title">Your exports <span>— every design you export is kept here, on this device</span></div>
+        {lib.length === 0 ? (
+          <div className="empty" style={{ padding: '48px 20px' }}>
+            <h1 style={{ fontSize: 'clamp(20px,3vw,28px)' }}>Nothing here yet.</h1>
+            <p>Open a design in the editor and hit Export — PNG, JPEG and PDF renders all land here automatically.</p>
+          </div>
+        ) : (
+          <div className="libgrid">
+            {lib.map((it) => (
+              <div key={it.id} className="libcard">
+                <img src={it.dataUrl} alt={it.name} loading="lazy" />
+                <div className="libmeta">
+                  <b>{it.name}</b>
+                  <span>{it.brand} · {it.preset} · {new Date(it.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  <div className="librow">
+                    <a className="mini" href={it.dataUrl} download={`${it.name.replace(/\W+/g, '-').toLowerCase()}.png`}>Download</a>
+                    <button className="mini" onClick={() => onDelete(it.id)}>Delete</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
 }
 
 export function ScoreBadge({ score, size = 'md' }: { score?: { total: number; pass: boolean; insight?: string }; size?: 'sm' | 'md' }) {
@@ -51,8 +125,19 @@ export default function App() {
   useEffect(() => {
     fetch('/api/health').then((r) => r.json()).then((h) => setHosted(!!h.hosted)).catch(() => {});
     fetch('/api/brands').then((r) => r.json()).then(setBrands).catch(() => {});
-    switchBrand('xero');
+    // restore the previous session (designs + history survive refresh)
+    restoreSession('xero').then((savedBrand) => switchBrandKitOnly(savedBrand || 'xero'));
   }, []);
+
+  // load a kit WITHOUT clearing restored designs
+  function switchBrandKitOnly(id: string) {
+    getBrand(id)
+      .then((k) => {
+        st.getState().setKit(k);
+        applyBrandChrome(k);
+      })
+      .catch(() => setError('Could not reach the server. Is it running on :8787?'));
+  }
 
   // each brand brings its own reference library
   useEffect(() => {
@@ -99,12 +184,101 @@ export default function App() {
     }
   }
 
-  async function remix(src: { refId?: string; spec?: any; key: string }) {
+  // ----- blank canvas / import / campaign ----------------------------------
+  function activePreset() {
+    return kit?.presets.find((p) => p.id === presetId) || kit?.presets[0];
+  }
+
+  function openBlank() {
+    if (!kit) return;
+    const p = activePreset()!;
+    const ink = kit.colors.find((c: any) => c.roles?.includes('text'))?.value || '#111111';
+    const logo = kit.assets.find((a) => a.category === 'logo');
+    const spec = {
+      id: newId('d'),
+      name: 'Untitled',
+      note: 'Started from a blank canvas',
+      canvas: { w: p.w, h: p.h, preset: p.id, background: '#FFFFFF' },
+      layers: [
+        { id: newId('l'), type: 'text', box: { x: Math.round(p.w * 0.08), y: Math.round(p.h * 0.3), w: Math.round(p.w * 0.84), h: Math.round(p.h * 0.2) }, text: 'Your headline here', role: 'headline', size: Math.round(p.h * 0.08), color: ink, align: 'left' },
+        { id: newId('l'), type: 'logo', box: { x: Math.round(p.w * 0.08), y: Math.round(p.h * 0.88), w: Math.round(p.w * 0.22), h: Math.round(p.h * 0.07) }, assetId: logo?.id, variant: (logo as any)?.variant, src: logo?.src, text: (logo as any)?.text, fontFamily: (logo as any)?.fontFamily, fontWeight: (logo as any)?.fontWeight, color: (logo as any)?.color },
+      ],
+    };
+    st.getState().setDesigns([spec as any]);
+    st.getState().openEditor(spec as any);
+  }
+
+  function importImage(file: File) {
+    if (!kit || !file.type.startsWith('image/')) return;
+    const p = activePreset()!;
+    const rd = new FileReader();
+    rd.onload = () => {
+      const spec = {
+        id: newId('d'),
+        name: file.name.replace(/\.\w+$/, ''),
+        note: 'Imported design — layer brand elements on top, or ask the copilot',
+        canvas: { w: p.w, h: p.h, preset: p.id, background: '#FFFFFF' },
+        layers: [
+          { id: newId('l'), type: 'image', box: { x: 0, y: 0, w: p.w, h: p.h }, src: rd.result as string, fit: 'contain', status: 'ready' },
+        ],
+      };
+      st.getState().setDesigns([spec as any]);
+      st.getState().openEditor(spec as any);
+    };
+    rd.readAsDataURL(file);
+  }
+
+  const [campaignBusy, setCampaignBusy] = useState('');
+  async function runCampaign() {
+    if (!kit || busy || campaignBusy) return;
+    const p = prompt.trim() || EXAMPLES[0];
+    if (!p) return;
+    setError('');
+    setCampaignBusy('concepts');
+    try {
+      // 1) three distinct concepts
+      let concepts: DesignSpec[] = [];
+      await generateStream(
+        { brandId: kit.id, prompt: p, variations: 3, presetId },
+        {
+          onSpecs: (s) => { concepts = s; st.getState().setDesigns(s); setStatus('rendering'); },
+          onImage: ({ specId, layerId, src, error }) => st.getState().patchDesignImage(specId, layerId, src, error),
+          onScore: ({ specId, score }) => st.getState().setScore(specId, score),
+          onError: (e) => { throw new Error(e.error); },
+        },
+      );
+      setStatus('idle');
+      // 2) every concept adapted to every other placement — the full campaign
+      const others = kit.presets.filter((x) => x.id !== presetId);
+      setCampaignBusy(`adapting 0/${concepts.length * others.length}`);
+      let done = 0;
+      const adapted = await Promise.all(
+        concepts.flatMap((c) =>
+          others.map((o) =>
+            runAdapt({ brandId: kit.id, spec: c, presetId: o.id })
+              .then((r) => {
+                setCampaignBusy(`adapting ${++done}/${concepts.length * others.length}`);
+                return { ...r.spec, name: `${c.name} · ${o.label}` };
+              })
+              .catch(() => null),
+          ),
+        ),
+      );
+      st.getState().addBranches(adapted.filter(Boolean) as DesignSpec[], 'Campaign');
+    } catch (e: any) {
+      setError(e?.message || String(e));
+    } finally {
+      setCampaignBusy('');
+      setStatus('idle');
+    }
+  }
+
+  async function remix(src: { refId?: string; spec?: any; structure?: string; key: string }) {
     if (busy || remixing || !kit) return;
     setRemixing(src.key);
     setError('');
     try {
-      const { specs } = await runRemix({ brandId: kit.id, refId: src.refId, spec: src.spec, n: 3, presetId } as any);
+      const { specs } = await runRemix({ brandId: kit.id, refId: src.refId, spec: src.spec, structure: src.structure, n: 3, presetId } as any);
       st.getState().setDesigns(specs);
     } catch (e: any) {
       setError(e?.message || String(e));
@@ -162,13 +336,31 @@ export default function App() {
 
   const toast = useStore((s) => s.toast);
   const [replayTour, setReplayTour] = useState(0);
-  const [showLib, setShowLib] = useState(false);
   const [lib, setLib] = useState<LibraryItem[]>([]);
   useEffect(() => {
-    if (view === 'home') listExports().then(setLib).catch(() => {});
-  }, [view, showLib]);
+    if (view !== 'editor') listExports().then(setLib).catch(() => {});
+  }, [view]);
+
+  // URL <-> view: /, /editor, /library are real pages (back/forward work)
+  useEffect(() => {
+    const fromPath = () => {
+      const p = window.location.pathname;
+      const v = p === '/editor' ? 'editor' : p === '/library' ? 'library' : 'home';
+      if (v === 'editor' && !useStore.getState().working) {
+        window.history.replaceState({}, '', '/');
+        useStore.setState({ view: 'home' });
+      } else {
+        useStore.setState({ view: v });
+      }
+    };
+    fromPath();
+    window.addEventListener('popstate', fromPath);
+    return () => window.removeEventListener('popstate', fromPath);
+  }, []);
 
   if (view === 'editor') return <Editor />;
+  if (view === 'library')
+    return <LibraryPage lib={lib} onBack={() => st.getState().setView('home')} onDelete={(id) => removeExport(id).then(() => listExports().then(setLib))} />;
 
   return (
     <div className="app">
@@ -181,7 +373,7 @@ export default function App() {
           Brandwright
           <span className="tag">version control for brand design</span>
           <button className="helpbtn" title="Replay the tour" onClick={() => setReplayTour((n) => n + 1)}>?</button>
-          <button className={'libbtn' + (showLib ? ' on' : '')} title="Your exported designs" onClick={() => setShowLib((v) => !v)}>
+          <button className="libbtn" title="Your exported designs" onClick={() => st.getState().setView('library')}>
             🖼 Library{lib.length ? ` · ${lib.length}` : ''}
           </button>
         </div>
@@ -256,36 +448,21 @@ export default function App() {
               ))}
             </select>
           </label>
-          <button className="go" disabled={busy} onClick={() => run()}>
+          <button className="ghost" disabled={busy || !!campaignBusy} onClick={openBlank} title="Start with an empty canvas and build by hand">
+            ⬜ Blank canvas
+          </button>
+          <label className="ghost importbtn" title="Bring an existing design in and edit it">
+            📥 Import
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => e.target.files?.[0] && importImage(e.target.files[0])} />
+          </label>
+          <button className="ghost" disabled={busy || !!campaignBusy} onClick={runCampaign} title="3 concepts × every placement size — a full campaign in one go">
+            {campaignBusy ? `🚀 ${campaignBusy}` : '🚀 Campaign'}
+          </button>
+          <button className="go" disabled={busy || !!campaignBusy} onClick={() => run()}>
             {status === 'thinking' ? 'Designing…' : status === 'rendering' ? 'Rendering…' : 'Generate'}
           </button>
         </div>
       </section>
-
-      {showLib && (
-        <section className="libview">
-          <div className="refstrip-title">Library <span>— every PNG you export is kept here, on this device</span></div>
-          {lib.length === 0 ? (
-            <div className="ed-hint" style={{ padding: '18px 4px' }}>Nothing yet — open a design in the editor and hit Export PNG.</div>
-          ) : (
-            <div className="libgrid">
-              {lib.map((it) => (
-                <div key={it.id} className="libcard">
-                  <img src={it.dataUrl} alt={it.name} loading="lazy" />
-                  <div className="libmeta">
-                    <b>{it.name}</b>
-                    <span>{it.brand} · {it.preset} · {new Date(it.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    <div className="librow">
-                      <a className="mini" href={it.dataUrl} download={`${it.name.replace(/\W+/g, '-').toLowerCase()}.png`}>Download</a>
-                      <button className="mini" onClick={() => removeExport(it.id).then(() => listExports().then(setLib))}>Delete</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
 
       {(refs.length > 0 || specRefs.length > 0) && (
         <section className="refstrip">
@@ -305,6 +482,18 @@ export default function App() {
                 <span>{remixing === s.id ? 'Remixing…' : s.name}</span>
               </button>
             ))}
+            <button
+              className={'refcard upload' + (remixing === '__upload__' ? ' busy' : '')}
+              disabled={busy || !!remixing}
+              title="Remix any ad you've seen — describe its structure and Brandwright rebuilds it in your brand"
+              onClick={() => {
+                const desc = window.prompt('Describe the reference ad\'s structure in one line\n(e.g. "big stat top-left, product photo right, dark footer with CTA and logo"):');
+                if (desc?.trim()) remix({ structure: desc.trim(), key: '__upload__' } as any);
+              }}
+            >
+              <span className="upface">＋</span>
+              <span>{remixing === '__upload__' ? 'Remixing…' : 'Your reference'}</span>
+            </button>
           </div>
         </section>
       )}
@@ -318,15 +507,7 @@ export default function App() {
         </div>
       )}
 
-      {status === 'thinking' && (
-        <div className="gallery">
-          {Array.from({ length: variations }).map((_, i) => (
-            <div key={i} className="card">
-              <div className="dv-shimmer" style={{ width: '100%', aspectRatio: '1', borderRadius: 16 }} />
-            </div>
-          ))}
-        </div>
-      )}
+      {status === 'thinking' && <GenLoader count={variations} />}
 
       {status === 'idle' && !designs.length && !error && (
         <div className="empty">
