@@ -22,10 +22,41 @@ const mid = () => Math.random().toString(36).slice(2, 9);
 
 async function post<T>(path: string, body: unknown): Promise<T> {
   const r = await fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-  const j = await r.json();
+  const txt = await r.text();
+  let j: any;
+  try { j = JSON.parse(txt); } catch {
+    throw new Error(r.status === 413 ? 'the references are too large — attach fewer or smaller images' : `server error ${r.status} — ${txt.slice(0, 90)}`);
+  }
   if (!r.ok) throw new Error(j.error || path + ' failed');
   return j;
 }
+
+// shrink any attached reference to a chat-friendly jpeg — big Retina
+// screenshots would otherwise blow the hosted request-size limit
+function toRefDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const cap = 900;
+      const sc = Math.min(1, cap / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * sc));
+      c.height = Math.max(1, Math.round(img.height * sc));
+      c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('could not read image')); };
+    img.src = url;
+  });
+}
+
+const BRAND_WORDS: [RegExp, string][] = [
+  [/\bxero\b/i, 'xero'], [/\bspotify\b/i, 'spotify'], [/\bcoca[- ]?cola\b|\bcoke\b/i, 'cocacola'],
+  [/\bheadspace\b/i, 'headspace'], [/\bairbnb\b/i, 'airbnb'],
+];
+const detectBrand = (t: string) => BRAND_WORDS.find(([re]) => re.test(t))?.[1] || 'demo';
 
 export default function ChatPage() {
   const st = useStore;
@@ -36,6 +67,7 @@ export default function ChatPage() {
   const [attach, setAttach] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [demoKit, setDemoKit] = useState<BrandKit | null>(null);
+  const [chatBrandId, setChatBrandId] = useState('demo');
   const [replyTo, setReplyTo] = useState<{ spec: DesignSpec; label: string } | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -48,9 +80,7 @@ export default function ChatPage() {
   const onFiles = (files: FileList | null) => {
     if (!files) return;
     Array.from(files).slice(0, 8).forEach((f) => {
-      const rd = new FileReader();
-      rd.onload = () => setAttach((a) => [...a, String(rd.result)]);
-      rd.readAsDataURL(f);
+      toRefDataUrl(f).then((u) => setAttach((a) => [...a, u])).catch(() => {});
     });
   };
 
@@ -76,9 +106,11 @@ export default function ChatPage() {
         const { refs } = await post<{ refs: { structure: string }[] }>('/api/analyze-refs', { images });
         patch(readId, { text: `${refs.length} references read — structure extracted from each.`, status: 'ok' });
 
-        // 2 · bind the brand kit
-        const kitId = push({ role: 'bot', text: 'Building brand kit “demo” — palette, fonts, logos, assets…', status: 'busy' });
-        const kit = await getBrand('demo');
+        // 2 · bind the brand kit — named brand in the prompt wins, else "demo"
+        const brandId = detectBrand(t);
+        setChatBrandId(brandId);
+        const kitId = push({ role: 'bot', text: `Building brand kit “${brandId}” — palette, fonts, logos, assets…`, status: 'busy' });
+        const kit = await getBrand(brandId);
         setDemoKit(kit);
         st.getState().setKit(kit);
         patch(kitId, { text: undefined, kitCard: kit, status: 'ok' });
@@ -89,18 +121,18 @@ export default function ChatPage() {
         for (let i = 0; i < refs.length; i++) {
           const gid = push({ role: 'bot', title: `Reference ${i + 1} — ${n} layered takes`, text: 'designing…', status: 'busy' });
           try {
-            const { specs } = await post<{ specs: DesignSpec[] }>('/api/remix', { brandId: 'demo', structure: refs[i].structure, n });
+            const { specs } = await post<{ specs: DesignSpec[] }>('/api/remix', { brandId, structure: refs[i].structure, n });
             total += specs.length;
             patch(gid, { text: undefined, designs: specs, status: 'ok' });
           } catch (e: any) {
             patch(gid, { text: 'This reference failed — ' + (e?.message || e), status: 'err' });
           }
         }
-        push({ role: 'bot', text: `Done — ${total} editable, layered designs, every colour, font and logo from the demo kit. Click any design to edit it in chat, or open it in the editor.`, status: 'ok' });
+        push({ role: 'bot', text: `Done — ${total} editable, layered designs, every colour, font and logo from the ${kit.name} kit. Click any design to edit it in chat, or open it in the editor.`, status: 'ok' });
       } else if (replyTo) {
         push({ role: 'user', text: `↪ ${replyTo.label} · ${t}` });
         const eid = push({ role: 'bot', text: 'Editing the layers — carrying everything you didn’t mention…', status: 'busy' });
-        const spec = await editDesign({ brandId: 'demo', spec: replyTo.spec, instruction: t });
+        const spec = await editDesign({ brandId: chatBrandId, spec: replyTo.spec, instruction: t });
         patch(eid, { text: undefined, title: 'Edited — new layers, same commit history', designs: [spec], status: 'ok' });
         setReplyTo({ spec, label: 'edited design' }); // chain further edits onto the result
       } else {
