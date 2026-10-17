@@ -1,0 +1,284 @@
+{
+  "id": "headspace",
+  "name": "Headspace",
+  "colors": [
+    {
+      "token": "orange",
+      "value": "#F47D31",
+      "name": "Headspace Orange",
+      "roles": [
+        "background",
+        "accent",
+        "cta"
+      ]
+    },
+    {
+      "token": "ink",
+      "value": "#2D3240",
+      "name": "Ink",
+      "roles": [
+        "text"
+      ]
+    },
+    {
+      "token": "cream",
+      "value": "#FBF3E4",
+      "name": "Warm Cream",
+      "roles": [
+        "background"
+      ]
+    },
+    {
+      "token": "blue",
+      "value": "#5A7BEF",
+      "name": "Calm Blue",
+      "roles": [
+        "background",
+        "accent"
+      ]
+    },
+    {
+      "token": "yellow",
+      "value": "#FFCE00",
+      "name": "Sunshine",
+      "roles": [
+        "accent"
+      ]
+    },
+    {
+      "token": "white",
+      "value": "#FFFFFF",
+      "name": "White",
+      "roles": [
+        "text",
+        "background"
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "role": "headline",
+      "family": "Baloo 2",
+      "weights": [
+        600,
+        700
+      ],
+      "stack": "'Baloo 2', 'Comic Sans MS', sans-serif"
+    },
+    {
+      "role": "body",
+      "family": "Quicksand",
+      "weights": [
+        500,
+        600
+      ],
+      "stack": "'Quicksand', system-ui, sans-serif"
+    },
+    {
+      "role": "eyebrow",
+      "family": "Quicksand",
+      "weights": [
+        600
+      ],
+      "stack": "'Quicksand', sans-serif"
+    }
+  ],
+  "presets": [
+    {
+      "id": "square_1080",
+      "label": "Square 1:1",
+      "w": 1080,
+      "h": 1080
+    },
+    {
+      "id": "story_1080x1920",
+      "label": "Story 9:16",
+      "w": 1080,
+      "h": 1920
+    },
+    {
+      "id": "meta_feed_1200x1200",
+      "label": "Meta feed",
+      "w": 1200,
+      "h": 1200
+    },
+    {
+      "id": "banner_1200x628",
+      "label": "Banner 1.91:1",
+      "w": 1200,
+      "h": 628
+    }
+  ],
+  "assets": [
+    {
+      "id": "logo-00",
+      "category": "logo",
+      "label": "Wordmark · ink",
+      "variant": "ink",
+      "text": "headspace",
+      "fontFamily": "'Baloo 2', sans-serif",
+      "fontWeight": 700,
+      "color": "#2D3240"
+    },
+    {
+      "id": "logo-01",
+      "category": "logo",
+      "label": "Wordmark · white",
+      "variant": "white",
+      "text": "headspace",
+      "fontFamily": "'Baloo 2', sans-serif",
+      "fontWeight": 700,
+      "color": "#FFFFFF"
+    },
+    {
+      "id": "bloom-000",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-000.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-001",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-001.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-002",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-002.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-003",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-003.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-004",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-004.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-005",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-005.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-006",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-006.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-007",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-007.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-008",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-008.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-009",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-009.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-010",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-010.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-011",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-011.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-012",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-012.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-013",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-013.png",
+      "recolorable": true
+    }
+  ],
+  "rules": [
+    {
+      "id": "soft",
+      "text": "Everything is soft and rounded — generous curves, no sharp corners, no harsh contrast.",
+      "severity": "warn"
+    },
+    {
+      "id": "calm",
+      "text": "Copy soothes, never pressures. No urgency, no FOMO, no exclamation-mark stacking.",
+      "severity": "error"
+    },
+    {
+      "id": "warm",
+      "text": "Warm grounds (orange/cream); ink text on light, white text on orange.",
+      "severity": "error"
+    }
+  ],
+  "voice": "Warm, gentle, lightly playful. Permission-giving, never preachy: 'Less overthinking. More you.' 'Meditation made simple.' Breathes between words.",
+  "archetypes": [
+    {
+      "id": "headline-card",
+      "label": "Card with bold headline + CTA pill, wordmark bottom-left",
+      "regions": []
+    },
+    {
+      "id": "photo-hero",
+      "label": "Full-bleed photo, headline top, CTA + wordmark bottom",
+      "regions": []
+    },
+    {
+      "id": "type-poster",
+      "label": "Typographic poster: giant headline, flat brand ground, minimal accents",
+      "regions": []
+    }
+  ],
+  "rewardWeights": {
+    "palette": 0.14,
+    "contrast": 0.18,
+    "safezone": 0.14,
+    "archetype": 0.06,
+    "hook": 0.14,
+    "cta": 0.12,
+    "thumbstop": 0.08,
+    "hierarchy": 0.07,
+    "voice": 0.07
+  },
+  "learned": [],
+  "examples": [
+    "Encourage stressed professionals to try a 10-minute sleep meditation.",
+    "New-year reset: be kind to your mind.",
+    "Student discount on mindfulness for exam season."
+  ]
+}

@@ -4,12 +4,15 @@ import { getBrand, generateStream } from './api';
 import { useStore } from './store';
 import Editor from './Editor';
 
-const EXAMPLES = [
-  'Promote Xero as easy accounting for small businesses — get paid faster.',
-  'Announce a free 30-day trial, friendly and confident.',
-  'Payroll made simple, for cafe and salon owners.',
-  'Switch to Xero and be up and running in under 4 hours.',
-];
+interface BrandListing { id: string; name: string; colors: { token: string; value: string }[] }
+
+function applyBrandChrome(k: { colors: { value: string; roles?: string[] }[] }) {
+  const accent = k.colors.find((c) => c.roles?.includes('cta')) || k.colors.find((c) => c.roles?.includes('accent'));
+  if (accent) {
+    document.documentElement.style.setProperty('--accent', accent.value);
+    document.documentElement.style.setProperty('--accent-ink', accent.value);
+  }
+}
 
 export function ScoreBadge({ score, size = 'md' }: { score?: { total: number; pass: boolean; insight?: string }; size?: 'sm' | 'md' }) {
   if (!score) return null;
@@ -34,32 +37,36 @@ export default function App() {
   const [presetId, setPresetId] = useState('square_1080');
   const [status, setStatus] = useState<'idle' | 'thinking' | 'rendering'>('idle');
   const [error, setError] = useState('');
+  const [brands, setBrands] = useState<BrandListing[]>([]);
 
   useEffect(() => {
-    getBrand('xero')
-      .then((k) => {
-        st.getState().setKit(k);
-        // brand-adaptive chrome: the editor takes its accent from the active genome
-        const accent = k.colors.find((c) => c.roles?.includes('cta')) || k.colors.find((c) => c.roles?.includes('accent'));
-        if (accent) {
-          document.documentElement.style.setProperty('--accent', accent.value);
-          document.documentElement.style.setProperty('--accent-ink', accent.value);
-        }
-      })
-      .catch(() => setError('Could not reach the server. Is it running on :8787?'));
+    fetch('/api/brands').then((r) => r.json()).then(setBrands).catch(() => {});
+    switchBrand('xero');
   }, []);
 
+  function switchBrand(id: string) {
+    getBrand(id)
+      .then((k) => {
+        st.getState().setKit(k);
+        st.getState().setDesigns([]);
+        applyBrandChrome(k); // brand-adaptive chrome: accents follow the genome
+        setError('');
+      })
+      .catch(() => setError('Could not reach the server. Is it running on :8787?'));
+  }
+
   const busy = status !== 'idle';
-  const logo = useMemo(() => kit?.assets.find((a) => a.category === 'logo' && a.variant === 'midnight'), [kit]);
+  const EXAMPLES: string[] = (kit as any)?.examples || [];
+  const logo = useMemo(() => kit?.assets.find((a) => a.category === 'logo'), [kit]);
 
   async function run(p = prompt) {
-    if (!p.trim() || busy) return;
+    if (!p.trim() || busy || !kit) return;
     setError('');
     st.getState().setDesigns([]);
     setStatus('thinking');
     try {
       await generateStream(
-        { brandId: 'xero', prompt: p, variations, presetId },
+        { brandId: kit.id, prompt: p, variations, presetId },
         {
           onSpecs: (specs) => {
             st.getState().setDesigns(specs);
@@ -91,10 +98,19 @@ export default function App() {
         </div>
         {kit && (
           <div className="genome">
-            {logo && <img src={logo.src} alt="" />}
-            <span>
-              <b>{kit.name}</b> genome · {kit.assets.length} assets · {kit.colors.length} colours
-            </span>
+            {logo?.src ? (
+              <img src={logo.src} alt="" />
+            ) : (
+              <span style={{ fontFamily: (logo as any)?.fontFamily, fontWeight: (logo as any)?.fontWeight || 800, color: (logo as any)?.color, fontSize: 14 }}>
+                {(logo as any)?.text}
+              </span>
+            )}
+            <select className="brandsel" value={kit.id} onChange={(e) => switchBrand(e.target.value)} disabled={busy} title="Switch the active brand genome">
+              {(brands.length ? brands : [{ id: kit.id, name: kit.name, colors: [] }]).map((b) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+            <span>genome · {kit.assets.length} assets · {kit.colors.length} colours</span>
           </div>
         )}
       </header>
@@ -103,7 +119,7 @@ export default function App() {
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe the ad you want…  e.g.  “Create 4 images promoting easy invoicing for small businesses”"
+          placeholder={`Describe the ${kit?.name || 'brand'} ad you want…  e.g.  “Create 4 images like our summer campaign”`}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) run();
           }}

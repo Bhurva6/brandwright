@@ -1,0 +1,277 @@
+{
+  "id": "cocacola",
+  "name": "Coca-Cola",
+  "colors": [
+    {
+      "token": "red",
+      "value": "#F40009",
+      "name": "Coke Red",
+      "roles": [
+        "background",
+        "accent",
+        "cta"
+      ]
+    },
+    {
+      "token": "white",
+      "value": "#FFFFFF",
+      "name": "White",
+      "roles": [
+        "text",
+        "background"
+      ]
+    },
+    {
+      "token": "black",
+      "value": "#1E1E1E",
+      "name": "Coke Black",
+      "roles": [
+        "text",
+        "background"
+      ]
+    },
+    {
+      "token": "cream",
+      "value": "#F7F3E8",
+      "name": "Cream",
+      "roles": [
+        "background"
+      ]
+    },
+    {
+      "token": "darkred",
+      "value": "#A3000C",
+      "name": "Classic Dark Red",
+      "roles": [
+        "background",
+        "accent"
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "role": "headline",
+      "family": "Oswald",
+      "weights": [
+        600,
+        700
+      ],
+      "stack": "'Oswald', 'Arial Narrow', sans-serif"
+    },
+    {
+      "role": "body",
+      "family": "Inter",
+      "weights": [
+        400,
+        600
+      ],
+      "stack": "'Inter', system-ui, sans-serif"
+    },
+    {
+      "role": "eyebrow",
+      "family": "Oswald",
+      "weights": [
+        600
+      ],
+      "stack": "'Oswald', sans-serif"
+    }
+  ],
+  "presets": [
+    {
+      "id": "square_1080",
+      "label": "Square 1:1",
+      "w": 1080,
+      "h": 1080
+    },
+    {
+      "id": "story_1080x1920",
+      "label": "Story 9:16",
+      "w": 1080,
+      "h": 1920
+    },
+    {
+      "id": "meta_feed_1200x1200",
+      "label": "Meta feed",
+      "w": 1200,
+      "h": 1200
+    },
+    {
+      "id": "banner_1200x628",
+      "label": "Banner 1.91:1",
+      "w": 1200,
+      "h": 628
+    }
+  ],
+  "assets": [
+    {
+      "id": "logo-00",
+      "category": "logo",
+      "label": "Wordmark · white",
+      "variant": "white",
+      "text": "Coca-Cola",
+      "fontFamily": "'Pacifico', cursive",
+      "fontWeight": 400,
+      "color": "#FFFFFF"
+    },
+    {
+      "id": "logo-01",
+      "category": "logo",
+      "label": "Wordmark · red",
+      "variant": "red",
+      "text": "Coca-Cola",
+      "fontFamily": "'Pacifico', cursive",
+      "fontWeight": 400,
+      "color": "#F40009"
+    },
+    {
+      "id": "bloom-000",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-000.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-001",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-001.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-002",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-002.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-003",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-003.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-004",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-004.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-005",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-005.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-006",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-006.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-007",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-007.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-008",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-008.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-009",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-009.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-010",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-010.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-011",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-011.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-012",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-012.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-013",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-013.png",
+      "recolorable": true
+    }
+  ],
+  "rules": [
+    {
+      "id": "red",
+      "text": "Coke Red dominates. White script wordmark on red; red wordmark only on white/cream.",
+      "severity": "error"
+    },
+    {
+      "id": "joy",
+      "text": "Imagery radiates togetherness, refreshment and joy — never clinical or corporate.",
+      "severity": "warn"
+    },
+    {
+      "id": "contrast",
+      "text": "Headlines are white on red or black on cream. Never grey.",
+      "severity": "error"
+    }
+  ],
+  "voice": "Joyful, iconic, universal. Short uplifting lines about moments of refreshment and togetherness: 'Taste the feeling.' 'Open happiness.' 'Real magic.'",
+  "archetypes": [
+    {
+      "id": "headline-card",
+      "label": "Card with bold headline + CTA pill, wordmark bottom-left",
+      "regions": []
+    },
+    {
+      "id": "photo-hero",
+      "label": "Full-bleed photo, headline top, CTA + wordmark bottom",
+      "regions": []
+    },
+    {
+      "id": "type-poster",
+      "label": "Typographic poster: giant headline, flat brand ground, minimal accents",
+      "regions": []
+    }
+  ],
+  "rewardWeights": {
+    "palette": 0.14,
+    "contrast": 0.18,
+    "safezone": 0.14,
+    "archetype": 0.06,
+    "hook": 0.14,
+    "cta": 0.12,
+    "thumbstop": 0.08,
+    "hierarchy": 0.07,
+    "voice": 0.07
+  },
+  "learned": [],
+  "examples": [
+    "A summer campaign: ice-cold Coke with friends on a rooftop at sunset.",
+    "Festive season sharing ad — togetherness over a family dinner.",
+    "Launch Coke Zero to gamers pulling an all-nighter."
+  ]
+}

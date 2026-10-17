@@ -59,7 +59,27 @@ export function LayerView({ l, kit }: { l: Layer; kit?: BrandKit }) {
     case 'charm':
       return <img src={l.src} alt="" crossOrigin="anonymous" style={{ ...base, objectFit: 'contain' }} />;
     case 'logo':
-      return <img src={l.src} alt="" crossOrigin="anonymous" style={{ ...base, objectFit: 'contain', objectPosition: 'left center' }} />;
+      return l.src ? (
+        <img src={l.src} alt="" crossOrigin="anonymous" style={{ ...base, objectFit: 'contain', objectPosition: 'left center' }} />
+      ) : (
+        // text wordmark: styled type in the brand's logo face
+        <div
+          style={{
+            ...base,
+            display: 'flex',
+            alignItems: 'center',
+            fontFamily: l.fontFamily || fontFor('headline', kit),
+            fontWeight: l.fontWeight || 800,
+            fontSize: Math.min(l.box.h * 0.72, (l.box.w / Math.max((l.text || 'logo').length, 3)) * 1.7),
+            color: l.color || '#000',
+            letterSpacing: l.letterSpacing,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+          }}
+        >
+          {l.text}
+        </div>
+      );
     case 'text':
       return <AutoText l={l} kit={kit} />;
     case 'pill':

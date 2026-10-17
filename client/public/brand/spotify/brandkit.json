@@ -1,0 +1,298 @@
+{
+  "id": "spotify",
+  "name": "Spotify",
+  "colors": [
+    {
+      "token": "green",
+      "value": "#1ED760",
+      "name": "Spotify Green",
+      "roles": [
+        "accent",
+        "cta"
+      ]
+    },
+    {
+      "token": "black",
+      "value": "#121212",
+      "name": "Black",
+      "roles": [
+        "background",
+        "text"
+      ]
+    },
+    {
+      "token": "white",
+      "value": "#FFFFFF",
+      "name": "White",
+      "roles": [
+        "text",
+        "background"
+      ]
+    },
+    {
+      "token": "purple",
+      "value": "#7358FF",
+      "name": "Electric Purple",
+      "roles": [
+        "background",
+        "accent"
+      ]
+    },
+    {
+      "token": "pink",
+      "value": "#F774C4",
+      "name": "Hot Pink",
+      "roles": [
+        "background",
+        "accent"
+      ]
+    },
+    {
+      "token": "yellow",
+      "value": "#FFF176",
+      "name": "Acid Yellow",
+      "roles": [
+        "accent"
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "role": "headline",
+      "family": "Montserrat",
+      "weights": [
+        800,
+        900
+      ],
+      "stack": "'Montserrat', 'Helvetica Neue', sans-serif"
+    },
+    {
+      "role": "body",
+      "family": "Inter",
+      "weights": [
+        400,
+        600
+      ],
+      "stack": "'Inter', system-ui, sans-serif"
+    },
+    {
+      "role": "eyebrow",
+      "family": "Montserrat",
+      "weights": [
+        700
+      ],
+      "stack": "'Montserrat', sans-serif"
+    }
+  ],
+  "presets": [
+    {
+      "id": "square_1080",
+      "label": "Square 1:1",
+      "w": 1080,
+      "h": 1080
+    },
+    {
+      "id": "story_1080x1920",
+      "label": "Story 9:16",
+      "w": 1080,
+      "h": 1920
+    },
+    {
+      "id": "meta_feed_1200x1200",
+      "label": "Meta feed",
+      "w": 1200,
+      "h": 1200
+    },
+    {
+      "id": "banner_1200x628",
+      "label": "Banner 1.91:1",
+      "w": 1200,
+      "h": 628
+    }
+  ],
+  "assets": [
+    {
+      "id": "logo-00",
+      "category": "logo",
+      "label": "Wordmark · white",
+      "variant": "white",
+      "text": "Spotify",
+      "fontFamily": "'Montserrat', sans-serif",
+      "fontWeight": 800,
+      "color": "#FFFFFF",
+      "letterSpacing": "-0.02em"
+    },
+    {
+      "id": "logo-01",
+      "category": "logo",
+      "label": "Wordmark · green",
+      "variant": "green",
+      "text": "Spotify",
+      "fontFamily": "'Montserrat', sans-serif",
+      "fontWeight": 800,
+      "color": "#1ED760",
+      "letterSpacing": "-0.02em"
+    },
+    {
+      "id": "logo-02",
+      "category": "logo",
+      "label": "Wordmark · black",
+      "variant": "black",
+      "text": "Spotify",
+      "fontFamily": "'Montserrat', sans-serif",
+      "fontWeight": 800,
+      "color": "#121212",
+      "letterSpacing": "-0.02em"
+    },
+    {
+      "id": "bloom-000",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-000.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-001",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-001.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-002",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-002.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-003",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-003.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-004",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-004.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-005",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-005.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-006",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-006.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-007",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-007.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-008",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-008.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-009",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-009.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-010",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-010.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-011",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-011.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-012",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-012.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-013",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-013.png",
+      "recolorable": true
+    }
+  ],
+  "rules": [
+    {
+      "id": "green",
+      "text": "Spotify Green is an accent, never a background for text. Black grounds dominate.",
+      "severity": "error"
+    },
+    {
+      "id": "bold",
+      "text": "Typography is huge, tight and ultra-bold. Headlines can shout.",
+      "severity": "warn"
+    },
+    {
+      "id": "duotone",
+      "text": "Imagery leans duotone/high-saturation; music culture, never stock-corporate.",
+      "severity": "warn"
+    }
+  ],
+  "voice": "Bold, culture-fluent, a little cheeky. Speaks to listeners like insiders: 'Music for every mood.' 'Your year, wrapped.' Short, punchy, confident.",
+  "archetypes": [
+    {
+      "id": "headline-card",
+      "label": "Card with bold headline + CTA pill, wordmark bottom-left",
+      "regions": []
+    },
+    {
+      "id": "photo-hero",
+      "label": "Full-bleed photo, headline top, CTA + wordmark bottom",
+      "regions": []
+    },
+    {
+      "id": "type-poster",
+      "label": "Typographic poster: giant headline, flat brand ground, minimal accents",
+      "regions": []
+    }
+  ],
+  "rewardWeights": {
+    "palette": 0.14,
+    "contrast": 0.18,
+    "safezone": 0.14,
+    "archetype": 0.06,
+    "hook": 0.14,
+    "cta": 0.12,
+    "thumbstop": 0.08,
+    "hierarchy": 0.07,
+    "voice": 0.07
+  },
+  "learned": [],
+  "examples": [
+    "Promote a 3-months-free Premium offer to students.",
+    "Launch a true-crime podcast exclusive — dark and intriguing.",
+    "Wrapped-style year-in-review hype ad."
+  ]
+}

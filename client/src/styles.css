@@ -36,6 +36,7 @@ body {
 .genome { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px 6px 10px; box-shadow: var(--shadow); }
 .genome img { height: 16px; width: auto; }
 .genome b { color: var(--ink); font-weight: 600; }
+.brandsel { border: none; background: none; font: inherit; font-weight: 700; color: var(--ink); cursor: pointer; outline: none; padding: 2px 0; }
 
 /* composer */
 .composer { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; display: flex; flex-direction: column; gap: 14px; }

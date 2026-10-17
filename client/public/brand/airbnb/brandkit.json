@@ -1,0 +1,284 @@
+{
+  "id": "airbnb",
+  "name": "Airbnb",
+  "colors": [
+    {
+      "token": "rausch",
+      "value": "#FF385C",
+      "name": "Rausch",
+      "roles": [
+        "accent",
+        "cta"
+      ]
+    },
+    {
+      "token": "ink",
+      "value": "#222222",
+      "name": "Ink",
+      "roles": [
+        "text"
+      ]
+    },
+    {
+      "token": "white",
+      "value": "#FFFFFF",
+      "name": "White",
+      "roles": [
+        "background",
+        "text"
+      ]
+    },
+    {
+      "token": "linen",
+      "value": "#F7F3EF",
+      "name": "Linen",
+      "roles": [
+        "background"
+      ]
+    },
+    {
+      "token": "teal",
+      "value": "#00847E",
+      "name": "Teal",
+      "roles": [
+        "accent"
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "role": "headline",
+      "family": "Nunito Sans",
+      "weights": [
+        800,
+        900
+      ],
+      "stack": "'Nunito Sans', 'Helvetica Neue', sans-serif"
+    },
+    {
+      "role": "body",
+      "family": "Nunito Sans",
+      "weights": [
+        400,
+        600
+      ],
+      "stack": "'Nunito Sans', system-ui, sans-serif"
+    },
+    {
+      "role": "eyebrow",
+      "family": "Nunito Sans",
+      "weights": [
+        700
+      ],
+      "stack": "'Nunito Sans', sans-serif"
+    }
+  ],
+  "presets": [
+    {
+      "id": "square_1080",
+      "label": "Square 1:1",
+      "w": 1080,
+      "h": 1080
+    },
+    {
+      "id": "story_1080x1920",
+      "label": "Story 9:16",
+      "w": 1080,
+      "h": 1920
+    },
+    {
+      "id": "meta_feed_1200x1200",
+      "label": "Meta feed",
+      "w": 1200,
+      "h": 1200
+    },
+    {
+      "id": "banner_1200x628",
+      "label": "Banner 1.91:1",
+      "w": 1200,
+      "h": 628
+    }
+  ],
+  "assets": [
+    {
+      "id": "logo-00",
+      "category": "logo",
+      "label": "Wordmark · rausch",
+      "variant": "rausch",
+      "text": "airbnb",
+      "fontFamily": "'Nunito Sans', sans-serif",
+      "fontWeight": 800,
+      "color": "#FF385C"
+    },
+    {
+      "id": "logo-01",
+      "category": "logo",
+      "label": "Wordmark · white",
+      "variant": "white",
+      "text": "airbnb",
+      "fontFamily": "'Nunito Sans', sans-serif",
+      "fontWeight": 800,
+      "color": "#FFFFFF"
+    },
+    {
+      "id": "logo-02",
+      "category": "logo",
+      "label": "Wordmark · ink",
+      "variant": "ink",
+      "text": "airbnb",
+      "fontFamily": "'Nunito Sans', sans-serif",
+      "fontWeight": 800,
+      "color": "#222222"
+    },
+    {
+      "id": "bloom-000",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-000.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-001",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-001.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-002",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-002.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-003",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-003.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-004",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-004.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-005",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-005.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-006",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-006.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-007",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-007.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-008",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-008.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-009",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-009.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-010",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-010.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-011",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-011.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-012",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-012.png",
+      "recolorable": true
+    },
+    {
+      "id": "bloom-013",
+      "category": "bloom",
+      "label": "Shape",
+      "src": "/brand/common/blooms/bloom-013.png",
+      "recolorable": true
+    }
+  ],
+  "rules": [
+    {
+      "id": "photo",
+      "text": "Photography-first: real homes, real light, real belonging. Minimal overlay chrome.",
+      "severity": "warn"
+    },
+    {
+      "id": "clean",
+      "text": "White or linen grounds; Rausch only for CTAs and small accents.",
+      "severity": "error"
+    },
+    {
+      "id": "human",
+      "text": "Copy is human and hosted — about belonging, never about “inventory”.",
+      "severity": "error"
+    }
+  ],
+  "voice": "Warm, human, editorial. Speaks about belonging anywhere: 'Belong anywhere.' 'Made possible by Hosts.' Understated confidence, never salesy.",
+  "archetypes": [
+    {
+      "id": "headline-card",
+      "label": "Card with bold headline + CTA pill, wordmark bottom-left",
+      "regions": []
+    },
+    {
+      "id": "photo-hero",
+      "label": "Full-bleed photo, headline top, CTA + wordmark bottom",
+      "regions": []
+    },
+    {
+      "id": "type-poster",
+      "label": "Typographic poster: giant headline, flat brand ground, minimal accents",
+      "regions": []
+    }
+  ],
+  "rewardWeights": {
+    "palette": 0.14,
+    "contrast": 0.18,
+    "safezone": 0.14,
+    "archetype": 0.06,
+    "hook": 0.14,
+    "cta": 0.12,
+    "thumbstop": 0.08,
+    "hierarchy": 0.07,
+    "voice": 0.07
+  },
+  "learned": [],
+  "examples": [
+    "Summer escapes: book a lakeside cabin for the long weekend.",
+    "Promote Airbnb Experiences — cook pasta with a nonna in Rome.",
+    "Host your spare room and earn while you travel."
+  ]
+}

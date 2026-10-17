@@ -79,7 +79,11 @@ export function normalizeDesign(raw, brand, preset, opts = {}) {
       }
       case 'logo': {
         const a = pickLogo(brand, l.variant);
-        layers.push({ id, type: 'logo', box, assetId: a?.id, variant: a?.variant || l.variant, src: a?.src });
+        layers.push({
+          id, type: 'logo', box, assetId: a?.id, variant: a?.variant || l.variant, src: a?.src,
+          // text wordmark (brands without a drawn mark render styled type)
+          text: a?.text, fontFamily: a?.fontFamily, fontWeight: a?.fontWeight, color: a?.color, letterSpacing: a?.letterSpacing,
+        });
         break;
       }
       case 'pill':

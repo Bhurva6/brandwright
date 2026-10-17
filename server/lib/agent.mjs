@@ -42,6 +42,7 @@ LAYER TYPES (emit layers back-to-front; start with a background):
   pill         { type:"pill", x,y,w,h, text, fill:<token>, textColor:<token> }   // CTA button
   featureList  { type:"featureList", x,y,w,h, items:["ACCOUNTING","PAYMENTS"], color:<token>, markColor:<token> }
 
+${brand.assets.some((a) => a.category === 'charm') ? '' : 'NOTE: this brand has NO charm stickers — never emit charm layers.\n'}${brand.assets.some((a) => a.category === 'background') ? '' : 'NOTE: this brand has no background template assets — build grounds from background/shape/bloom layers.\n'}
 GUIDELINES:
   - Always include a background and exactly ONE logo. Lead with a big, confident headline.
   - Write all copy in the brand voice. Keep headlines short and punchy.
