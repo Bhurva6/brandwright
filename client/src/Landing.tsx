@@ -90,6 +90,7 @@ export default function Landing() {
         <div className="brandmark">Brandwright</div>
         <div className="land-links">
           <button className="ghost" onClick={() => st.getState().setView('home')}>Studio</button>
+          <button className="ghost" onClick={() => st.getState().setView('chat')}><Icon name="sparkles" size={13} /> Chat</button>
           <button className="ghost" onClick={() => st.getState().setView('library')}><Icon name="folder" size={13} /> Drafts</button>
           <button className="go" onClick={openEditor}>Open the editor</button>
         </div>

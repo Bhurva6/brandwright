@@ -183,6 +183,44 @@ import path from 'path';
 const __dirnameX = path.dirname(fileURLToPath(import.meta.url));
 const REFS = JSON.parse(readFileSync(path.join(__dirnameX, '../client/public/refs/manifest.json'), 'utf8')).refs;
 
+// Vision read of uploaded reference images (chat ingest): Flash describes each
+// ad's layout structure in remix-ready terms. Stateless — Vercel-safe.
+app.post('/api/analyze-refs', async (req, res) => {
+  try {
+    const { images = [] } = req.body || {};
+    if (!images.length) return res.status(400).json({ error: 'images required' });
+    const { flash, MODELS } = await import('./lib/openai.mjs');
+    const out = await Promise.all(
+      images.slice(0, 8).map(async (dataUrl) => {
+        const r = await flash.chat.completions.create({
+          model: MODELS.flash,
+          max_tokens: 380,
+          messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text:
+                    'You are analysing a reference ad so another agent can recreate its STRUCTURE for a different brand. ' +
+                    'In 2-3 sentences describe: the ground (colour/photo/blob shapes), every block and its position (headline, body, CTA pill, logo, feature ticks, sticker charms, photos), and the visual rhythm. ' +
+                    'No brand names, no copy text — structure only. Reply with the description alone.',
+                },
+                { type: 'image_url', image_url: { url: dataUrl } },
+              ],
+            },
+          ],
+        });
+        return { structure: (r.choices[0]?.message?.content || '').trim() };
+      }),
+    );
+    res.json({ refs: out });
+  } catch (e) {
+    console.error('analyze-refs', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
 app.post('/api/remix', async (req, res) => {
   try {
     const { brandId = 'xero', refId, spec, n = 3, presetId } = req.body || {};

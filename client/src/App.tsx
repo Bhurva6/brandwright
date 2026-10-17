@@ -8,6 +8,7 @@ import { newId } from './vc';
 import Editor from './Editor';
 import Landing from './Landing';
 import Ingest from './Ingest';
+import ChatPage from './ChatPage';
 import { Coachmarks, HOME_STEPS } from './Coachmarks';
 import { Icon } from './Icon';
 import { listExports, removeExport, toggleFav, saveExport } from './library';
@@ -359,6 +360,7 @@ export default function App() {
   }, []);
 
   if (view === 'landing') return <Landing />;
+  if (view === 'chat') return <ChatPage />;
   if (view === 'ingest') return <Ingest hosted={hosted} />;
   if (view === 'editor') return <Editor />;
   if (view === 'library' || view === 'favs')
@@ -393,6 +395,9 @@ export default function App() {
           <button className="helpbtn" title="Replay the tour" onClick={(e) => { e.stopPropagation(); setReplayTour((n) => n + 1); }}>?</button>
           <button className="libbtn" title="Your exported designs" onClick={(e) => { e.stopPropagation(); st.getState().setView('library'); }}>
             <Icon name="folder" size={13} /> Drafts{lib.length ? ` · ${lib.length}` : ''}
+          </button>
+          <button className="libbtn" title="One-thread copilot: references in, layered designs out" onClick={(e) => { e.stopPropagation(); st.getState().setView('chat'); }}>
+            <Icon name="sparkles" size={13} /> Chat
           </button>
         </div>
         {kit && (

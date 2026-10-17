@@ -1,0 +1,1290 @@
+{
+ "id": "demo",
+ "name": "Demo",
+ "colors": [
+  {
+   "token": "ink",
+   "value": "#00124E",
+   "name": "Midnight",
+   "roles": [
+    "text",
+    "background"
+   ]
+  },
+  {
+   "token": "blue",
+   "value": "#1F65D6",
+   "name": "Xero Blue",
+   "roles": [
+    "accent",
+    "background",
+    "cta"
+   ]
+  },
+  {
+   "token": "sky",
+   "value": "#82C7F5",
+   "name": "Sky",
+   "roles": [
+    "background",
+    "accent"
+   ]
+  },
+  {
+   "token": "skyPale",
+   "value": "#CCE7F8",
+   "name": "Pale Sky",
+   "roles": [
+    "background"
+   ]
+  },
+  {
+   "token": "paper",
+   "value": "#F2F0ED",
+   "name": "Paper",
+   "roles": [
+    "background"
+   ]
+  },
+  {
+   "token": "white",
+   "value": "#FFFFFF",
+   "name": "White",
+   "roles": [
+    "background",
+    "text"
+   ]
+  },
+  {
+   "token": "yellow",
+   "value": "#F5C44D",
+   "name": "Charm Yellow",
+   "roles": [
+    "accent"
+   ]
+  },
+  {
+   "token": "amber",
+   "value": "#D98B3A",
+   "name": "Charm Amber",
+   "roles": [
+    "accent"
+   ]
+  },
+  {
+   "token": "pink",
+   "value": "#F0869A",
+   "name": "Charm Pink",
+   "roles": [
+    "accent"
+   ]
+  },
+  {
+   "token": "green",
+   "value": "#4FB985",
+   "name": "Tick Green",
+   "roles": [
+    "accent"
+   ]
+  }
+ ],
+ "fonts": [
+  {
+   "role": "headline",
+   "family": "DM Sans",
+   "weights": [
+    700,
+    800
+   ],
+   "stack": "'DM Sans', system-ui, sans-serif"
+  },
+  {
+   "role": "body",
+   "family": "Inter",
+   "weights": [
+    400,
+    500,
+    600
+   ],
+   "stack": "'Inter', system-ui, sans-serif"
+  },
+  {
+   "role": "eyebrow",
+   "family": "Inter",
+   "weights": [
+    600
+   ],
+   "stack": "'Inter', system-ui, sans-serif"
+  }
+ ],
+ "presets": [
+  {
+   "id": "square_1080",
+   "label": "Square 1:1",
+   "w": 1080,
+   "h": 1080
+  },
+  {
+   "id": "story_1080x1920",
+   "label": "Story 9:16",
+   "w": 1080,
+   "h": 1920
+  },
+  {
+   "id": "meta_feed_1200x1200",
+   "label": "Meta feed",
+   "w": 1200,
+   "h": 1200
+  },
+  {
+   "id": "banner_1200x628",
+   "label": "Banner 1.91:1",
+   "w": 1200,
+   "h": 628
+  }
+ ],
+ "assets": [
+  {
+   "id": "bloom-000",
+   "category": "bloom",
+   "origName": "09_17bea3ad-6ca3-487c-8ddb-c75be7d31294.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-000.png",
+   "w": 460,
+   "h": 451,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-001",
+   "category": "bloom",
+   "origName": "10_ebd4c9d2-469b-4d06-955c-deb80038c074.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-001.png",
+   "w": 643,
+   "h": 521,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-002",
+   "category": "bloom",
+   "origName": "11_a077e94f-6a78-4744-b184-83452c0eff8d.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-002.png",
+   "w": 540,
+   "h": 508,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-003",
+   "category": "bloom",
+   "origName": "12_5947930f-65e7-4070-b800-f073db9f6599.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-003.png",
+   "w": 516,
+   "h": 506,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-004",
+   "category": "bloom",
+   "origName": "13_0e5f6db4-8192-4b7d-91d4-9c1b12fcf29c.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-004.png",
+   "w": 725,
+   "h": 478,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-005",
+   "category": "bloom",
+   "origName": "14_64a3ecaa-7442-4db2-b5ed-4d200b50430c.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-005.png",
+   "w": 777,
+   "h": 478,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-006",
+   "category": "bloom",
+   "origName": "15_7312227c-678c-4214-9a22-22ae967b64d1.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-006.png",
+   "w": 724,
+   "h": 415,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-007",
+   "category": "bloom",
+   "origName": "15_9adc152c-5362-4c6a-9c5b-867e884bfa45.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-007.png",
+   "w": 807,
+   "h": 458,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-008",
+   "category": "bloom",
+   "origName": "16_eae914bb-c4d3-4a8d-bb04-968dc97a6f17.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-008.png",
+   "w": 621,
+   "h": 534,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-009",
+   "category": "bloom",
+   "origName": "17_eb16143d-f5d5-4e24-a4b8-45c0712b66e1.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-009.png",
+   "w": 612,
+   "h": 470,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-010",
+   "category": "bloom",
+   "origName": "18_013f0702-1e76-4d79-9060-997da49bc892.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-010.png",
+   "w": 658,
+   "h": 426,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-011",
+   "category": "bloom",
+   "origName": "19_dbe57cdd-8108-45f7-aa37-25c8e335741e.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-011.png",
+   "w": 724,
+   "h": 415,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-012",
+   "category": "bloom",
+   "origName": "20_a71667e1-4cd1-433e-b0b3-3c049e357fbd.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-012.png",
+   "w": 576,
+   "h": 321,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-013",
+   "category": "bloom",
+   "origName": "21_84e1928f-48f4-4955-ad64-5aba8c1a1424.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-013.png",
+   "w": 612,
+   "h": 470,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-014",
+   "category": "bloom",
+   "origName": "22_4058ae97-efdb-41f6-b530-8a6df7b5c434.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-014.png",
+   "w": 658,
+   "h": 426,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-015",
+   "category": "bloom",
+   "origName": "22_648da800-8090-4480-8c17-0e451e00ca08.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-015.png",
+   "w": 576,
+   "h": 321,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-016",
+   "category": "bloom",
+   "origName": "23_74860eff-3259-4caf-9da6-1aa64df30ee1.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-016.png",
+   "w": 540,
+   "h": 508,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-017",
+   "category": "bloom",
+   "origName": "24_051acdc8-0932-4227-8d3a-f39f0e3d5e52.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-017.png",
+   "w": 643,
+   "h": 521,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-018",
+   "category": "bloom",
+   "origName": "25_af33aba5-4395-42d6-b958-c8e5302e1df2.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-018.png",
+   "w": 725,
+   "h": 478,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-019",
+   "category": "bloom",
+   "origName": "26_8a2bba7a-ce40-48b0-b61c-7b5985b090a5.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-019.png",
+   "w": 777,
+   "h": 478,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-020",
+   "category": "bloom",
+   "origName": "27_2c191e02-5d19-4aee-a593-e32b810c0ede.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-020.png",
+   "w": 807,
+   "h": 458,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-021",
+   "category": "bloom",
+   "origName": "27_83e372d1-d3c6-448c-96b1-db095770a81e.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-021.png",
+   "w": 460,
+   "h": 451,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-022",
+   "category": "bloom",
+   "origName": "28_a030489e-2aa8-4ddc-a151-0227d1775c9e.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-022.png",
+   "w": 621,
+   "h": 534,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-023",
+   "category": "bloom",
+   "origName": "29_5de69300-fd81-4d95-a096-ab71e3928d0b.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-023.png",
+   "w": 516,
+   "h": 506,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-024",
+   "category": "bloom",
+   "origName": "30_1dd5c9fe-de97-4788-a8fd-81f6ec7d3406.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-024.png",
+   "w": 460,
+   "h": 451,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-025",
+   "category": "bloom",
+   "origName": "31_fe6171b6-0084-4f22-a40c-a9c2d9005fee.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-025.png",
+   "w": 621,
+   "h": 534,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-026",
+   "category": "bloom",
+   "origName": "32_c4c03a39-1ec2-4d99-9dc6-8f0eb1de68f8.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-026.png",
+   "w": 540,
+   "h": 508,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-027",
+   "category": "bloom",
+   "origName": "33_06a55792-6c82-4809-8dc2-02e93df4000a.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-027.png",
+   "w": 516,
+   "h": 506,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-028",
+   "category": "bloom",
+   "origName": "34_9176f435-300c-4f85-a118-fa74606afab6.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-028.png",
+   "w": 643,
+   "h": 521,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-029",
+   "category": "bloom",
+   "origName": "35_e5beb435-725a-4ffc-808f-f0896e579735.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-029.png",
+   "w": 807,
+   "h": 458,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-030",
+   "category": "bloom",
+   "origName": "36_3414f814-5f14-4b32-b845-367561c771aa.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-030.png",
+   "w": 576,
+   "h": 321,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-031",
+   "category": "bloom",
+   "origName": "37_6f73fcef-7b46-48ea-b6da-65f7320cc7fe.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-031.png",
+   "w": 724,
+   "h": 415,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-032",
+   "category": "bloom",
+   "origName": "38_0d406a7d-4944-4911-9477-0d6f332d6e95.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-032.png",
+   "w": 777,
+   "h": 478,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-033",
+   "category": "bloom",
+   "origName": "39_081b004c-79d1-468c-a17c-c23fa2f0f5b9.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-033.png",
+   "w": 612,
+   "h": 470,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-034",
+   "category": "bloom",
+   "origName": "40_ffc9b518-ba7e-4182-a6d6-f49d797ec34a.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-034.png",
+   "w": 725,
+   "h": 478,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "bloom-035",
+   "category": "bloom",
+   "origName": "41_fbf34b40-189a-4f67-974b-e6553f89af0e.png",
+   "label": "Bloom",
+   "src": "/brand/xero/assets/bloom-035.png",
+   "w": 658,
+   "h": 426,
+   "hasAlpha": true,
+   "recolorable": true
+  },
+  {
+   "id": "illustration-036",
+   "category": "illustration",
+   "origName": "01_da9e5406-afac-40c5-a16e-149db1ba3096_Vacation.svg",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-036.svg",
+   "hasAlpha": false,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-037",
+   "category": "illustration",
+   "origName": "03_a6b018c4-2be8-480d-8ce6-a1016b188337_Tax_Return.svg",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-037.svg",
+   "hasAlpha": false,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-038",
+   "category": "illustration",
+   "origName": "04_d558cb9b-8b23-42fe-a83c-8f48fece872d_Anywhere_Access.svg",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-038.svg",
+   "hasAlpha": false,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-039",
+   "category": "illustration",
+   "origName": "06_7dcd5cfc-92b3-4d4d-bf31-74b5683ba887.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-039.png",
+   "w": 638,
+   "h": 631,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-040",
+   "category": "illustration",
+   "origName": "07_c4828698-0bfc-4972-97fb-613682f19db6.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-040.png",
+   "w": 999,
+   "h": 571,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-041",
+   "category": "illustration",
+   "origName": "08_04ca290b-aa4a-4e6e-a7bc-5ca24fbbd70d.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-041.png",
+   "w": 837,
+   "h": 458,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-042",
+   "category": "illustration",
+   "origName": "09_699f7f9f-206c-4fa0-9049-4aaad608cf5b.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-042.png",
+   "w": 680,
+   "h": 487,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-043",
+   "category": "illustration",
+   "origName": "10_d253b4ba-02cf-4612-9d18-b93c9784f78f.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-043.png",
+   "w": 581,
+   "h": 549,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-044",
+   "category": "illustration",
+   "origName": "11_a3b885b9-19ea-42af-a6c0-0f2032fd8a9f.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-044.png",
+   "w": 837,
+   "h": 458,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-045",
+   "category": "illustration",
+   "origName": "12_c2047bf4-60f9-4ccd-8d12-731f86bc64da.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-045.png",
+   "w": 581,
+   "h": 549,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-046",
+   "category": "illustration",
+   "origName": "13_6b6de390-09ed-4464-b93c-1d5c9948532e.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-046.png",
+   "w": 680,
+   "h": 524,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-047",
+   "category": "illustration",
+   "origName": "14_80d946dc-0309-4582-b09a-f5f39b885e2e.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-047.png",
+   "w": 999,
+   "h": 571,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-048",
+   "category": "illustration",
+   "origName": "15_eab8740c-41dc-4e32-a565-2f73d6629d1f.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-048.png",
+   "w": 638,
+   "h": 631,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "illustration-049",
+   "category": "illustration",
+   "origName": "16_a34a5d04-839a-42b1-9afe-afdb309ff361.png",
+   "label": "Illustration",
+   "src": "/brand/xero/assets/illustration-049.png",
+   "w": 714,
+   "h": 473,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "logo-050",
+   "category": "logo",
+   "origName": "01_0f4c5387-a60d-4a27-93e8-9f5223676154.png",
+   "label": "Wordmark \u00b7 white",
+   "src": "/brand/xero/assets/logo-050.png",
+   "w": 210,
+   "h": 60,
+   "hasAlpha": true,
+   "recolorable": false,
+   "variant": "white"
+  },
+  {
+   "id": "logo-051",
+   "category": "logo",
+   "origName": "02_2f020a69-e294-4971-b448-760f8b1827ad.png",
+   "label": "Wordmark \u00b7 midnight",
+   "src": "/brand/xero/assets/logo-051.png",
+   "w": 210,
+   "h": 60,
+   "hasAlpha": true,
+   "recolorable": false,
+   "variant": "midnight"
+  },
+  {
+   "id": "logo-052",
+   "category": "logo",
+   "origName": "03_a6d69555-61d3-43ba-a7ab-e38d56a3805c.png",
+   "label": "Wordmark \u00b7 blue",
+   "src": "/brand/xero/assets/logo-052.png",
+   "w": 210,
+   "h": 60,
+   "hasAlpha": true,
+   "recolorable": false,
+   "variant": "blue"
+  },
+  {
+   "id": "charm-053",
+   "category": "charm",
+   "origName": "01_abae37d0-cb6e-4e7c-8bc4-13542068ecd3.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-053.png",
+   "w": 75,
+   "h": 69,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "charm-054",
+   "category": "charm",
+   "origName": "02_418c1844-0245-4f33-aeb8-7a3e3b8ad23c.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-054.png",
+   "w": 76,
+   "h": 67,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "charm-055",
+   "category": "charm",
+   "origName": "02_fe1e9f40-8d12-4890-a61a-89189bd35494.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-055.png",
+   "w": 60,
+   "h": 82,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "charm-056",
+   "category": "charm",
+   "origName": "03_ca497862-09a8-4d79-803b-bfd96b145e47.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-056.png",
+   "w": 75,
+   "h": 77,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "charm-057",
+   "category": "charm",
+   "origName": "04_85d0a1a5-1c99-4250-aa9b-0db199de7374.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-057.png",
+   "w": 75,
+   "h": 77,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "charm-058",
+   "category": "charm",
+   "origName": "05_8eb79ce3-caff-42cd-a9e4-e75c0a26928f.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-058.png",
+   "w": 71,
+   "h": 72,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "charm-059",
+   "category": "charm",
+   "origName": "06_ae608f3c-c42e-4dd2-98a4-88c89e52a932.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-059.png",
+   "w": 71,
+   "h": 72,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "charm-060",
+   "category": "charm",
+   "origName": "06_ffa56f64-1102-46c6-89b9-50301e6912ac.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-060.png",
+   "w": 84,
+   "h": 85,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "charm-061",
+   "category": "charm",
+   "origName": "07_c1d8ba28-b4bb-4067-bcfb-72de14e56c76.png",
+   "label": "Charm",
+   "src": "/brand/xero/assets/charm-061.png",
+   "w": 273,
+   "h": 297,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-063",
+   "category": "background",
+   "origName": "01_4c697152-6594-4ae4-b069-d5cddec06d2e.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-063.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-064",
+   "category": "background",
+   "origName": "02_fb7d193a-f8c7-4ccb-a138-ef2dd580c770.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-064.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-065",
+   "category": "background",
+   "origName": "03_040d2847-9b45-479f-9f9f-e26219542eb3.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-065.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-066",
+   "category": "background",
+   "origName": "04_4bd578f8-72e9-4ed3-9361-d7642f371d5a.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-066.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-067",
+   "category": "background",
+   "origName": "05_85cd075f-f534-491c-b16d-e4561a00aa9d.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-067.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-068",
+   "category": "background",
+   "origName": "06_86d7d942-8d10-418d-b14e-bff3711c34e2.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-068.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-069",
+   "category": "background",
+   "origName": "07_91655fef-5d8d-484f-a676-591f4859d3be.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-069.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-070",
+   "category": "background",
+   "origName": "08_e6d88a0d-da79-42d7-9ed6-364bdb339482.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-070.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-071",
+   "category": "background",
+   "origName": "09_74b0caa7-fa4e-4778-9338-b4bc5f1527e2.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-071.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-072",
+   "category": "background",
+   "origName": "10_c6a417a4-d8df-47a5-8d1a-3fc52f278795.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-072.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-073",
+   "category": "background",
+   "origName": "11_54fded8e-91ec-4c63-8eee-b248b06db741.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-073.png",
+   "w": 579,
+   "h": 579,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-074",
+   "category": "background",
+   "origName": "12_caec33cd-a21c-4d71-aa40-066470dd8ee5.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-074.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-075",
+   "category": "background",
+   "origName": "13_f20c4a23-ba70-4de9-96d7-26b8403a98b4.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-075.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-076",
+   "category": "background",
+   "origName": "14_0c91ce36-113f-493d-8b17-dd754a6ff3fd.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-076.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-077",
+   "category": "background",
+   "origName": "14_996f1c06-6a5f-4e7e-8043-26f3165e52fb.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-077.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-078",
+   "category": "background",
+   "origName": "14_c84e0a5e-7094-47bd-b243-276d5097d6db.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-078.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-079",
+   "category": "background",
+   "origName": "15_17ae0d0c-d768-4c79-b87f-3657b751345c.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-079.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  },
+  {
+   "id": "background-080",
+   "category": "background",
+   "origName": "16_fe4ed594-a50e-4a9e-8839-49216794802a.png",
+   "label": "Background",
+   "src": "/brand/xero/assets/background-080.png",
+   "w": 579,
+   "h": 1028,
+   "hasAlpha": true,
+   "recolorable": false
+  }
+ ],
+ "rules": [
+  {
+   "id": "contrast",
+   "text": "Headline text must be ink (#00124E) or white with strong contrast; never low-contrast on sky.",
+   "severity": "error"
+  },
+  {
+   "id": "logo-once",
+   "text": "The xero wordmark appears once, from the asset library, with clear-space at least its cap-height.",
+   "severity": "error"
+  },
+  {
+   "id": "palette",
+   "text": "Use only brand palette colours. Blue and sky for shapes and blooms; charms are accents only.",
+   "severity": "error"
+  },
+  {
+   "id": "ticks",
+   "text": "Feature lists use green ticks with short uppercase labels (ACCOUNTING, PAYMENTS, PAYROLL, ANALYTICS).",
+   "severity": "warn"
+  },
+  {
+   "id": "safezone",
+   "text": "Respect Meta safe zones on social placements; keep the logo and CTA inside the safe area.",
+   "severity": "warn"
+  },
+  {
+   "id": "learned-resized-shape",
+   "text": "Resize shapes proportionally; never distort or stretch Xero brand shapes.",
+   "severity": "warn"
+  },
+  {
+   "id": "learned-moved-shape",
+   "text": "Keep brand shapes in their original position; never move or reposition them.",
+   "severity": "warn"
+  },
+  {
+   "id": "learned-edited-design",
+   "text": "Use \"edited\" alone; never pair it with \"design\" in Xero communications.",
+   "severity": "warn"
+  },
+  {
+   "id": "learned-moved-logo",
+   "text": "Keep the Xero logo in its designated position; never move it.",
+   "severity": "warn"
+  }
+ ],
+ "voice": "Friendly, plain-spoken and encouraging. Short active sentences that talk to small-business owners like a helpful partner. Confident, never jargon-y. Examples: 'Get a Xero Coach. Get ahead.' / 'Up and running in under 4 hours.' / 'Other software holds you back. Xero holds your hand.'",
+ "archetypes": [
+  {
+   "id": "headline-card",
+   "label": "White card headline + CTA pill, logo bottom-left, charms top-right",
+   "regions": [
+    {
+     "role": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     }
+    },
+    {
+     "role": "card",
+     "box": {
+      "x": 0.04,
+      "y": 0.13,
+      "w": 0.92,
+      "h": 0.66
+     }
+    },
+    {
+     "role": "headline",
+     "box": {
+      "x": 0.1,
+      "y": 0.3,
+      "w": 0.72,
+      "h": 0.24
+     }
+    },
+    {
+     "role": "pill",
+     "box": {
+      "x": 0.1,
+      "y": 0.62,
+      "w": 0.5,
+      "h": 0.1
+     }
+    },
+    {
+     "role": "charm",
+     "box": {
+      "x": 0.6,
+      "y": 0.08,
+      "w": 0.32,
+      "h": 0.18
+     }
+    },
+    {
+     "role": "logo",
+     "box": {
+      "x": 0.06,
+      "y": 0.88,
+      "w": 0.22,
+      "h": 0.07
+     }
+    },
+    {
+     "role": "featureList",
+     "box": {
+      "x": 0.36,
+      "y": 0.88,
+      "w": 0.58,
+      "h": 0.08
+     }
+    }
+   ]
+  },
+  {
+   "id": "photo-hero",
+   "label": "Photo with blob overlay, headline top, logo bottom-right, CTA bottom-left",
+   "regions": [
+    {
+     "role": "image",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 1
+     }
+    },
+    {
+     "role": "headline",
+     "box": {
+      "x": 0.06,
+      "y": 0.06,
+      "w": 0.82,
+      "h": 0.2
+     }
+    },
+    {
+     "role": "pill",
+     "box": {
+      "x": 0.06,
+      "y": 0.85,
+      "w": 0.42,
+      "h": 0.09
+     }
+    },
+    {
+     "role": "logo",
+     "box": {
+      "x": 0.7,
+      "y": 0.87,
+      "w": 0.24,
+      "h": 0.08
+     }
+    }
+   ]
+  },
+  {
+   "id": "split-contrast",
+   "label": "Navy + sky split, contrasting headlines, product centred",
+   "regions": [
+    {
+     "role": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 0.5,
+      "h": 1
+     }
+    },
+    {
+     "role": "headline",
+     "box": {
+      "x": 0.04,
+      "y": 0.08,
+      "w": 0.42,
+      "h": 0.3
+     }
+    },
+    {
+     "role": "headline",
+     "box": {
+      "x": 0.54,
+      "y": 0.08,
+      "w": 0.42,
+      "h": 0.3
+     }
+    },
+    {
+     "role": "image",
+     "box": {
+      "x": 0.3,
+      "y": 0.32,
+      "w": 0.4,
+      "h": 0.52
+     }
+    },
+    {
+     "role": "featureList",
+     "box": {
+      "x": 0.04,
+      "y": 0.72,
+      "w": 0.32,
+      "h": 0.16
+     }
+    },
+    {
+     "role": "logo",
+     "box": {
+      "x": 0.04,
+      "y": 0.9,
+      "w": 0.22,
+      "h": 0.07
+     }
+    }
+   ]
+  }
+ ],
+ "rewardWeights": {
+  "palette": 0.2,
+  "contrast": 0.2,
+  "safezone": 0.15,
+  "archetype": 0.15,
+  "hierarchy": 0.15,
+  "voice": 0.15
+ },
+ "learned": [
+  {
+   "id": "learned-0",
+   "key": "resized shape",
+   "text": "Resize shapes proportionally; never distort or stretch Xero brand shapes.",
+   "origin": "learned",
+   "confirmations": 3
+  },
+  {
+   "id": "learned-1",
+   "key": "moved shape",
+   "text": "Keep brand shapes in their original position; never move or reposition them.",
+   "origin": "learned",
+   "confirmations": 3
+  },
+  {
+   "id": "learned-2",
+   "key": "edited design",
+   "text": "Use \"edited\" alone; never pair it with \"design\" in Xero communications.",
+   "origin": "learned",
+   "confirmations": 3
+  },
+  {
+   "id": "learned-3",
+   "key": "moved logo",
+   "text": "Keep the Xero logo in its designated position; never move it.",
+   "origin": "learned",
+   "confirmations": 3
+  }
+ ],
+ "examples": [
+  "Promote Xero as easy accounting for small businesses \u2014 get paid faster.",
+  "Announce a free 30-day trial, friendly and confident.",
+  "Payroll made simple, for cafe and salon owners.",
+  "Switch to Xero and be up and running in under 4 hours."
+ ]
+}

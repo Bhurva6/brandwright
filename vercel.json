@@ -33,6 +33,10 @@
     {
       "source": "/library",
       "destination": "/index.html"
+    },
+    {
+      "source": "/chat",
+      "destination": "/index.html"
     }
   ],
   "functions": {
