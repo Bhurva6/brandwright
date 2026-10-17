@@ -251,7 +251,7 @@ export default function ChatPage() {
               {m.kitCard && (
                 <div className="ckit">
                   <div className="ckit-head"><Icon name="dna" size={15} /> Brand kit <b>{m.kitCard.name.toLowerCase()}</b> ready</div>
-                  <div className="ckit-sw">{m.kitCard.colors.slice(0, 8).map((c: any, i: number) => <i key={i} style={{ background: c.hex || c }} />)}</div>
+                  <div className="ckit-sw">{m.kitCard.colors.slice(0, 8).map((c: any, i: number) => <i key={i} style={{ background: c.value || c.hex || c }} />)}</div>
                   <div className="ckit-meta">{m.kitCard.colors.length} colours · {m.kitCard.fonts.length} type roles · {m.kitCard.assets.length} assets bound</div>
                 </div>
               )}
