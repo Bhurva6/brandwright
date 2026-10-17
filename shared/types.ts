@@ -170,6 +170,7 @@ export interface BrandRule {
 }
 
 export interface BrandKit {
+  id: string;
   name: string;
   colors: BrandColor[];
   fonts: BrandFont[];
@@ -177,6 +178,9 @@ export interface BrandKit {
   assets: BrandAsset[];
   rules: BrandRule[];
   voice: string; // tone-of-voice guidance for the agent's copywriting
+  archetypes?: LayoutArchetype[];
+  rewardWeights?: Record<string, number>; // critic dimension weights; the outer loop tunes these
+  learned?: LearnedRule[];
 }
 
 // ---------------------------------------------------------------------------
@@ -197,4 +201,126 @@ export interface AgentRequest {
 export interface AgentResult {
   specs: DesignSpec[];
   message: string; // chat reply shown to the designer
+}
+
+// ===========================================================================
+// Version control — the git-for-design model
+// ===========================================================================
+
+export type Author = 'human' | 'generator' | 'critic';
+
+/** Everything needed to reproduce an image generation; stored on the commit. */
+export interface GenerationRecipe {
+  model: string;
+  prompt: string;
+  size: string;
+  seed?: number;
+  params?: Record<string, unknown>;
+  assetHash?: string; // content-addressed id of the resulting image blob
+}
+
+export interface CriticFinding {
+  dimension: string; // 'palette' | 'contrast' | 'safezone' | 'archetype' | 'voice' | ...
+  severity: 'error' | 'warn' | 'info';
+  message: string;
+  layerId?: string;
+}
+
+/** The reward R for a design, per the self-improvement loop. */
+export interface CriticScore {
+  total: number; // 0..1 weighted reward R = Σ wᵢ·scoreᵢ
+  dimensions: Record<string, number>; // per-dimension 0..1
+  findings: CriticFinding[];
+  pass: boolean; // total >= threshold and no error-severity findings
+}
+
+export interface Commit {
+  id: string; // short hash
+  parents: string[]; // parent commit ids (a merge has 2)
+  author: Author;
+  message: string;
+  specId: string; // points into DesignRepo.specs
+  score?: CriticScore;
+  createdAt: number;
+}
+
+export interface Branch {
+  name: string;
+  head: string; // commit id
+  strategy?: string; // creative-direction label for a variation branch
+}
+
+export interface DesignRepo {
+  id: string;
+  brandId: string;
+  commits: Record<string, Commit>;
+  specs: Record<string, DesignSpec>; // specId -> immutable snapshot
+  branches: Branch[];
+  headBranch: string;
+}
+
+export interface LayerDiff {
+  layerId: string;
+  type: LayerType;
+  kind: 'added' | 'removed' | 'changed';
+  changes?: { field: string; from: unknown; to: unknown }[];
+}
+
+/** Semantic diff over the DesignSpec IR — the signature feature. */
+export interface SpecDiff {
+  from: string; // commit id
+  to: string; // commit id
+  layers: LayerDiff[];
+  canvasChanges?: { field: string; from: unknown; to: unknown }[];
+  summary: string; // "headline ✎, ink→blue, +charm"
+}
+
+// ===========================================================================
+// Brand ingest + learning
+// ===========================================================================
+
+/** A layout pattern mined from the brand's example ads (no vision; from geometry/meta). */
+export interface LayoutArchetype {
+  id: string;
+  label: string; // 'headline-left + cta pill + logo bottom-left'
+  regions: { role: string; box: Box }[]; // boxes normalized 0..1
+  source?: string; // reference asset id it was mined from
+}
+
+export interface LearnedRule {
+  id: string;
+  text: string;
+  origin: 'inferred' | 'learned'; // inferred at ingest vs learned from edits
+  weight?: number;
+  confirmations?: number;
+}
+
+/** One accept/edit/revert event — the outer-loop training signal. */
+export interface PreferenceSignal {
+  commitId: string;
+  action: 'accept' | 'edit' | 'revert';
+  layerId?: string;
+  before?: unknown;
+  after?: unknown;
+  at: number;
+}
+
+/** A classified, optimized asset discovered during ingest. */
+export interface IngestedAsset {
+  id: string;
+  category: BrandAsset['category'];
+  label: string;
+  src: string; // served path
+  w?: number;
+  h?: number;
+  hasAlpha?: boolean;
+  recolorable?: boolean;
+}
+
+/** Raw ingest output before DeepSeek enrichment. */
+export interface IngestDraft {
+  brandId: string;
+  name: string;
+  palette: { value: string; pct: number }[];
+  assets: IngestedAsset[];
 }
