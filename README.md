@@ -54,13 +54,37 @@ reward clears threshold. Two agents (generator + critic) converse through commit
 
 ## Features
 
-Create (N variations = N branches) · editable canvas (drag/resize/retype/recolor/
-reorder/delete, brand-swatch enforced) · conversational edit · per-layer image
-re-roll with candidates · version history with authorship + semantic diff + restore ·
-Performance Lens scores + insights · auto-fix · creative-fatigue refresh ·
-reference remix (per-brand reference libraries; structure transfer) · re-skin to any
-brand · multi-placement adapt + launch-pack export (zip: all sizes + copy sheet +
-compliance report) · live brand ingest · brand-adaptive UI chrome.
+**Pages** — landing (`/`), studio (`/studio`), editor (`/editor`), drafts (`/drafts`),
+favourites (`/favourites`), guided brand ingest (`/ingest`); session + history
+survive refresh (IndexedDB).
+
+**Create** — N variations = N branches (chunked generation, salvage parsing: a
+truncated model response yields its complete designs, never an error) · reference
+remix as an overlapping card deck (per-brand libraries, your own described
+reference, selected-card loading) · campaign mode (3 concepts × every placement) ·
+blank canvas with a manual add-layer palette · import any image to edit.
+
+**Edit** — drag/resize/retype/recolor (brand-swatch enforced) · keyboard
+shortcuts (⌘C/V/D, ⌫, arrows, ⌘Z) · conversational copilot (bottom bar) ·
+per-layer image re-roll with kept candidate takes · background removal (button,
+or auto-applied when the chat instruction asks) · place your own photo ·
+exploded 3D layers view (labelled planes, drag to orbit) · editable title.
+
+**Judge** — Performance Lens baseline score always on screen · accountable
+auto-fix: before→after delta, resolved findings, per-dimension gains, semantic
+change list — with an honesty guard that refuses non-improvements · deterministic
+layout tidy pass (no overlapping readables, canvas clamping) on every generation.
+
+**Version** — commit DAG with authorship (human/generator/critic), semantic
+diffs, checkout + restore, creative-fatigue refresh, re-skin to any brand.
+
+**Ship** — native canvas export engine (no DOM screenshots): PNG / JPEG / SVG /
+print-ready PDF / Motion (layer-reveal WebM rendered in-browser) · launch-pack
+zip (all sizes + copy sheet + compliance report) · CMYK print check · Drafts +
+Favourites library · multi-placement adapt.
+
+**Learn** — live genome ingest from any asset folder · preference signals from
+human edits induce explicit genome rules (3× repeat → new rule, toast shown).
 
 ## Run it
 
@@ -90,7 +114,17 @@ server/lib/spec.mjs    normalizer: tokens→hex, asset binding, valid-by-constru
 server/index.js        API: generate(SSE) edit critic autofix refresh remix adapt
                        reskin ingest learn image
 client/src/vc.ts       the version engine: commit DAG, branches, semantic diff
-client/src/store.ts    app state: repo, working tree, scores, learning signals
-client/src/Editor.tsx  canvas editing, lens, history, re-skin, pack export
+client/src/store.ts    app state: repo, working tree, scores, routes, persistence
+client/src/Editor.tsx  canvas editing, lens + fix receipts, history, re-skin, exports
+client/src/rasterize.ts native canvas renderer — every export draws the spec itself
+client/src/Exploded.tsx 3D exploded-layers view
+client/src/Ingest.tsx  guided brand-ingest page
 client/src/Layers.tsx  spec renderer (auto-fit text, recolorable blooms, wordmarks)
 ```
+
+## Live
+
+Hosted demo: https://brandwright-bhurva6s-projects.vercel.app (live ingest is
+local-only — serverless filesystems are read-only; five genomes ship preloaded).
+A fictional test kit for ingest lives in `Verve Coffee Brand Kit/` form — or
+generate your own and drop the folder on `/ingest` locally.
