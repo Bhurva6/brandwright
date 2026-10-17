@@ -4,6 +4,8 @@ import { getBrand, generateStream, runRemix } from './api';
 import { useStore } from './store';
 import Editor from './Editor';
 import { Coachmarks, HOME_STEPS } from './Coachmarks';
+import { listExports, removeExport } from './library';
+import type { LibraryItem } from './library';
 
 interface RefAd { id: string; src: string; label: string; structure: string }
 
@@ -160,6 +162,11 @@ export default function App() {
 
   const toast = useStore((s) => s.toast);
   const [replayTour, setReplayTour] = useState(0);
+  const [showLib, setShowLib] = useState(false);
+  const [lib, setLib] = useState<LibraryItem[]>([]);
+  useEffect(() => {
+    if (view === 'home') listExports().then(setLib).catch(() => {});
+  }, [view, showLib]);
 
   if (view === 'editor') return <Editor />;
 
@@ -174,6 +181,9 @@ export default function App() {
           Brandwright
           <span className="tag">version control for brand design</span>
           <button className="helpbtn" title="Replay the tour" onClick={() => setReplayTour((n) => n + 1)}>?</button>
+          <button className={'libbtn' + (showLib ? ' on' : '')} title="Your exported designs" onClick={() => setShowLib((v) => !v)}>
+            🖼 Library{lib.length ? ` · ${lib.length}` : ''}
+          </button>
         </div>
         {kit && (
           <div className="genome">
@@ -251,6 +261,31 @@ export default function App() {
           </button>
         </div>
       </section>
+
+      {showLib && (
+        <section className="libview">
+          <div className="refstrip-title">Library <span>— every PNG you export is kept here, on this device</span></div>
+          {lib.length === 0 ? (
+            <div className="ed-hint" style={{ padding: '18px 4px' }}>Nothing yet — open a design in the editor and hit Export PNG.</div>
+          ) : (
+            <div className="libgrid">
+              {lib.map((it) => (
+                <div key={it.id} className="libcard">
+                  <img src={it.dataUrl} alt={it.name} loading="lazy" />
+                  <div className="libmeta">
+                    <b>{it.name}</b>
+                    <span>{it.brand} · {it.preset} · {new Date(it.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <div className="librow">
+                      <a className="mini" href={it.dataUrl} download={`${it.name.replace(/\W+/g, '-').toLowerCase()}.png`}>Download</a>
+                      <button className="mini" onClick={() => removeExport(it.id).then(() => listExports().then(setLib))}>Delete</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       {(refs.length > 0 || specRefs.length > 0) && (
         <section className="refstrip">

@@ -220,6 +220,22 @@ select.resel { appearance: none; -webkit-appearance: none; }
   .top { flex-direction: column; align-items: flex-start; }
 }
 
+/* ===================== library ===================== */
+.libbtn { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px; padding: 6px 13px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.libbtn:hover, .libbtn.on { border-color: var(--accent); color: var(--accent); }
+.libview { margin-top: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; animation: fade-in 280ms ease both; }
+.libgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+.libcard { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+.libcard img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: var(--line-2); }
+.libmeta { padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; }
+.libmeta b { font-size: 12.8px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.libmeta span { font-size: 11px; color: var(--muted); }
+.librow { display: flex; gap: 6px; margin-top: 6px; }
+.librow .mini { text-decoration: none; color: var(--ink); }
+.ed-title { border: 1px solid transparent; background: none; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15px; margin-left: auto; color: var(--ink); border-radius: 8px; padding: 5px 9px; min-width: 120px; max-width: 240px; }
+.ed-title:hover { border-color: var(--line); }
+.ed-title:focus { border-color: var(--accent); outline: none; background: #fff; }
+
 /* ===================== coachmarks ===================== */
 .cm-root { position: fixed; inset: 0; z-index: 90; }
 .cm-hole {

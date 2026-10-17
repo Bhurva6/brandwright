@@ -3,7 +3,8 @@
 // Every change becomes a commit on the active branch.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { toPng } from 'html-to-image';
+import { toPng, toJpeg, toSvg } from 'html-to-image';
+import { jsPDF } from 'jspdf';
 import JSZip from 'jszip';
 import { DesignView } from './DesignView';
 import type { DesignSpec, BrandKit } from './types';
@@ -14,6 +15,7 @@ import { diffSpecs, diffSummary, specOf, newId } from './vc';
 import { editDesign, regenImage, runCritic, runAutofix, runRefresh, runAdapt, runReskin, getBrand } from './api';
 import { ScoreBadge } from './App';
 import { Coachmarks, EDITOR_STEPS } from './Coachmarks';
+import { saveExport } from './library';
 import type { Layer } from './types';
 
 let layerClipboard: Layer | null = null; // copy/paste buffer (survives branch switches)
@@ -268,6 +270,7 @@ export default function Editor() {
         try {
           const png = await renderSpecPng(item.spec, kit);
           zip.file(`${slug(working.name)}-${item.name}.png`, png.split(',')[1], { base64: true });
+          saveExport({ id: newId('x'), name: working.name, brand: kit.name, preset: item.name, at: Date.now(), dataUrl: png }).catch(() => {});
         } catch (e) {
           console.error('pack: render failed for', item.name, e); // skip a bad size, keep the pack
         }
@@ -297,20 +300,111 @@ export default function Editor() {
     }
   }
 
-  // ----- export -------------------------------------------------------------
+  // ----- export (png / jpeg / svg / pdf / motion webm) ---------------------
+  const [exportFmt, setExportFmt] = useState('png');
+
+  function download(href: string, ext: string) {
+    const a = document.createElement('a');
+    a.download = `${working.name.replace(/\W+/g, '-').toLowerCase()}.${ext}`;
+    a.href = href;
+    a.click();
+  }
+
   async function exportPng() {
     const node = stageRef.current;
     if (!node) return;
-    const dataUrl = await toPng(node, {
-      width: working.canvas.w,
-      height: working.canvas.h,
-      style: { transform: 'none' },
-      pixelRatio: 1,
+    const opts = { width: working.canvas.w, height: working.canvas.h, style: { transform: 'none' as const }, pixelRatio: 1 };
+    try {
+      if (exportFmt === 'motion') return await exportMotion();
+      if (exportFmt === 'jpeg') return download(await toJpeg(node, { ...opts, quality: 0.92, backgroundColor: '#fff' }), 'jpg');
+      if (exportFmt === 'svg') return download(await toSvg(node, opts), 'svg');
+      const dataUrl = await toPng(node, opts);
+      if (exportFmt === 'pdf') {
+        const landscape = working.canvas.w >= working.canvas.h;
+        const pdf = new jsPDF({ orientation: landscape ? 'l' : 'p', unit: 'px', format: [working.canvas.w, working.canvas.h] });
+        pdf.addImage(dataUrl, 'PNG', 0, 0, working.canvas.w, working.canvas.h);
+        pdf.save(`${working.name.replace(/\W+/g, '-').toLowerCase()}.pdf`);
+      } else {
+        download(dataUrl, 'png');
+      }
+      // every raster export lands in the Library so nothing is ever lost
+      try {
+        await saveExport({ id: newId('x'), name: working.name, brand: kit.name, preset: working.canvas.preset, at: Date.now(), dataUrl });
+        useStore.setState({ toast: '🖼 Saved to Library' });
+        setTimeout(() => useStore.setState({ toast: undefined }), 3000);
+      } catch { /* best-effort */ }
+    } catch (e: any) {
+      useStore.setState({ toast: 'Export failed: ' + (e?.message || e) });
+      setTimeout(() => useStore.setState({ toast: undefined }), 5000);
+    }
+  }
+
+  /** Motion export: the design builds itself — layers reveal in stages,
+   *  recorded off a canvas straight to WebM. No services, all in-browser. */
+  async function exportMotion() {
+    const W = working.canvas.w, H = working.canvas.h;
+    const groups: string[][] = [
+      ['background', 'shape', 'bloom'],
+      ['image', 'charm'],
+      ['text'],
+      ['pill', 'featureList', 'logo'],
+    ];
+    useStore.setState({ toast: '🎬 Rendering motion…' });
+    // cumulative stage frames
+    const frames: HTMLImageElement[] = [];
+    for (let g = 0; g < groups.length; g++) {
+      const allowed = new Set(groups.slice(0, g + 1).flat());
+      const partial = { ...working, layers: working.layers.filter((l) => allowed.has(l.type)) };
+      const url = await renderSpecPng(partial, kit);
+      const img = new Image();
+      img.src = url;
+      await img.decode();
+      frames.push(img);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d')!;
+    const stream = canvas.captureStream(30);
+    const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8_000_000 });
+    const chunks: Blob[] = [];
+    rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+    const done = new Promise<void>((r) => (rec.onstop = () => r()));
+    rec.start();
+
+    const STAGE_MS = 650, HOLD_MS = 1200;
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const t0 = performance.now();
+    const total = groups.length * STAGE_MS + HOLD_MS;
+    await new Promise<void>((resolve) => {
+      const tick = (now: number) => {
+        const t = now - t0;
+        const stage = Math.min(Math.floor(t / STAGE_MS), frames.length - 1);
+        const p = stage === frames.length - 1 && t > frames.length * STAGE_MS ? 1 : Math.min((t - stage * STAGE_MS) / STAGE_MS, 1);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, W, H);
+        if (stage > 0) ctx.drawImage(frames[stage - 1], 0, 0);
+        ctx.globalAlpha = ease(p);
+        const k = 1.015 - 0.015 * ease(p); // subtle settle
+        ctx.drawImage(frames[stage], (W - W * k) / 2, (H - H * k) / 2 + (1 - ease(p)) * 14, W * k, H * k);
+        ctx.globalAlpha = 1;
+        if (t < total) requestAnimationFrame(tick);
+        else resolve();
+      };
+      requestAnimationFrame(tick);
     });
-    const a = document.createElement('a');
-    a.download = `${working.name.replace(/\W+/g, '-').toLowerCase()}.png`;
-    a.href = dataUrl;
-    a.click();
+    rec.stop();
+    await done;
+    download(URL.createObjectURL(new Blob(chunks, { type: 'video/webm' })), 'webm');
+    useStore.setState({ toast: '🎬 Motion exported (WebM)' });
+    setTimeout(() => useStore.setState({ toast: undefined }), 3500);
+  }
+
+  function renameWorking(name: string) {
+    const clean = name.trim();
+    if (!clean || clean === working.name) return;
+    st.setState({ working: { ...working, name: clean }, dirty: false });
+    st.getState().commitWorking('human', `Renamed to “${clean.slice(0, 30)}”`);
   }
 
   // ----- selected-commit diff ----------------------------------------------
@@ -341,7 +435,14 @@ export default function Editor() {
             </button>
           ))}
         </div>
-        <div className="ed-title">{working.name}</div>
+        <input
+          className="ed-title"
+          key={working.id + working.name}
+          defaultValue={working.name}
+          title="Rename this design"
+          onBlur={(e) => renameWorking(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+        />
         <button className="ghost" onClick={refreshConcept} disabled={!!lensBusy} title="Creative fatigue? Generate fresh executions of this concept as new branches">
           {lensBusy === 'refresh' ? 'Working…' : '⟳ Refresh concept'}
         </button>
@@ -360,7 +461,14 @@ export default function Editor() {
         <button className="ghost" onClick={exportPack} disabled={!!lensBusy} title="Zip with every placement size + copy sheet + brand-compliance report">
           📦 Export pack
         </button>
-        <button className="go" onClick={exportPng}>Export PNG</button>
+        <select className="ghost resel" value={exportFmt} onChange={(e) => setExportFmt(e.target.value)} title="Export format">
+          <option value="png">PNG</option>
+          <option value="jpeg">JPEG</option>
+          <option value="svg">SVG</option>
+          <option value="pdf">PDF</option>
+          <option value="motion">🎬 Motion</option>
+        </select>
+        <button className="go" onClick={exportPng}>Export</button>
         <button className="helpbtn" title="Replay the editor tour" onClick={() => setReplayTour((n) => n + 1)}>?</button>
       </div>
 
