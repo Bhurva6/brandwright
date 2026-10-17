@@ -1,0 +1,14 @@
+{
+  "name": "brandwright-server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "smoke": "node scripts/smoke.mjs",
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.8",
+    "openai": "^7.36.0"
+  }
+}

@@ -8,3 +8,5 @@ dist
 server/.env
 client/.env
 .vite
+server/scripts/*.png
+server/.assets
