@@ -43,27 +43,45 @@ export default function Landing() {
     else s.setView('home');
   };
 
-  // scroll-reveal: anything with .rv slides in when it enters the viewport
+  // hero entrance: flip .in a frame after mount so the staged transition runs
   useEffect(() => {
-    const els = rootRef.current?.querySelectorAll('.rv');
+    const t = requestAnimationFrame(() =>
+      requestAnimationFrame(() => rootRef.current?.querySelectorAll('.hero-rv').forEach((el) => el.classList.add('in'))),
+    );
+    return () => cancelAnimationFrame(t);
+  }, []);
+
+  // scroll-reveal: .rv elements slide in as they genuinely enter the viewport
+  useEffect(() => {
+    const els = rootRef.current?.querySelectorAll('.rv:not(.hero-rv)');
     if (!els?.length) return;
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('in')),
-      { threshold: 0.16 },
+      { threshold: 0.12, rootMargin: '0px 0px -14% 0px' },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
 
-  // light parallax on the hero blobs
+  // scroll choreography: blob parallax, progress bar, condensing nav
   useEffect(() => {
-    const onScroll = () => rootRef.current?.style.setProperty('--py', `${window.scrollY * 0.12}px`);
+    const onScroll = () => {
+      const el = rootRef.current;
+      if (!el) return;
+      const y = window.scrollY;
+      el.style.setProperty('--py', `${y * 0.14}px`);
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      el.style.setProperty('--prog', `${h > 0 ? (y / h) * 100 : 0}%`);
+      el.classList.toggle('scrolled', y > 24);
+    };
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
     <div className="landing" ref={rootRef}>
+      <div className="land-progress" aria-hidden="true" />
       <div className="land-blobs" aria-hidden="true"><i /><i /><i /></div>
 
       <nav className="land-nav">
@@ -76,14 +94,14 @@ export default function Landing() {
       </nav>
 
       <header className="land-hero">
-        <div className="land-eyebrow rv in">The agentic image editor</div>
-        <h1 className="rv in d1">Version control<br />for brand design.</h1>
-        <p className="rv in d2">Learns any brand. Designs in layers, never pixels. Checks its own work. Remembers everything.</p>
-        <div className="land-cta rv in d3">
+        <div className="land-eyebrow rv hero-rv">The agentic image editor</div>
+        <h1 className="rv hero-rv d1">Version control<br />for brand design.</h1>
+        <p className="rv hero-rv d2">Learns any brand. Designs in layers, never pixels. Checks its own work. Remembers everything.</p>
+        <div className="land-cta rv hero-rv d3">
           <button className="go big" onClick={openEditor}>{hasSession ? 'Continue in the editor' : 'Open the editor'}</button>
           <button className="ghost big2" onClick={() => st.getState().setView('library')}><Icon name="folder" size={14} /> Drafts</button>
         </div>
-        <div className="land-brands rv in d4">
+        <div className="land-brands rv hero-rv d4">
           <span>Preloaded genomes</span>
           <b>Xero</b><b>Coca-Cola</b><b>Spotify</b><b>Headspace</b><b>Airbnb</b><em>+ yours</em>
         </div>
@@ -115,7 +133,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="ld-stats rv">
+      <section className="ld-stats rv rv-scale">
         {STATS.map((s) => (
           <div key={s.l} className="ld-stat">
             <b>{s.n}</b>
@@ -137,7 +155,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="ld-final rv">
+      <section className="ld-final rv rv-scale">
         <h2>Make something on-brand.</h2>
         <div className="land-cta">
           <button className="go big inv" onClick={openEditor}>Open the editor</button>
