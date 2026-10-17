@@ -437,7 +437,7 @@ export default function Editor() {
     if (type === 'charm') { const a = asset('charm'); if (!a) return; l = { type, box: mid(W * 0.18, H * 0.18), assetId: a.id, src: a.src }; }
     if (type === 'pill') l = { type, box: { x: Math.round(W * 0.08), y: Math.round(H * 0.8), w: Math.round(W * 0.34), h: Math.round(H * 0.075) }, text: 'Call to action', fill: accent, textColor: '#FFFFFF' };
     if (type === 'featureList') l = { type, box: mid(W * 0.5, H * 0.2), items: ['FEATURE ONE', 'FEATURE TWO'], color: ink, markColor: '#4FB985', columns: 1 };
-    if (type === 'logo') { const a: any = asset('logo'); if (!a) return; l = { type, box: { x: Math.round(W * 0.08), y: Math.round(H * 0.9), w: Math.round(W * 0.22), h: Math.round(H * 0.06) }, assetId: a.id, variant: a.variant, src: a.src, text: a.text, fontFamily: a.fontFamily, fontWeight: a.fontWeight, color: a.color }; }
+    if (type === 'logo') { const logos: any[] = kit.assets.filter((x) => x.category === 'logo'); const a: any = logos.find((x) => x.variant && x.variant !== 'white') || logos[0]; if (!a) return; l = { type, box: { x: Math.round(W * 0.08), y: Math.round(H * 0.9), w: Math.round(W * 0.22), h: Math.round(H * 0.06) }, assetId: a.id, variant: a.variant, src: a.src, text: a.text, fontFamily: a.fontFamily, fontWeight: a.fontWeight, color: a.color }; }
     if (type === 'image') l = { type, box: mid(W * 0.7, H * 0.5), prompt: '', fit: 'cover', status: 'pending' };
     if (!l) return;
     l.id = newId('l');

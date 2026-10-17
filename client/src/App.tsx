@@ -196,7 +196,8 @@ export default function App() {
     if (!kit) return;
     const p = activePreset()!;
     const ink = kit.colors.find((c: any) => c.roles?.includes('text'))?.value || '#111111';
-    const logo = kit.assets.find((a) => a.category === 'logo');
+    const logos = kit.assets.filter((a) => a.category === 'logo');
+    const logo = logos.find((x: any) => x.variant && x.variant !== 'white') || logos[0];
     const spec = {
       id: newId('d'),
       name: 'Untitled',
