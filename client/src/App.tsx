@@ -9,7 +9,7 @@ import Editor from './Editor';
 import Landing from './Landing';
 import { Coachmarks, HOME_STEPS } from './Coachmarks';
 import { Icon } from './Icon';
-import { listExports, removeExport } from './library';
+import { listExports, removeExport, toggleFav } from './library';
 import type { LibraryItem } from './library';
 
 interface RefAd { id: string; src: string; label: string; structure: string }
@@ -56,32 +56,41 @@ export function GenLoader({ count }: { count: number }) {
   );
 }
 
-function LibraryPage({ lib, onBack, onDelete }: { lib: LibraryItem[]; onBack: () => void; onDelete: (id: string) => void }) {
+function LibraryPage({ lib, onBack, onDelete, onFav }: { lib: LibraryItem[]; onBack: () => void; onDelete: (id: string) => void; onFav: (id: string) => void }) {
+  const [favOnly, setFavOnly] = useState(false);
+  const shown = favOnly ? lib.filter((x) => x.fav) : lib;
   return (
     <div className="app">
       <header className="top">
         <div className="brandmark">
           Brandwright
-          <span className="tag">library</span>
+          <span className="tag">drafts</span>
         </div>
         <button className="ghost" onClick={onBack}><Icon name="back" /> Studio</button>
       </header>
       <section className="libview">
-        <div className="refstrip-title">Your exports <span>— every design you export is kept here, on this device</span></div>
-        {lib.length === 0 ? (
+        <div className="refstrip-title" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          Your drafts <span>— saved drafts and every export, kept on this device</span>
+          <span style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+            <button className={'mini' + (!favOnly ? ' on' : '')} onClick={() => setFavOnly(false)}>All</button>
+            <button className={'mini' + (favOnly ? ' on' : '')} onClick={() => setFavOnly(true)}><Icon name="heart" size={11} /> Favourites</button>
+          </span>
+        </div>
+        {shown.length === 0 ? (
           <div className="empty" style={{ padding: '48px 20px' }}>
             <h1 style={{ fontSize: 'clamp(20px,3vw,28px)' }}>Nothing here yet.</h1>
-            <p>Open a design in the editor and hit Export — PNG, JPEG and PDF renders all land here automatically.</p>
+            <p>Hit “Save draft” in the editor — exports land here automatically too.</p>
           </div>
         ) : (
           <div className="libgrid">
-            {lib.map((it) => (
+            {shown.map((it) => (
               <div key={it.id} className="libcard">
                 <img src={it.dataUrl} alt={it.name} loading="lazy" />
                 <div className="libmeta">
                   <b>{it.name}</b>
                   <span>{it.brand} · {it.preset} · {new Date(it.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                   <div className="librow">
+                    <button className={'mini favtog' + (it.fav ? ' on' : '')} title={it.fav ? 'Unfavourite' : 'Favourite'} onClick={() => onFav(it.id)}><Icon name="heart" size={11} /></button>
                     <a className="mini" href={it.dataUrl} download={`${it.name.replace(/\W+/g, '-').toLowerCase()}.png`}>Download</a>
                     <button className="mini" onClick={() => onDelete(it.id)}>Delete</button>
                   </div>
@@ -365,7 +374,7 @@ export default function App() {
   if (view === 'landing') return <Landing />;
   if (view === 'editor') return <Editor />;
   if (view === 'library')
-    return <LibraryPage lib={lib} onBack={() => st.getState().setView('home')} onDelete={(id) => removeExport(id).then(() => listExports().then(setLib))} />;
+    return <LibraryPage lib={lib} onBack={() => st.getState().setView('home')} onDelete={(id) => removeExport(id).then(() => listExports().then(setLib))} onFav={(id) => toggleFav(id).then(() => listExports().then(setLib))} />;
 
   return (
     <div className="app">
@@ -395,7 +404,7 @@ export default function App() {
           <span className="tag">studio</span>
           <button className="helpbtn" title="Replay the tour" onClick={(e) => { e.stopPropagation(); setReplayTour((n) => n + 1); }}>?</button>
           <button className="libbtn" title="Your exported designs" onClick={(e) => { e.stopPropagation(); st.getState().setView('library'); }}>
-            <Icon name="folder" size={13} /> Library{lib.length ? ` · ${lib.length}` : ''}
+            <Icon name="folder" size={13} /> Drafts{lib.length ? ` · ${lib.length}` : ''}
           </button>
         </div>
         {kit && (

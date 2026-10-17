@@ -8,6 +8,7 @@ export interface LibraryItem {
   preset: string;
   at: number;
   dataUrl: string;
+  fav?: boolean;
 }
 
 const DB = 'brandwright';
@@ -65,3 +66,7 @@ export const saveExport = (item: LibraryItem) => tx('readwrite', (s) => s.put(it
 export const listExports = () =>
   tx<LibraryItem[]>('readonly', (s) => s.getAll() as IDBRequest<LibraryItem[]>).then((items) => items.sort((a, b) => b.at - a.at));
 export const removeExport = (id: string) => tx('readwrite', (s) => s.delete(id));
+export async function toggleFav(id: string): Promise<void> {
+  const item = await tx<LibraryItem>('readonly', (s) => s.get(id) as IDBRequest<LibraryItem>);
+  if (item) await tx('readwrite', (s) => s.put({ ...item, fav: !item.fav }));
+}

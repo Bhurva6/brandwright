@@ -17,6 +17,7 @@ import { ScoreBadge } from './App';
 import { Coachmarks, EDITOR_STEPS } from './Coachmarks';
 import { saveExport } from './library';
 import { Icon } from './Icon';
+import { renderSpecToCanvas, renderSpecDataUrl } from './rasterize';
 import type { Layer } from './types';
 
 let layerClipboard: Layer | null = null; // copy/paste buffer (survives branch switches)
@@ -313,9 +314,14 @@ export default function Editor() {
     if (!node) return;
     const opts = { width: working.canvas.w, height: working.canvas.h, style: { transform: 'none' as const }, pixelRatio: 1 };
     try {
-      if (exportFmt === 'jpeg') return download(await toJpeg(node, { ...opts, quality: 0.92, backgroundColor: '#fff' }), 'jpg');
+      if (exportFmt === 'jpeg') {
+        const url = await renderSpecDataUrl(working, kit, 'image/jpeg', 0.92);
+        download(url, 'jpg');
+        saveExport({ id: newId('x'), name: working.name, brand: kit.name, preset: working.canvas.preset, at: Date.now(), dataUrl: url }).catch(() => {});
+        return;
+      }
       if (exportFmt === 'svg') return download(await toSvg(node, opts), 'svg');
-      const dataUrl = await toPng(node, opts);
+      const dataUrl = await renderSpecDataUrl(working, kit);
       if (exportFmt === 'pdf') {
         const landscape = working.canvas.w >= working.canvas.h;
         const pdf = new jsPDF({ orientation: landscape ? 'l' : 'p', unit: 'px', format: [working.canvas.w, working.canvas.h] });
@@ -327,7 +333,7 @@ export default function Editor() {
       // every raster export lands in the Library so nothing is ever lost
       try {
         await saveExport({ id: newId('x'), name: working.name, brand: kit.name, preset: working.canvas.preset, at: Date.now(), dataUrl });
-        useStore.setState({ toast: 'Saved to Library' });
+        useStore.setState({ toast: 'Saved to Drafts' });
         setTimeout(() => useStore.setState({ toast: undefined }), 3000);
       } catch { /* best-effort */ }
     } catch (e: any) {
@@ -347,17 +353,13 @@ export default function Editor() {
       ['pill', 'featureList', 'logo'],
     ];
     useStore.setState({ toast: 'Rendering motion…' });
-    // cumulative stage frames — a failed stage is skipped, never fatal
-    const frames: HTMLImageElement[] = [];
+    // cumulative stage frames — native canvas render, a failed stage is skipped
+    const frames: HTMLCanvasElement[] = [];
     for (let g = 0; g < groups.length; g++) {
       try {
         const allowed = new Set(groups.slice(0, g + 1).flat());
-        const partial = { ...working, layers: working.layers.filter((l) => allowed.has(l.type)) };
-        const url = await renderSpecPng(partial, kit);
-        const img = new Image();
-        img.src = url;
-        await img.decode();
-        if (img.width > 0) frames.push(img);
+        const c = await renderSpecToCanvas(working, kit, (l) => allowed.has(l.type));
+        if (c.width > 0) frames.push(c);
       } catch (e) {
         console.error('motion: stage frame failed', g, e);
       }
@@ -392,8 +394,8 @@ export default function Editor() {
           ctx.fillRect(0, 0, W, H);
           const prev = frames[stage - 1];
           const cur = frames[stage];
-          if (prev instanceof HTMLImageElement) ctx.drawImage(prev, 0, 0, W, H);
-          if (cur instanceof HTMLImageElement) {
+          if (prev) ctx.drawImage(prev, 0, 0, W, H);
+          if (cur) {
             ctx.globalAlpha = ease(p);
             const k = 1.015 - 0.015 * ease(p); // subtle settle
             ctx.drawImage(cur, (W - W * k) / 2, (H - H * k) / 2 + (1 - ease(p)) * 14, W * k, H * k);
@@ -461,14 +463,12 @@ export default function Editor() {
   const [printPrev, setPrintPrev] = useState<{ screen: string; print: string } | null>(null);
   async function printCheck() {
     useStore.setState({ toast: 'Simulating print…' });
-    const screen = await renderSpecPng(working, kit);
-    const img = new Image();
-    img.src = screen;
-    await img.decode();
+    const base = await renderSpecToCanvas(working, kit);
+    const screen = base.toDataURL('image/png');
     const c = document.createElement('canvas');
-    c.width = img.width; c.height = img.height;
+    c.width = base.width; c.height = base.height;
     const ctx = c.getContext('2d')!;
-    ctx.drawImage(img, 0, 0);
+    ctx.drawImage(base, 0, 0);
     const d = ctx.getImageData(0, 0, c.width, c.height);
     const px = d.data;
     for (let i = 0; i < px.length; i += 4) {
@@ -539,6 +539,38 @@ export default function Editor() {
             <option key={b.id} value={b.id}>{b.name}</option>
           ))}
         </select>
+        <button
+          className="ghost"
+          title="Save this draft to your Drafts"
+          onClick={async () => {
+            try {
+              const url = await renderSpecDataUrl(working, kit);
+              await saveExport({ id: newId('x'), name: working.name, brand: kit.name, preset: working.canvas.preset, at: Date.now(), dataUrl: url });
+              useStore.setState({ toast: 'Saved to Drafts' });
+            } catch (err: any) {
+              useStore.setState({ toast: 'Save failed: ' + (err?.message || err) });
+            }
+            setTimeout(() => useStore.setState({ toast: undefined }), 3000);
+          }}
+        >
+          <Icon name="folder" /> Save draft
+        </button>
+        <button
+          className="ghost favbtn"
+          title="Save this design straight to Favourites"
+          onClick={async () => {
+            try {
+              const url = await renderSpecDataUrl(working, kit);
+              await saveExport({ id: newId('x'), name: working.name, brand: kit.name, preset: working.canvas.preset, at: Date.now(), dataUrl: url, fav: true });
+              useStore.setState({ toast: 'Saved to Favourites' });
+            } catch (err: any) {
+              useStore.setState({ toast: 'Save failed: ' + (err?.message || err) });
+            }
+            setTimeout(() => useStore.setState({ toast: undefined }), 3000);
+          }}
+        >
+          <Icon name="heart" />
+        </button>
         <button className="ghost" onClick={exportPack} disabled={!!lensBusy} title="Zip with every placement size + copy sheet + brand-compliance report">
           <Icon name="package" /> Pack
         </button>
@@ -818,21 +850,9 @@ export default function Editor() {
 
 const slug = (s: string) => s.replace(/\W+/g, '-').toLowerCase();
 
-/** Render a spec to a full-resolution PNG offscreen (fonts + images included). */
+/** Render a spec to a full-resolution PNG — native canvas engine, no DOM screenshots. */
 async function renderSpecPng(spec: DesignSpec, kit: BrandKit): Promise<string> {
-  const host = document.createElement('div');
-  host.style.cssText = 'position:fixed;left:-100000px;top:0;';
-  document.body.appendChild(host);
-  const root = createRoot(host);
-  root.render(<DesignView spec={spec} kit={kit} width={spec.canvas.w} />);
-  await new Promise((r) => setTimeout(r, 60));
-  await Promise.all(Array.from(host.querySelectorAll('img')).map((im) => (im.complete ? null : new Promise((r) => { im.onload = im.onerror = r; }))));
-  await new Promise((r) => setTimeout(r, 120)); // autosize text settle
-  const stage = host.querySelector('.dv-stage') as HTMLElement;
-  const png = await toPng(stage, { width: spec.canvas.w, height: spec.canvas.h, style: { transform: 'none' }, pixelRatio: 1 });
-  root.unmount();
-  host.remove();
-  return png;
+  return renderSpecDataUrl(spec, kit);
 }
 
 // Re-roll an image layer; every take is kept as a clickable candidate.

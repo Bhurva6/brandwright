@@ -105,7 +105,18 @@ body {
 .ed-top { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
 .ed-title { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15px; margin-left: auto; }
 .ghost { background: none; border: 1px solid var(--line); border-radius: 9px; padding: 7px 12px; font: inherit; font-size: 13px; color: var(--ink); cursor: pointer; }
-select.resel { appearance: none; -webkit-appearance: none; }
+/* dropdowns — consistent custom look with a drawn chevron */
+select.resel, .controls select, select.brandsel, select.fmtsel {
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23837a70' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 26px !important;
+  cursor: pointer;
+}
+select.brandsel { background-position: right 2px center; padding-right: 16px !important; }
+.controls select { border-radius: 999px; padding: 7px 26px 7px 12px; transition: border-color 130ms ease; }
+.controls select:hover, select.resel:hover { border-color: var(--accent); }
+select:focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
 .ghost:hover { border-color: var(--accent); color: var(--accent); }
 .ed-branches { display: flex; gap: 6px; overflow-x: auto; flex: 1 1 0; min-width: 0; scrollbar-width: thin; padding: 2px 0; }
 .bchip { border: 1px solid var(--line); background: #fffdfa; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-family: Inter, sans-serif; color: var(--muted); cursor: pointer; white-space: nowrap; }
@@ -436,3 +447,41 @@ button .icx, label .icx, .mini .icx { margin-right: 2px; }
   border: none; background: rgba(255,255,255,0.14); color: #fff; font-size: 16px; cursor: pointer;
 }
 .lightbox-x:hover { background: rgba(255,255,255,0.28); }
+
+/* ===================== responsive ===================== */
+.controls { flex-wrap: wrap; row-gap: 10px; }
+.gallery { grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); }
+.ed-top { flex-wrap: wrap; row-gap: 8px; }
+.ed-title { min-width: 90px; }
+
+@media (max-width: 1080px) {
+  .ed-right { width: 230px; min-width: 230px; }
+  .ed-side { width: 264px; min-width: 264px; }
+}
+
+@media (max-width: 900px) {
+  /* editor stacks: canvas first, then tools, then history */
+  .ed { height: auto; min-height: 100vh; overflow: auto; }
+  .ed-main { flex-direction: column; }
+  .ed-canvas { order: 0; min-height: 56vh; }
+  .ed-side { order: 1; width: 100%; min-width: 0; border-right: none; border-top: 1px solid var(--line); }
+  .ed-right { order: 2; width: 100%; min-width: 0; border-left: none; border-top: 1px solid var(--line); }
+  .ed-chatbar { position: sticky; bottom: 0; z-index: 20; flex-wrap: wrap; }
+  .ed-chatbar .ed-err { white-space: normal; }
+  .genome { flex-wrap: wrap; }
+}
+
+@media (max-width: 640px) {
+  .go { padding: 11px 18px; }
+  .ghost { padding: 7px 9px; }
+  .ed-branches { max-width: 100%; }
+  .land-hero h1 { font-size: clamp(32px, 11vw, 48px); }
+  .refcard { width: 96px; }
+  .refcard img { height: 96px; }
+  .printprev-card { padding: 14px; }
+  .cm-tip { width: min(320px, calc(100vw - 24px)); }
+  .controls .go { width: 100%; margin-left: 0; }
+  .genstatus { font-size: 12.5px; padding: 9px 16px; text-align: center; }
+}
+.favbtn:hover, .favtog:hover { color: #d6336c; border-color: #d6336c; }
+.favtog.on { color: #d6336c; border-color: #d6336c; background: #fdeef4; }

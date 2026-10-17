@@ -2,11 +2,30 @@
   "buildCommand": "npm install --prefix client && npm run build --prefix client",
   "outputDirectory": "client/dist",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/index" },
-    { "source": "/assets/blobs/:path*", "destination": "/api/index" },
-    { "source": "/studio", "destination": "/index.html" },
-    { "source": "/editor", "destination": "/index.html" },
-    { "source": "/library", "destination": "/index.html" }
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/assets/blobs/:path*",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/studio",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/editor",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/drafts",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/library",
+      "destination": "/index.html"
+    }
   ],
   "functions": {
     "api/index.js": {

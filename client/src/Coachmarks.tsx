@@ -132,7 +132,7 @@ export const HOME_STEPS: CoachStep[] = [
   {
     target: '.libbtn',
     title: 'Nothing gets lost',
-    text: 'Every design you export lands in the Library, and your whole session — designs, branches, history — survives a refresh.',
+    text: 'Save drafts and exports here — and your whole session — designs, branches, history — survives a refresh.',
   },
 ];
 
@@ -180,6 +180,6 @@ export const EDITOR_STEPS: CoachStep[] = [
   {
     target: 'select.fmtsel',
     title: 'Export anything',
-    text: 'PNG, JPEG, SVG, print-ready PDF — or Motion, which renders your design as a layer-reveal video. Every export is kept in the Library.',
+    text: 'PNG, JPEG, SVG, print-ready PDF — or Motion, which renders your design as a layer-reveal video. Everything is kept in your Drafts.',
   },
 ];

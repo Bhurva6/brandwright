@@ -32,7 +32,7 @@ export default function Landing() {
         <div className="brandmark">Brandwright</div>
         <div className="land-links">
           <button className="ghost" onClick={go}>Studio</button>
-          <button className="ghost" onClick={() => st.getState().setView('library')}>Library</button>
+          <button className="ghost" onClick={() => st.getState().setView('library')}>Drafts</button>
         </div>
       </nav>
 
