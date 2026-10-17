@@ -11,7 +11,7 @@ import { useStore, useLog } from './store';
 import type { Score } from './store';
 import { LayerView } from './Layers';
 import { diffSpecs, diffSummary, specOf } from './vc';
-import { editDesign, regenImage, runCritic, runAutofix, runRefresh, runAdapt } from './api';
+import { editDesign, regenImage, runCritic, runAutofix, runRefresh, runAdapt, runReskin, getBrand } from './api';
 import { ScoreBadge } from './App';
 import type { Layer } from './types';
 
@@ -35,6 +35,10 @@ export default function Editor() {
   const [chatErr, setChatErr] = useState('');
   const [lens, setLens] = useState<Score>();
   const [lensBusy, setLensBusy] = useState<'' | 'check' | 'fix' | 'refresh'>('');
+  const [brandList, setBrandList] = useState<{ id: string; name: string }[]>([]);
+  useEffect(() => {
+    fetch('/api/brands').then((r) => r.json()).then(setBrandList).catch(() => {});
+  }, []);
   const stageRef = useRef<HTMLDivElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
@@ -151,6 +155,27 @@ export default function Editor() {
     }
   }
 
+  // ----- re-skin: rebase this design onto another brand ---------------------
+  async function reskinTo(toBrandId: string) {
+    if (!toBrandId || lensBusy) return;
+    setLensBusy('refresh');
+    try {
+      const { spec: reskinned } = await runReskin({ spec: working, toBrandId });
+      const toKit = await getBrand(toBrandId);
+      st.getState().setKit(toKit);
+      // theme the chrome to the new brand
+      const accent = toKit.colors.find((c: any) => c.roles?.includes('cta')) || toKit.colors.find((c: any) => c.roles?.includes('accent'));
+      if (accent) {
+        document.documentElement.style.setProperty('--accent', accent.value);
+        document.documentElement.style.setProperty('--accent-ink', accent.value);
+      }
+      st.getState().addBranches([reskinned], `Re-skin → ${toKit.name}`);
+      st.getState().switchBranch(useStore.getState().repo.branches.at(-1)!.name);
+    } finally {
+      setLensBusy('');
+    }
+  }
+
   // ----- launch-ready pack --------------------------------------------------
   async function exportPack() {
     if (lensBusy) return;
@@ -227,8 +252,11 @@ export default function Editor() {
 
   const swatches = kit.colors;
 
+  const toast = useStore((s) => s.toast);
+
   return (
     <div className="ed">
+      {toast && <div className="toast">{toast}</div>}
       {/* ===== top bar ===== */}
       <div className="ed-top">
         <button className="ghost" onClick={() => st.getState().closeEditor()}>← Gallery</button>
@@ -243,6 +271,18 @@ export default function Editor() {
         <button className="ghost" onClick={refreshConcept} disabled={!!lensBusy} title="Creative fatigue? Generate fresh executions of this concept as new branches">
           {lensBusy === 'refresh' ? 'Working…' : '⟳ Refresh concept'}
         </button>
+        <select
+          className="ghost resel"
+          value=""
+          disabled={!!lensBusy}
+          onChange={(e) => reskinTo(e.target.value)}
+          title="Rebase this design onto a different brand — same skeleton, new DNA"
+        >
+          <option value="" disabled>⎌ Re-skin to…</option>
+          {brandList.filter((b) => b.id !== kit.id).map((b) => (
+            <option key={b.id} value={b.id}>{b.name}</option>
+          ))}
+        </select>
         <button className="ghost" onClick={exportPack} disabled={!!lensBusy} title="Zip with every placement size + copy sheet + brand-compliance report">
           📦 Export pack
         </button>

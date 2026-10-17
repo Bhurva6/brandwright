@@ -3,7 +3,9 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { listBrands, loadBrand } from './lib/brand.mjs';
+import { listBrands, loadBrand, saveBrand, BRANDS_DIR } from './lib/brand.mjs';
+import { ingestFolder, samplePalette } from './lib/ingest.mjs';
+import { inferGenome } from './lib/infer.mjs';
 import { generateDesigns, editDesign } from './lib/agent.mjs';
 import { generateImage, sizeForCanvas } from './lib/image.mjs';
 import { critique, repairInstruction } from './lib/critic.mjs';
@@ -11,7 +13,7 @@ import { BLOB_DIR } from './lib/store.mjs';
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '8mb' }));
+app.use(express.json({ limit: '60mb' }));
 app.use('/assets/blobs', express.static(BLOB_DIR, { maxAge: '1y', immutable: true }));
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
@@ -171,18 +173,38 @@ const REFS = JSON.parse(readFileSync(path.join(__dirnameX, '../client/public/ref
 
 app.post('/api/remix', async (req, res) => {
   try {
-    const { brandId = 'xero', refId, n = 3, presetId } = req.body || {};
+    const { brandId = 'xero', refId, spec, n = 3, presetId } = req.body || {};
     const brand = loadBrand(brandId);
-    const ref = REFS.find((r) => r.id === refId);
-    if (!brand || !ref) return res.status(400).json({ error: 'brand and refId required' });
+    if (!brand) return res.status(400).json({ error: 'brand required' });
     const preset = brand.presets.find((p) => p.id === presetId) || brand.presets[0];
+
+    // structure source: a curated text description (refId) or a live spec
+    let structure;
+    if (refId) {
+      const ref = REFS.find((r) => r.id === refId);
+      if (!ref) return res.status(400).json({ error: 'unknown refId' });
+      structure = `"${ref.structure}"`;
+    } else if (spec) {
+      const skeleton = {
+        background: spec.canvas.background,
+        layers: spec.layers.map((l) => {
+          const W = spec.canvas.w, H = spec.canvas.h;
+          const o = { type: l.type, x: +(l.box.x / W).toFixed(2), y: +(l.box.y / H).toFixed(2), w: +(l.box.w / W).toFixed(2), h: +(l.box.h / H).toFixed(2) };
+          if (l.role) o.role = l.role;
+          return o;
+        }),
+      };
+      structure = 'this layout skeleton (fractional boxes): ' + JSON.stringify(skeleton);
+    } else {
+      return res.status(400).json({ error: 'refId or spec required' });
+    }
+
     const prompt =
-      `REFERENCE REMIX. Recreate the STRUCTURE of this reference ad for ${brand.name}, fully on-brand:\n` +
-      `"${ref.structure}"\n` +
+      `REFERENCE REMIX. Recreate the STRUCTURE of this reference ad for ${brand.name}, fully on-brand:\n${structure}\n` +
       `Keep the same layout skeleton and visual rhythm, but use OUR brand colours, type roles, voice and assets, with fresh on-brand copy for ${brand.name}. Produce ${n} takes: one faithful to the structure, the rest progressively freer riffs on it.`;
     const { specs } = await generateDesigns({ brand, prompt, variations: n, preset });
     await fillImages(specs);
-    res.json({ specs, ref });
+    res.json({ specs });
   } catch (e) {
     console.error('remix', e);
     res.status(500).json({ error: String(e?.message || e) });
@@ -208,6 +230,137 @@ app.post('/api/adapt', async (req, res) => {
     res.json({ spec: adapted });
   } catch (e) {
     console.error('adapt', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// OUTER LEARNING LOOP — every human edit is a preference signal. When the
+// designer makes the same kind of correction 3 times, DeepSeek induces an
+// explicit rule and writes it back into the genome (visible + versioned).
+import { flash, MODELS } from './lib/openai.mjs';
+const signalKey = (m) => String(m).toLowerCase().replace(/[^a-z ]/g, '').trim().split(' ').slice(0, 3).join(' ');
+app.post('/api/learn', async (req, res) => {
+  try {
+    const { brandId, event } = req.body || {};
+    const brand = loadBrand(brandId);
+    if (!brand || !event) return res.status(400).json({ error: 'brandId and event required' });
+    const ledgerPath = path.join(BRANDS_DIR, brandId, 'signals.json');
+    const ledger = fs.existsSync(ledgerPath) ? JSON.parse(fs.readFileSync(ledgerPath, 'utf8')) : [];
+    ledger.push({ event, at: Date.now() });
+    fs.writeFileSync(ledgerPath, JSON.stringify(ledger));
+
+    const key = signalKey(event);
+    const count = ledger.filter((s) => signalKey(s.event) === key).length;
+    const already = (brand.learned || []).some((l) => l.key === key);
+    let learnedRule = null;
+    if (count >= 3 && !already) {
+      const r = await flash.chat.completions.create({
+        model: MODELS.flash,
+        temperature: 0.3,
+        max_tokens: 120,
+        messages: [{
+          role: 'user',
+          content: `A designer working on the ${brand.name} brand repeatedly made this correction: "${event}" (${count} times). Write ONE concise brand-guideline rule (max 18 words) capturing the preference. Reply with the rule text only.`,
+        }],
+      });
+      const text = r.choices[0].message.content?.trim().replace(/^"|"$/g, '');
+      if (text) {
+        brand.learned = [...(brand.learned || []), { id: 'learned-' + (brand.learned?.length || 0), key, text, origin: 'learned', confirmations: count }];
+        brand.rules = [...brand.rules, { id: 'learned-' + key.replace(/ /g, '-'), text, severity: 'warn' }];
+        saveBrand(brand);
+        learnedRule = text;
+      }
+    }
+    res.json({ ok: true, learnedRule, signals: ledger.length });
+  } catch (e) {
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// LIVE BRAND INGEST — point Brandwright at any brand's asset folder and it
+// configures itself: classify assets, sample the exact palette, infer fonts /
+// voice / rules / briefs with DeepSeek. The new genome is immediately active.
+import fs from 'fs';
+import os from 'os';
+app.post('/api/ingest', async (req, res) => {
+  try {
+    const { name, files } = req.body || {};
+    if (!name?.trim() || !Array.isArray(files) || !files.length) return res.status(400).json({ error: 'name and files required' });
+    const id = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24) || 'brand';
+
+    // materialize the uploaded folder (relative paths preserved for classification)
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bw-ingest-'));
+    for (const f of files.slice(0, 80)) {
+      const rel = String(f.path || f.name).replace(/^[/.]+/, '').replace(/\.\./g, '');
+      const abs = path.join(tmp, rel);
+      fs.mkdirSync(path.dirname(abs), { recursive: true });
+      fs.writeFileSync(abs, Buffer.from(f.data, 'base64'));
+    }
+
+    const outDir = path.join(BRANDS_DIR, id, 'assets');
+    const { assets } = await ingestFolder(tmp, outDir, { brandId: id });
+    const allImages = fs.readdirSync(outDir).map((f) => path.join(outDir, f));
+    const palette = await samplePalette(allImages.length ? allImages : [], 6);
+    const inferred = await inferGenome({ name, palette, assets });
+
+    const kit = {
+      id,
+      name: name.trim(),
+      colors: inferred.colors,
+      fonts: inferred.fonts,
+      presets: [
+        { id: 'square_1080', label: 'Square 1:1', w: 1080, h: 1080 },
+        { id: 'story_1080x1920', label: 'Story 9:16', w: 1080, h: 1920 },
+        { id: 'meta_feed_1200x1200', label: 'Meta feed', w: 1200, h: 1200 },
+        { id: 'banner_1200x628', label: 'Banner 1.91:1', w: 1200, h: 628 },
+      ],
+      assets: assets.length
+        ? assets
+        : [{ id: 'logo-00', category: 'logo', label: 'Wordmark', variant: 'ink', text: name.trim(), fontFamily: "'Archivo', sans-serif", fontWeight: 800, color: inferred.colors.find((c) => c.roles?.includes('text'))?.value || '#111111' }],
+      rules: inferred.rules,
+      voice: inferred.voice,
+      archetypes: [
+        { id: 'headline-card', label: 'Card with bold headline + CTA pill, logo bottom-left', regions: [] },
+        { id: 'photo-hero', label: 'Full-bleed photo, headline top, CTA + logo bottom', regions: [] },
+        { id: 'type-poster', label: 'Typographic poster on a flat brand ground', regions: [] },
+      ],
+      rewardWeights: { palette: 0.14, contrast: 0.18, safezone: 0.14, archetype: 0.06, hook: 0.14, cta: 0.12, thumbstop: 0.08, hierarchy: 0.07, voice: 0.07 },
+      learned: [],
+      examples: inferred.examples,
+    };
+    // guarantee a logo asset exists (text wordmark fallback)
+    if (!kit.assets.some((a) => a.category === 'logo')) {
+      kit.assets.unshift({ id: 'logo-00', category: 'logo', label: 'Wordmark', variant: 'ink', text: name.trim(), fontFamily: "'Archivo', sans-serif", fontWeight: 800, color: inferred.colors.find((c) => c.roles?.includes('text'))?.value || '#111111' });
+    }
+    saveBrand(kit);
+    fs.rmSync(tmp, { recursive: true, force: true });
+    res.json({ kit });
+  } catch (e) {
+    console.error('ingest', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// Re-skin (the "rebase"): replay a design's structure onto a DIFFERENT brand.
+// Same layout skeleton; colours, fonts, logo, voice and product all retarget.
+app.post('/api/reskin', async (req, res) => {
+  try {
+    const { spec, toBrandId } = req.body || {};
+    const to = loadBrand(toBrandId);
+    if (!spec || !to) return res.status(400).json({ error: 'spec and toBrandId required' });
+    const preset = to.presets.find((p) => p.id === spec.canvas.preset) || to.presets[0];
+    const { spec: reskinned } = await editDesign({
+      brand: to,
+      spec,
+      instruction:
+        `RE-SKIN this design for the brand ${to.name}. Keep the exact same layout skeleton — same layers, same ids, same positions and sizes. ` +
+        `Map every colour to the closest ${to.name} brand token, switch the logo to a ${to.name} variant, and REWRITE all copy (headlines, body, CTA, features) for ${to.name}'s product and voice. ` +
+        `If there are image layers, rewrite their prompts for ${to.name}'s world (then the imagery regenerates).`,
+    });
+    await fillImages([reskinned]);
+    res.json({ spec: reskinned });
+  } catch (e) {
+    console.error('reskin', e);
     res.status(500).json({ error: String(e?.message || e) });
   }
 });

@@ -1,0 +1,186 @@
+{
+  "id": "testco",
+  "name": "TestCo",
+  "colors": [
+    {
+      "token": "white",
+      "value": "#FFFFFF",
+      "name": "Pure White",
+      "roles": [
+        "background",
+        "text"
+      ]
+    },
+    {
+      "token": "ink",
+      "value": "#111111",
+      "name": "Ink Black",
+      "roles": [
+        "text",
+        "background"
+      ]
+    },
+    {
+      "token": "slate",
+      "value": "#4A4A4A",
+      "name": "Slate Gray",
+      "roles": [
+        "text"
+      ]
+    },
+    {
+      "token": "cloud",
+      "value": "#F2F2F2",
+      "name": "Cloud Gray",
+      "roles": [
+        "background"
+      ]
+    },
+    {
+      "token": "signal",
+      "value": "#0057FF",
+      "name": "Signal Blue",
+      "roles": [
+        "accent",
+        "cta"
+      ]
+    },
+    {
+      "token": "ember",
+      "value": "#FF5A1F",
+      "name": "Ember Orange",
+      "roles": [
+        "accent",
+        "cta"
+      ]
+    }
+  ],
+  "fonts": [
+    {
+      "role": "headline",
+      "family": "Archivo",
+      "weights": [
+        700,
+        800
+      ],
+      "stack": "'Archivo', system-ui, sans-serif"
+    },
+    {
+      "role": "body",
+      "family": "Inter",
+      "weights": [
+        400,
+        600
+      ],
+      "stack": "'Inter', system-ui, sans-serif"
+    },
+    {
+      "role": "eyebrow",
+      "family": "Inter",
+      "weights": [
+        600
+      ],
+      "stack": "'Inter', system-ui, sans-serif"
+    }
+  ],
+  "presets": [
+    {
+      "id": "square_1080",
+      "label": "Square 1:1",
+      "w": 1080,
+      "h": 1080
+    },
+    {
+      "id": "story_1080x1920",
+      "label": "Story 9:16",
+      "w": 1080,
+      "h": 1920
+    },
+    {
+      "id": "meta_feed_1200x1200",
+      "label": "Meta feed",
+      "w": 1200,
+      "h": 1200
+    },
+    {
+      "id": "banner_1200x628",
+      "label": "Banner 1.91:1",
+      "w": 1200,
+      "h": 628
+    }
+  ],
+  "assets": [
+    {
+      "id": "logo-00",
+      "category": "logo",
+      "label": "Wordmark",
+      "variant": "ink",
+      "text": "TestCo",
+      "fontFamily": "'Archivo', sans-serif",
+      "fontWeight": 800,
+      "color": "#FFFFFF"
+    }
+  ],
+  "rules": [
+    {
+      "id": "contrast-minimum",
+      "text": "Body text must hit at least 4.5:1 contrast against its background; use Ink Black on white or white on Signal Blue, never Slate Gray on Cloud Gray.",
+      "severity": "error"
+    },
+    {
+      "id": "accent-scarcity",
+      "text": "Signal Blue or Ember Orange may cover no more than 15% of any layout; keep the field neutral white or cloud.",
+      "severity": "warn"
+    },
+    {
+      "id": "headline-case",
+      "text": "Headlines use sentence case in Archivo; never all-caps beyond a single short word.",
+      "severity": "warn"
+    },
+    {
+      "id": "cta-single",
+      "text": "Each composition carries exactly one call-to-action button in Signal Blue with white label text.",
+      "severity": "error"
+    },
+    {
+      "id": "no-gradient",
+      "text": "Do not apply gradients, glows, or drop shadows to text or buttons; flat fills only.",
+      "severity": "error"
+    }
+  ],
+  "voice": "Direct, confident, and plainspoken — we explain rather than impress, and we never use filler. Short declarative sentences, active verbs, zero jargon. Example taglines: \"TestCo. Built to be tested.\" / \"Proof, not promises.\"",
+  "archetypes": [
+    {
+      "id": "headline-card",
+      "label": "Card with bold headline + CTA pill, logo bottom-left",
+      "regions": []
+    },
+    {
+      "id": "photo-hero",
+      "label": "Full-bleed photo, headline top, CTA + logo bottom",
+      "regions": []
+    },
+    {
+      "id": "type-poster",
+      "label": "Typographic poster on a flat brand ground",
+      "regions": []
+    }
+  ],
+  "rewardWeights": {
+    "palette": 0.14,
+    "contrast": 0.18,
+    "safezone": 0.14,
+    "archetype": 0.06,
+    "hook": 0.14,
+    "cta": 0.12,
+    "thumbstop": 0.08,
+    "hierarchy": 0.07,
+    "voice": 0.07
+  },
+  "learned": [],
+  "examples": [
+    "Full-page white ad with a single Archivo sentence-case headline in Ink Black, one line of Inter body copy, and a Signal Blue CTA button in the lower left.",
+    "Split layout: left half Cloud Gray with a product close-up, right half white with a short proof-point headline and one Ember Orange stat number.",
+    "Minimal social square: white background, three-word Archivo headline, small Inter subline, and a thin Signal Blue rule under the headline."
+  ]
+}

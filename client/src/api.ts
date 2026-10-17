@@ -26,6 +26,7 @@ async function post<T>(path: string, body: unknown): Promise<T> {
 export const runCritic = (body: { brandId: string; spec: DesignSpec }) => post<{ score: CriticScore }>('/api/critic', body);
 export const runRemix = (body: { brandId: string; refId: string; n: number; presetId?: string }) => post<{ specs: DesignSpec[] }>('/api/remix', body);
 export const runAdapt = (body: { brandId: string; spec: DesignSpec; presetId: string }) => post<{ spec: DesignSpec }>('/api/adapt', body);
+export const runReskin = (body: { spec: DesignSpec; toBrandId: string }) => post<{ spec: DesignSpec }>('/api/reskin', body);
 export const runAutofix = (body: { brandId: string; spec: DesignSpec }) =>
   post<{ improved: boolean; before: CriticScore; after?: CriticScore; spec: DesignSpec }>('/api/autofix', body);
 export const runRefresh = (body: { brandId: string; spec: DesignSpec; n: number }) => post<{ specs: DesignSpec[] }>('/api/refresh', body);

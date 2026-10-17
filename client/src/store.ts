@@ -22,6 +22,7 @@ interface State {
   viewingCommit?: string; // when inspecting an older commit (read-only)
   selectedId?: string;
   dirty: boolean;
+  toast?: string;
 
   setKit: (k: BrandKit) => void;
   setDesigns: (d: DesignSpec[]) => void;
@@ -146,6 +147,24 @@ export const useStore = create<State>((set, get) => ({
     const s = get();
     if (!s.working || !s.branch) return;
     set({ repo: commit(s.repo, s.branch, s.working, author, message), dirty: false });
+    // outer learning loop: every human edit is a preference signal (fire-and-forget)
+    if (author === 'human' && s.kit) {
+      fetch('/api/learn', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ brandId: s.kit.id, event: message }),
+      })
+        .then((r) => r.json())
+        .then((j) => {
+          if (j.learnedRule) {
+            // the genome just got smarter — refresh it and tell the designer
+            fetch(`/api/brand/${s.kit!.id}`).then((r) => r.json()).then((k) => set({ kit: k }));
+            set({ toast: `🧠 Genome learned: “${j.learnedRule}”` });
+            setTimeout(() => set({ toast: undefined }), 6000);
+          }
+        })
+        .catch(() => {});
+    }
   },
 
   checkout: (commitId) => {

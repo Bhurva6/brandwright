@@ -76,7 +76,8 @@ export async function ingestFolder(srcDir, outDir, { brandId, servedBase }) {
 
   for (const f of files) {
     const folder = topFolder(srcDir, f.p);
-    let category = folder in CATEGORY_BY_FOLDER ? CATEGORY_BY_FOLDER[folder] : classifyGeneric(folder, f.name);
+    const relPath = path.relative(srcDir, f.p); // full path carries category hints at any depth
+    let category = folder in CATEGORY_BY_FOLDER ? CATEGORY_BY_FOLDER[folder] : classifyGeneric(relPath, f.name);
     if (!includeFile(category, f)) continue;
 
     const ext = path.extname(f.name).toLowerCase();

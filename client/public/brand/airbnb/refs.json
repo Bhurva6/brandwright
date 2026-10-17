@@ -1,0 +1,526 @@
+{
+ "refs": [
+  {
+   "id": "d_ebb6e4fa",
+   "name": "Editorial Stay — Photo-Led",
+   "note": "Immersive photography-first; headline dominates top third, logo and pill anchored bottom",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#222222"
+   },
+   "layers": [
+    {
+     "id": "l_ef92550b",
+     "type": "image",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080,
+      "rotation": 0
+     },
+     "prompt": "Warm sunlit Airbnb interior, mid-century modern living room with large windows, real home, afternoon golden light casting soft shadows, lived-in and inviting, no people, no text, no logos",
+     "fit": "cover",
+     "radius": 0,
+     "status": "ready",
+     "src": "/assets/blobs/864d894d681e050f09dadda6.png"
+    },
+    {
+     "id": "l_a84d99ce",
+     "type": "shape",
+     "box": {
+      "x": 0,
+      "y": 670,
+      "w": 1080,
+      "h": 410,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#222222",
+     "radius": 0
+    },
+    {
+     "id": "l_178d4fdd",
+     "type": "bloom",
+     "box": {
+      "x": -86,
+      "y": 778,
+      "w": 378,
+      "h": 378,
+      "rotation": 0
+     },
+     "assetId": "bloom-004",
+     "src": "/brand/common/blooms/bloom-004.png",
+     "fill": "#FF385C"
+    },
+    {
+     "id": "l_873cf9a1",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 702,
+      "w": 950,
+      "h": 130,
+      "rotation": 0
+     },
+     "text": "Wherever you go, you're home.",
+     "role": "headline",
+     "size": 1,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_03b79b4f",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 842,
+      "w": 648,
+      "h": 65,
+      "rotation": 0
+     },
+     "text": "Stay in places that feel like yours, anywhere in the world.",
+     "role": "body",
+     "size": 39,
+     "color": "#F7F3EF",
+     "align": "left"
+    },
+    {
+     "id": "l_bbc763b3",
+     "type": "pill",
+     "box": {
+      "x": 65,
+      "y": 940,
+      "w": 302,
+      "h": 59,
+      "rotation": 0
+     },
+     "text": "Find your place",
+     "fill": "#FF385C",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_9b38be13",
+     "type": "logo",
+     "box": {
+      "x": 778,
+      "y": 950,
+      "w": 238,
+      "h": 54,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/airbnb/assets/logo-white.png"
+    }
+   ]
+  },
+  {
+   "id": "d_bc4543df",
+   "name": "Belonging Poster — Typographic",
+   "note": "Bold typographic poster; oversized rotated headline creates tension, rausch stripe anchors the composition",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#F7F3EF"
+   },
+   "layers": [
+    {
+     "id": "l_cac043b8",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#F7F3EF"
+    },
+    {
+     "id": "l_6edced63",
+     "type": "bloom",
+     "box": {
+      "x": 594,
+      "y": -108,
+      "w": 648,
+      "h": 594,
+      "rotation": 0
+     },
+     "assetId": "bloom-005",
+     "src": "/brand/common/blooms/bloom-005.png",
+     "fill": "#00847E"
+    },
+    {
+     "id": "l_cb7087c3",
+     "type": "shape",
+     "box": {
+      "x": 0,
+      "y": 950,
+      "w": 1080,
+      "h": 16,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#FF385C",
+     "radius": 0
+    },
+    {
+     "id": "l_bdee3738",
+     "type": "text",
+     "box": {
+      "x": 76,
+      "y": 162,
+      "w": 842,
+      "h": 594,
+      "rotation": 0
+     },
+     "text": "Belong anywhere.",
+     "role": "headline",
+     "size": 1,
+     "color": "#222222",
+     "align": "left"
+    },
+    {
+     "id": "l_5aa0a4b1",
+     "type": "text",
+     "box": {
+      "x": 76,
+      "y": 778,
+      "w": 540,
+      "h": 65,
+      "rotation": 0
+     },
+     "text": "Made possible by Hosts.",
+     "role": "eyebrow",
+     "size": 39,
+     "color": "#00847E",
+     "align": "left"
+    },
+    {
+     "id": "l_4867b029",
+     "type": "text",
+     "box": {
+      "x": 76,
+      "y": 842,
+      "w": 756,
+      "h": 54,
+      "rotation": 0
+     },
+     "text": "Open your door to the world and share what makes your corner of it special.",
+     "role": "body",
+     "size": 32,
+     "color": "#222222",
+     "align": "left"
+    },
+    {
+     "id": "l_46659872",
+     "type": "pill",
+     "box": {
+      "x": 76,
+      "y": 972,
+      "w": 324,
+      "h": 59,
+      "rotation": 0
+     },
+     "text": "Start hosting",
+     "fill": "#FF385C",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_26e797fb",
+     "type": "logo",
+     "box": {
+      "x": 788,
+      "y": 983,
+      "w": 216,
+      "h": 49,
+      "rotation": 0
+     },
+     "assetId": "logo-00",
+     "variant": "rausch",
+     "src": "/brand/airbnb/assets/logo-orig.png"
+    }
+   ]
+  },
+  {
+   "id": "d_36ae6814",
+   "name": "Host Earnings — Claim Card",
+   "note": "Confident earnings claim; teal geometric block creates asymmetry, numbers lead the hierarchy",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#FFFFFF"
+   },
+   "layers": [
+    {
+     "id": "l_8ca1e188",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#FFFFFF"
+    },
+    {
+     "id": "l_cd192556",
+     "type": "shape",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 432,
+      "h": 1080,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#00847E",
+     "radius": 0
+    },
+    {
+     "id": "l_9edbb5eb",
+     "type": "bloom",
+     "box": {
+      "x": 194,
+      "y": 86,
+      "w": 486,
+      "h": 432,
+      "rotation": 0
+     },
+     "assetId": "bloom-004",
+     "src": "/brand/common/blooms/bloom-004.png",
+     "fill": "#FF385C"
+    },
+    {
+     "id": "l_d93e4f32",
+     "type": "text",
+     "box": {
+      "x": 518,
+      "y": 130,
+      "w": 486,
+      "h": 86,
+      "rotation": 0
+     },
+     "text": "Earn like a local legend.",
+     "role": "eyebrow",
+     "size": 52,
+     "color": "#FF385C",
+     "align": "left"
+    },
+    {
+     "id": "l_7ee205c6",
+     "type": "text",
+     "box": {
+      "x": 518,
+      "y": 216,
+      "w": 518,
+      "h": 378,
+      "rotation": 0
+     },
+     "text": "Hosts made $57B.",
+     "role": "headline",
+     "size": 1,
+     "color": "#222222",
+     "align": "left"
+    },
+    {
+     "id": "l_5c21b685",
+     "type": "text",
+     "box": {
+      "x": 518,
+      "y": 594,
+      "w": 475,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "That's not a typo. That's what happens when you share your space with the world.",
+     "role": "body",
+     "size": 46,
+     "color": "#222222",
+     "align": "left"
+    },
+    {
+     "id": "l_82e696de",
+     "type": "text",
+     "box": {
+      "x": 518,
+      "y": 702,
+      "w": 378,
+      "h": 65,
+      "rotation": 0
+     },
+     "text": "Estimated host earnings, all-time.",
+     "role": "body",
+     "size": 39,
+     "color": "#00847E",
+     "align": "left"
+    },
+    {
+     "id": "l_3acef8b7",
+     "type": "pill",
+     "box": {
+      "x": 518,
+      "y": 950,
+      "w": 346,
+      "h": 59,
+      "rotation": 0
+     },
+     "text": "See what you could earn",
+     "fill": "#FF385C",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_0c4ca8e5",
+     "type": "logo",
+     "box": {
+      "x": 76,
+      "y": 972,
+      "w": 216,
+      "h": 49,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/airbnb/assets/logo-white.png"
+    }
+   ]
+  },
+  {
+   "id": "d_befc0645",
+   "name": "Experiences — Immersive Promo",
+   "note": "Experiences promo with dramatic rausch bloom bleeding from corner, bold headline over immersive photography",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#222222"
+   },
+   "layers": [
+    {
+     "id": "l_12c547bb",
+     "type": "image",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080,
+      "rotation": 0
+     },
+     "prompt": "Immersive travel experience, someone learning to make pasta with a local chef in a rustic Italian kitchen, hands in flour, warm ambient light, authentic moment, candid and joyful, no text, no logos",
+     "fit": "cover",
+     "radius": 0,
+     "status": "ready",
+     "src": "/assets/blobs/58a58c4f1b0d36ffbb4a5905.png"
+    },
+    {
+     "id": "l_a0026d1b",
+     "type": "shape",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#222222",
+     "radius": 0
+    },
+    {
+     "id": "l_01399501",
+     "type": "bloom",
+     "box": {
+      "x": 670,
+      "y": -194,
+      "w": 594,
+      "h": 594,
+      "rotation": 0
+     },
+     "assetId": "bloom-004",
+     "src": "/brand/common/blooms/bloom-004.png",
+     "fill": "#FF385C"
+    },
+    {
+     "id": "l_0fe4777d",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 86,
+      "w": 540,
+      "h": 86,
+      "rotation": 0
+     },
+     "text": "Don't just visit. Live there.",
+     "role": "eyebrow",
+     "size": 52,
+     "color": "#FF385C",
+     "align": "left"
+    },
+    {
+     "id": "l_ef22d9f8",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 173,
+      "w": 810,
+      "h": 302,
+      "rotation": 0
+     },
+     "text": "Go with the flow.",
+     "role": "headline",
+     "size": 1,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_407135e9",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 475,
+      "w": 594,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "Experiences led by locals who show you the world through their eyes.",
+     "role": "body",
+     "size": 46,
+     "color": "#F7F3EF",
+     "align": "left"
+    },
+    {
+     "id": "l_c7b78e01",
+     "type": "pill",
+     "box": {
+      "x": 65,
+      "y": 950,
+      "w": 324,
+      "h": 59,
+      "rotation": 0
+     },
+     "text": "Explore Experiences",
+     "fill": "#FF385C",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_22368b83",
+     "type": "logo",
+     "box": {
+      "x": 778,
+      "y": 961,
+      "w": 238,
+      "h": 54,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/airbnb/assets/logo-white.png"
+    }
+   ]
+  }
+ ]
+}

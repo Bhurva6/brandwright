@@ -1,0 +1,446 @@
+{
+ "refs": [
+  {
+   "id": "d_d8183a9a",
+   "name": "Loud Type Poster",
+   "note": "HUGE counter-rotated headline creates tension; yellow bloom anchors the composition",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#7358FF"
+   },
+   "layers": [
+    {
+     "id": "l_5f10360a",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#7358FF"
+    },
+    {
+     "id": "l_30669f4d",
+     "type": "bloom",
+     "box": {
+      "x": 54,
+      "y": 778,
+      "w": 454,
+      "h": 238,
+      "rotation": 0
+     },
+     "assetId": "bloom-002",
+     "src": "/brand/common/blooms/bloom-002.png",
+     "fill": "#FFF176"
+    },
+    {
+     "id": "l_bb48f8b0",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 130,
+      "w": 950,
+      "h": 562,
+      "rotation": -6
+     },
+     "text": "TURN IT UP",
+     "role": "headline",
+     "size": 337,
+     "color": "#FFF176",
+     "align": "left"
+    },
+    {
+     "id": "l_9cb82a56",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 626,
+      "w": 756,
+      "h": 173,
+      "rotation": -6
+     },
+     "text": "Music louder than your inner monologue.",
+     "role": "body",
+     "size": 104,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_2891cd88",
+     "type": "logo",
+     "box": {
+      "x": 65,
+      "y": 950,
+      "w": 238,
+      "h": 76,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/spotify/assets/logo-white.png"
+    }
+   ]
+  },
+  {
+   "id": "d_5f583820",
+   "name": "Duotone Artist Photo",
+   "note": "Purple-over-black duotone portrait bleeds edge to edge; headline slams across the middle with dramatic scale",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#121212"
+   },
+   "layers": [
+    {
+     "id": "l_61c8a4f2",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#121212"
+    },
+    {
+     "id": "l_9aee7221",
+     "type": "image",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080,
+      "rotation": 0
+     },
+     "prompt": "Intense duotone portrait of a performer mid-song, dramatic stage lighting, purple and black color grade, grain texture, cinematic, no text no logos",
+     "fit": "cover",
+     "radius": 0,
+     "status": "ready",
+     "src": "/assets/blobs/3e28bbdbc24099311b924dd7.png"
+    },
+    {
+     "id": "l_d59fdcae",
+     "type": "shape",
+     "box": {
+      "x": 0,
+      "y": 410,
+      "w": 1080,
+      "h": 367,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#7358FF",
+     "radius": 0
+    },
+    {
+     "id": "l_da2739d2",
+     "type": "text",
+     "box": {
+      "x": 54,
+      "y": 432,
+      "w": 972,
+      "h": 302,
+      "rotation": 0
+     },
+     "text": "THIS IS THE SOUND OF YOU",
+     "role": "headline",
+     "size": 181,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_f4be1530",
+     "type": "pill",
+     "box": {
+      "x": 54,
+      "y": 842,
+      "w": 378,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "Listen Now",
+     "fill": "#1ED760",
+     "textColor": "#121212"
+    },
+    {
+     "id": "l_c289fb0b",
+     "type": "logo",
+     "box": {
+      "x": 54,
+      "y": 961,
+      "w": 216,
+      "h": 70,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/spotify/assets/logo-white.png"
+    }
+   ]
+  },
+  {
+   "id": "d_a4761b52",
+   "name": "Playlist Promo Card",
+   "note": "Asymmetric green rectangle bleeds off right edge; giant playlist title in yellow with feature list of genres",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#121212"
+   },
+   "layers": [
+    {
+     "id": "l_ded651cf",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#121212"
+    },
+    {
+     "id": "l_d26d4431",
+     "type": "shape",
+     "box": {
+      "x": 778,
+      "y": 0,
+      "w": 302,
+      "h": 594,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#1ED760",
+     "radius": 0
+    },
+    {
+     "id": "l_51873520",
+     "type": "bloom",
+     "box": {
+      "x": 626,
+      "y": 756,
+      "w": 378,
+      "h": 194,
+      "rotation": 0
+     },
+     "assetId": "bloom-013",
+     "src": "/brand/common/blooms/bloom-013.png",
+     "fill": "#1ED760"
+    },
+    {
+     "id": "l_c75583c4",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 86,
+      "w": 670,
+      "h": 410,
+      "rotation": 0
+     },
+     "text": "RAP CAVIAR",
+     "role": "headline",
+     "size": 246,
+     "color": "#FFF176",
+     "align": "left"
+    },
+    {
+     "id": "l_4a030f43",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 475,
+      "w": 670,
+      "h": 108,
+      "rotation": 0
+     },
+     "text": "The finest in hip-hop, updated weekly.",
+     "role": "body",
+     "size": 65,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_55825c7a",
+     "type": "featureList",
+     "box": {
+      "x": 65,
+      "y": 605,
+      "w": 594,
+      "h": 194,
+      "rotation": 0
+     },
+     "items": [
+      "HIP-HOP",
+      "TRAP",
+      "DRILL",
+      "R&B"
+     ],
+     "color": "#FFFFFF",
+     "markColor": "#1ED760",
+     "columns": 1
+    },
+    {
+     "id": "l_8d9f3cc1",
+     "type": "pill",
+     "box": {
+      "x": 65,
+      "y": 864,
+      "w": 410,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "Follow Playlist",
+     "fill": "#1ED760",
+     "textColor": "#121212"
+    },
+    {
+     "id": "l_a5f0a8a2",
+     "type": "logo",
+     "box": {
+      "x": 65,
+      "y": 972,
+      "w": 194,
+      "h": 65,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/spotify/assets/logo-white.png"
+    }
+   ]
+  },
+  {
+   "id": "d_c939c62b",
+   "name": "Wrapped Stat Card",
+   "note": "Massive '47,892' dominates the canvas in black; bloom shapes add organic energy behind the number",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#F774C4"
+   },
+   "layers": [
+    {
+     "id": "l_4cc81296",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#F774C4"
+    },
+    {
+     "id": "l_4dd7ccda",
+     "type": "bloom",
+     "box": {
+      "x": -86,
+      "y": 162,
+      "w": 594,
+      "h": 540,
+      "rotation": -4
+     },
+     "assetId": "bloom-009",
+     "src": "/brand/common/blooms/bloom-009.png",
+     "fill": "#7358FF"
+    },
+    {
+     "id": "l_c14d21a6",
+     "type": "bloom",
+     "box": {
+      "x": 594,
+      "y": 540,
+      "w": 540,
+      "h": 486,
+      "rotation": 5
+     },
+     "assetId": "bloom-006",
+     "src": "/brand/common/blooms/bloom-006.png",
+     "fill": "#FFF176"
+    },
+    {
+     "id": "l_3880754a",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 65,
+      "w": 950,
+      "h": 86,
+      "rotation": 0
+     },
+     "text": "YOUR 2024 WRAPPED",
+     "role": "eyebrow",
+     "size": 52,
+     "color": "#121212",
+     "align": "left"
+    },
+    {
+     "id": "l_8cd11e79",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 194,
+      "w": 950,
+      "h": 486,
+      "rotation": 0
+     },
+     "text": "47,892",
+     "role": "headline",
+     "size": 292,
+     "color": "#121212",
+     "align": "left"
+    },
+    {
+     "id": "l_511c12e0",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 691,
+      "w": 950,
+      "h": 130,
+      "rotation": 0
+     },
+     "text": "minutes of music. That's 33 days straight. No skips detected.",
+     "role": "body",
+     "size": 78,
+     "color": "#121212",
+     "align": "left"
+    },
+    {
+     "id": "l_eff2c74e",
+     "type": "pill",
+     "box": {
+      "x": 65,
+      "y": 886,
+      "w": 346,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "Open Wrapped",
+     "fill": "#121212",
+     "textColor": "#F774C4"
+    },
+    {
+     "id": "l_e91fedb7",
+     "type": "logo",
+     "box": {
+      "x": 65,
+      "y": 983,
+      "w": 194,
+      "h": 65,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/spotify/assets/logo-white.png"
+    }
+   ]
+  }
+ ]
+}

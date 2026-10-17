@@ -1,0 +1,549 @@
+{
+ "refs": [
+  {
+   "id": "d_78915b91",
+   "name": "Calm Typographic Poster",
+   "note": "One huge rotated word dominates — pure typographic confidence with a single orange bloom accent.",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#FBF3E4"
+   },
+   "layers": [
+    {
+     "id": "l_ab566ddc",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#FBF3E4"
+    },
+    {
+     "id": "l_450dd78d",
+     "type": "bloom",
+     "box": {
+      "x": 670,
+      "y": 518,
+      "w": 562,
+      "h": 562,
+      "rotation": 0
+     },
+     "assetId": "bloom-012",
+     "src": "/brand/common/blooms/bloom-012.png",
+     "fill": "#F47D31"
+    },
+    {
+     "id": "l_cfa042f6",
+     "type": "text",
+     "box": {
+      "x": 54,
+      "y": 65,
+      "w": 594,
+      "h": 302,
+      "rotation": -4
+     },
+     "text": "Less overthinking.",
+     "role": "headline",
+     "size": 181,
+     "color": "#2D3240",
+     "align": "left"
+    },
+    {
+     "id": "l_2f5560d2",
+     "type": "text",
+     "box": {
+      "x": 518,
+      "y": 346,
+      "w": 518,
+      "h": 238,
+      "rotation": -2
+     },
+     "text": "More you.",
+     "role": "headline",
+     "size": 143,
+     "color": "#FFFFFF",
+     "align": "right"
+    },
+    {
+     "id": "l_0a606fc6",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 626,
+      "w": 454,
+      "h": 108,
+      "rotation": 0
+     },
+     "text": "Meditation made simple.",
+     "role": "body",
+     "size": 65,
+     "color": "#2D3240",
+     "align": "left"
+    },
+    {
+     "id": "l_15598ae7",
+     "type": "pill",
+     "box": {
+      "x": 65,
+      "y": 778,
+      "w": 302,
+      "h": 70,
+      "rotation": 0
+     },
+     "text": "Try for free",
+     "fill": "#2D3240",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_fcb34a5b",
+     "type": "logo",
+     "box": {
+      "x": 65,
+      "y": 950,
+      "w": 270,
+      "h": 76,
+      "rotation": 0
+     },
+     "assetId": "logo-00",
+     "variant": "ink",
+     "text": "headspace",
+     "fontFamily": "'Baloo 2', sans-serif",
+     "fontWeight": 700,
+     "color": "#2D3240"
+    }
+   ]
+  },
+  {
+   "id": "d_b284eac0",
+   "name": "Soft Illustration-Led",
+   "note": "A serene sleep-scene photo carries the emotion; headline and CTA float confidently over the image.",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#FBF3E4"
+   },
+   "layers": [
+    {
+     "id": "l_4b07b07b",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#5A7BEF"
+    },
+    {
+     "id": "l_a4ed1d26",
+     "type": "image",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 778,
+      "rotation": 0
+     },
+     "prompt": "Soft dreamy photograph of a calm bedroom at dawn, warm golden light spilling through sheer curtains onto rumpled white linen bedding, shallow depth of field, peaceful and airy atmosphere",
+     "fit": "cover",
+     "radius": 0,
+     "status": "ready",
+     "src": "/assets/blobs/418dcdf2776f8c3797772069.png"
+    },
+    {
+     "id": "l_52a69251",
+     "type": "shape",
+     "box": {
+      "x": 0,
+      "y": 734,
+      "w": 1080,
+      "h": 389,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#FBF3E4",
+     "radius": 0.06
+    },
+    {
+     "id": "l_e9a5da15",
+     "type": "shape",
+     "box": {
+      "x": 842,
+      "y": 238,
+      "w": 302,
+      "h": 302,
+      "rotation": -6
+     },
+     "kind": "ellipse",
+     "fill": "#5A7BEF",
+     "radius": 0.5
+    },
+    {
+     "id": "l_d7a2186f",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 65,
+      "w": 756,
+      "h": 216,
+      "rotation": 0
+     },
+     "text": "Sleep",
+     "role": "headline",
+     "size": 130,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_43fe62bf",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 259,
+      "w": 670,
+      "h": 130,
+      "rotation": 0
+     },
+     "text": "drift into your deepest rest.",
+     "role": "body",
+     "size": 78,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_2eb4159b",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 799,
+      "w": 702,
+      "h": 86,
+      "rotation": 0
+     },
+     "text": "Sleep sounds, wind-downs & guided relaxations.",
+     "role": "body",
+     "size": 52,
+     "color": "#2D3240",
+     "align": "left"
+    },
+    {
+     "id": "l_b4933fab",
+     "type": "pill",
+     "box": {
+      "x": 65,
+      "y": 907,
+      "w": 281,
+      "h": 65,
+      "rotation": 0
+     },
+     "text": "Start sleeping better",
+     "fill": "#F47D31",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_398ea152",
+     "type": "logo",
+     "box": {
+      "x": 756,
+      "y": 972,
+      "w": 238,
+      "h": 65,
+      "rotation": 0
+     },
+     "assetId": "logo-00",
+     "variant": "ink",
+     "text": "headspace",
+     "fontFamily": "'Baloo 2', sans-serif",
+     "fontWeight": 700,
+     "color": "#2D3240"
+    }
+   ]
+  },
+  {
+   "id": "d_b999afe0",
+   "name": "Benefit Card with CTA",
+   "note": "A massive orange rounded-rect card dominates, with ink text and a white CTA pill for strong conversion.",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#FBF3E4"
+   },
+   "layers": [
+    {
+     "id": "l_cf062803",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#FBF3E4"
+    },
+    {
+     "id": "l_842f3a2c",
+     "type": "shape",
+     "box": {
+      "x": 43,
+      "y": 54,
+      "w": 994,
+      "h": 972,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#F47D31",
+     "radius": 0.08
+    },
+    {
+     "id": "l_04c5e71a",
+     "type": "bloom",
+     "box": {
+      "x": 670,
+      "y": 86,
+      "w": 432,
+      "h": 432,
+      "rotation": 0
+     },
+     "assetId": "bloom-003",
+     "src": "/brand/common/blooms/bloom-003.png",
+     "fill": "#FFCE00"
+    },
+    {
+     "id": "l_654b8eb2",
+     "type": "text",
+     "box": {
+      "x": 86,
+      "y": 108,
+      "w": 648,
+      "h": 259,
+      "rotation": 0
+     },
+     "text": "Stress less, smile more.",
+     "role": "headline",
+     "size": 155,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_7befd52d",
+     "type": "text",
+     "box": {
+      "x": 86,
+      "y": 389,
+      "w": 626,
+      "h": 130,
+      "rotation": 0
+     },
+     "text": "Daily meditations that fit your life — not the other way around.",
+     "role": "body",
+     "size": 78,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_b287b65e",
+     "type": "featureList",
+     "box": {
+      "x": 86,
+      "y": 562,
+      "w": 594,
+      "h": 238,
+      "rotation": 0
+     },
+     "items": [
+      "3-minute sessions",
+      "Personalised for you",
+      "Science-backed calm"
+     ],
+     "color": "#FFFFFF",
+     "markColor": "#FFCE00",
+     "columns": 1
+    },
+    {
+     "id": "l_d0d8a677",
+     "type": "pill",
+     "box": {
+      "x": 86,
+      "y": 842,
+      "w": 324,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "Try Headspace free",
+     "fill": "#2D3240",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_bfd65c24",
+     "type": "logo",
+     "box": {
+      "x": 86,
+      "y": 961,
+      "w": 259,
+      "h": 70,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "text": "headspace",
+     "fontFamily": "'Baloo 2', sans-serif",
+     "fontWeight": 700,
+     "color": "#FFFFFF"
+    }
+   ]
+  },
+  {
+   "id": "d_cf5b0cf2",
+   "name": "Stat Claim — Sleep & Stress",
+   "note": "A colossal '84%' anchors the design — bold claim backed by brand warmth, with asymmetric bloom and crisp body copy.",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#5A7BEF"
+   },
+   "layers": [
+    {
+     "id": "l_6240cf0f",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#5A7BEF"
+    },
+    {
+     "id": "l_8c5069c6",
+     "type": "bloom",
+     "box": {
+      "x": 594,
+      "y": 162,
+      "w": 594,
+      "h": 594,
+      "rotation": 0
+     },
+     "assetId": "bloom-009",
+     "src": "/brand/common/blooms/bloom-009.png",
+     "fill": "#F47D31"
+    },
+    {
+     "id": "l_1e62cff2",
+     "type": "shape",
+     "box": {
+      "x": 778,
+      "y": 670,
+      "w": 346,
+      "h": 151,
+      "rotation": 5
+     },
+     "kind": "ellipse",
+     "fill": "#FFCE00",
+     "radius": 0.5
+    },
+    {
+     "id": "l_640fb457",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 86,
+      "w": 950,
+      "h": 378,
+      "rotation": 0
+     },
+     "text": "84%",
+     "role": "headline",
+     "size": 227,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_74f971a2",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 454,
+      "w": 756,
+      "h": 108,
+      "rotation": 0
+     },
+     "text": "of people felt less stressed after just 10 days.",
+     "role": "body",
+     "size": 65,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_91617861",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 594,
+      "w": 648,
+      "h": 86,
+      "rotation": 0
+     },
+     "text": "Science you can feel.",
+     "role": "eyebrow",
+     "size": 52,
+     "color": "#FFCE00",
+     "align": "left"
+    },
+    {
+     "id": "l_dea0a1f7",
+     "type": "text",
+     "box": {
+      "x": 65,
+      "y": 734,
+      "w": 702,
+      "h": 86,
+      "rotation": 0
+     },
+     "text": "Join millions who sleep better and stress less.",
+     "role": "body",
+     "size": 52,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_bc5c857e",
+     "type": "pill",
+     "box": {
+      "x": 65,
+      "y": 864,
+      "w": 302,
+      "h": 70,
+      "rotation": 0
+     },
+     "text": "Start your journey",
+     "fill": "#F47D31",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_7995f78b",
+     "type": "logo",
+     "box": {
+      "x": 65,
+      "y": 972,
+      "w": 238,
+      "h": 65,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "text": "headspace",
+     "fontFamily": "'Baloo 2', sans-serif",
+     "fontWeight": 700,
+     "color": "#FFFFFF"
+    }
+   ]
+  }
+ ]
+}

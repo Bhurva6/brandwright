@@ -692,7 +692,7 @@
       "id": "logo-050",
       "category": "logo",
       "origName": "01_0f4c5387-a60d-4a27-93e8-9f5223676154.png",
-      "label": "Wordmark \u00b7 white",
+      "label": "Wordmark · white",
       "src": "/brand/xero/assets/logo-050.png",
       "w": 210,
       "h": 60,
@@ -704,7 +704,7 @@
       "id": "logo-051",
       "category": "logo",
       "origName": "02_2f020a69-e294-4971-b448-760f8b1827ad.png",
-      "label": "Wordmark \u00b7 midnight",
+      "label": "Wordmark · midnight",
       "src": "/brand/xero/assets/logo-051.png",
       "w": 210,
       "h": 60,
@@ -716,7 +716,7 @@
       "id": "logo-052",
       "category": "logo",
       "origName": "03_a6d69555-61d3-43ba-a7ab-e38d56a3805c.png",
-      "label": "Wordmark \u00b7 blue",
+      "label": "Wordmark · blue",
       "src": "/brand/xero/assets/logo-052.png",
       "w": 210,
       "h": 60,
@@ -1047,6 +1047,11 @@
       "id": "safezone",
       "text": "Respect Meta safe zones on social placements; keep the logo and CTA inside the safe area.",
       "severity": "warn"
+    },
+    {
+      "id": "learned-resized-shape",
+      "text": "Resize shapes proportionally; never distort or stretch Xero brand shapes.",
+      "severity": "warn"
     }
   ],
   "voice": "Friendly, plain-spoken and encouraging. Short active sentences that talk to small-business owners like a helpful partner. Confident, never jargon-y. Examples: 'Get a Xero Coach. Get ahead.' / 'Up and running in under 4 hours.' / 'Other software holds you back. Xero holds your hand.'",
@@ -1231,9 +1236,17 @@
     "hierarchy": 0.15,
     "voice": 0.15
   },
-  "learned": [],
+  "learned": [
+    {
+      "id": "learned-0",
+      "key": "resized shape",
+      "text": "Resize shapes proportionally; never distort or stretch Xero brand shapes.",
+      "origin": "learned",
+      "confirmations": 3
+    }
+  ],
   "examples": [
-    "Promote Xero as easy accounting for small businesses \u2014 get paid faster.",
+    "Promote Xero as easy accounting for small businesses — get paid faster.",
     "Announce a free 30-day trial, friendly and confident.",
     "Payroll made simple, for cafe and salon owners.",
     "Switch to Xero and be up and running in under 4 hours."

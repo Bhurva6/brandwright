@@ -1,0 +1,442 @@
+{
+ "refs": [
+  {
+   "id": "d_3aca76bc",
+   "name": "Bold Typographic Poster",
+   "note": "One massive rotated headline dominates the red canvas, with a crisp white wordmark anchoring the bottom",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#F40009"
+   },
+   "layers": [
+    {
+     "id": "l_4f10e9e5",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#F40009"
+    },
+    {
+     "id": "l_c011fed5",
+     "type": "text",
+     "box": {
+      "x": 43,
+      "y": 86,
+      "w": 994,
+      "h": 778,
+      "rotation": -6
+     },
+     "text": "REAL MAGIC",
+     "role": "headline",
+     "size": 467,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_1a2dd392",
+     "type": "bloom",
+     "box": {
+      "x": 626,
+      "y": 594,
+      "w": 410,
+      "h": 410,
+      "rotation": 0
+     },
+     "assetId": "bloom-011",
+     "src": "/brand/common/blooms/bloom-011.png",
+     "fill": "#A3000C"
+    },
+    {
+     "id": "l_a4257148",
+     "type": "text",
+     "box": {
+      "x": 486,
+      "y": 778,
+      "w": 540,
+      "h": 86,
+      "rotation": 0
+     },
+     "text": "Open happiness.",
+     "role": "body",
+     "size": 52,
+     "color": "#FFFFFF",
+     "align": "right"
+    },
+    {
+     "id": "l_81c85467",
+     "type": "logo",
+     "box": {
+      "x": 43,
+      "y": 918,
+      "w": 302,
+      "h": 108,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/cocacola/assets/logo-white.png"
+    }
+   ]
+  },
+  {
+   "id": "d_f9db7738",
+   "name": "Photo-Led Togetherness",
+   "note": "A warm candid moment fills the frame — friends clinking bottles at golden hour, with headline blazing across the scene",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#F40009"
+   },
+   "layers": [
+    {
+     "id": "l_f2179d16",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#F40009"
+    },
+    {
+     "id": "l_74df2deb",
+     "type": "image",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080,
+      "rotation": 0
+     },
+     "prompt": "Joyful group of diverse friends laughing and toasting with ice-cold Coca-Cola bottles at a sun-drenched outdoor table, golden hour backlight, candid authentic moment, warm bokeh, lifestyle photography",
+     "fit": "cover",
+     "radius": 0,
+     "status": "ready",
+     "src": "/assets/blobs/229aea833359c0794314fa8d.png"
+    },
+    {
+     "id": "l_e90f5e39",
+     "type": "shape",
+     "box": {
+      "x": 0,
+      "y": 626,
+      "w": 1080,
+      "h": 454,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#1E1E1E",
+     "radius": 0
+    },
+    {
+     "id": "l_eaa7e2a9",
+     "type": "text",
+     "box": {
+      "x": 54,
+      "y": 648,
+      "w": 799,
+      "h": 173,
+      "rotation": 0
+     },
+     "text": "Taste the feeling.",
+     "role": "headline",
+     "size": 104,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_53b84bd4",
+     "type": "pill",
+     "box": {
+      "x": 54,
+      "y": 842,
+      "w": 346,
+      "h": 86,
+      "rotation": 0
+     },
+     "text": "Share a Coke",
+     "fill": "#F40009",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_aa6269dc",
+     "type": "logo",
+     "box": {
+      "x": 734,
+      "y": 929,
+      "w": 302,
+      "h": 108,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/cocacola/assets/logo-white.png"
+    }
+   ]
+  },
+  {
+   "id": "d_2311d577",
+   "name": "Product Hero — Colour Block",
+   "note": "A bold diagonal split of red and dark red frames the bottle, with a confident headline punching through",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#F7F3E8"
+   },
+   "layers": [
+    {
+     "id": "l_0a7710bd",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#F7F3E8"
+    },
+    {
+     "id": "l_065c72fd",
+     "type": "shape",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 670,
+      "h": 1080,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#F40009",
+     "radius": 0
+    },
+    {
+     "id": "l_cedd0b9f",
+     "type": "shape",
+     "box": {
+      "x": 594,
+      "y": 0,
+      "w": 540,
+      "h": 1080,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#A3000C",
+     "radius": 0
+    },
+    {
+     "id": "l_3ebfd368",
+     "type": "image",
+     "box": {
+      "x": 238,
+      "y": 108,
+      "w": 605,
+      "h": 864,
+      "rotation": 0
+     },
+     "prompt": "Single ice-cold glass Coca-Cola contour bottle, condensation droplets, dramatic studio lighting on deep red background, product photography, no text no logo",
+     "fit": "contain",
+     "radius": 0,
+     "status": "ready",
+     "src": "/assets/blobs/1e3d6522da9288ec45ffcb4f.png"
+    },
+    {
+     "id": "l_fe95ad07",
+     "type": "text",
+     "box": {
+      "x": 54,
+      "y": 238,
+      "w": 410,
+      "h": 151,
+      "rotation": 0
+     },
+     "text": "Ice cold.",
+     "role": "headline",
+     "size": 91,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_753d783a",
+     "type": "text",
+     "box": {
+      "x": 54,
+      "y": 378,
+      "w": 346,
+      "h": 65,
+      "rotation": 0
+     },
+     "text": "The one and only.",
+     "role": "body",
+     "size": 39,
+     "color": "#FFFFFF",
+     "align": "left"
+    },
+    {
+     "id": "l_ecf0f7ee",
+     "type": "pill",
+     "box": {
+      "x": 54,
+      "y": 475,
+      "w": 324,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "Find your Coke",
+     "fill": "#FFFFFF",
+     "textColor": "#F40009"
+    },
+    {
+     "id": "l_ec9581a3",
+     "type": "logo",
+     "box": {
+      "x": 54,
+      "y": 918,
+      "w": 324,
+      "h": 108,
+      "rotation": 0
+     },
+     "assetId": "logo-01",
+     "variant": "white",
+     "src": "/brand/cocacola/assets/logo-white.png"
+    }
+   ]
+  },
+  {
+   "id": "d_6152bcb2",
+   "name": "Stat Claim Card",
+   "note": "A giant '138' anchors the card — years of refreshment — with a cream card and red bloom adding warmth and authority",
+   "canvas": {
+    "w": 1080,
+    "h": 1080,
+    "preset": "square_1080",
+    "background": "#1E1E1E"
+   },
+   "layers": [
+    {
+     "id": "l_151b8df2",
+     "type": "background",
+     "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1080
+     },
+     "fill": "#1E1E1E"
+    },
+    {
+     "id": "l_c2b7409f",
+     "type": "shape",
+     "box": {
+      "x": 65,
+      "y": 65,
+      "w": 950,
+      "h": 950,
+      "rotation": 0
+     },
+     "kind": "rect",
+     "fill": "#F7F3E8",
+     "radius": 0.03
+    },
+    {
+     "id": "l_be423bc7",
+     "type": "bloom",
+     "box": {
+      "x": 648,
+      "y": 86,
+      "w": 378,
+      "h": 378,
+      "rotation": 0
+     },
+     "assetId": "bloom-010",
+     "src": "/brand/common/blooms/bloom-010.png",
+     "fill": "#F40009"
+    },
+    {
+     "id": "l_72390d16",
+     "type": "text",
+     "box": {
+      "x": 108,
+      "y": 130,
+      "w": 594,
+      "h": 410,
+      "rotation": 0
+     },
+     "text": "138",
+     "role": "headline",
+     "size": 246,
+     "color": "#F40009",
+     "align": "left"
+    },
+    {
+     "id": "l_7c62248c",
+     "type": "text",
+     "box": {
+      "x": 108,
+      "y": 65,
+      "w": 540,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "YEARS OF REFRESHMENT",
+     "role": "eyebrow",
+     "size": 46,
+     "color": "#A3000C",
+     "align": "left"
+    },
+    {
+     "id": "l_3d8d4518",
+     "type": "text",
+     "box": {
+      "x": 108,
+      "y": 562,
+      "w": 540,
+      "h": 173,
+      "rotation": 0
+     },
+     "text": "Since 1886, Coca-Cola has brought people together over the simple joy of an ice-cold taste.",
+     "role": "body",
+     "size": 104,
+     "color": "#1E1E1E",
+     "align": "left"
+    },
+    {
+     "id": "l_b94a0c4c",
+     "type": "pill",
+     "box": {
+      "x": 108,
+      "y": 756,
+      "w": 281,
+      "h": 76,
+      "rotation": 0
+     },
+     "text": "Our story",
+     "fill": "#F40009",
+     "textColor": "#FFFFFF"
+    },
+    {
+     "id": "l_65a5268e",
+     "type": "logo",
+     "box": {
+      "x": 108,
+      "y": 886,
+      "w": 270,
+      "h": 97,
+      "rotation": 0
+     },
+     "assetId": "logo-00",
+     "variant": "red",
+     "src": "/brand/cocacola/assets/logo-orig.png"
+    }
+   ]
+  }
+ ]
+}
