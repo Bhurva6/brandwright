@@ -16,12 +16,11 @@ interface RefAd { id: string; src: string; label: string; structure: string }
 
 interface BrandListing { id: string; name: string; colors: { token: string; value: string }[] }
 
+// The app keeps GetCrux's own identity; the active genome's colour only tints
+// scoped elements (genome chip) via --brand.
 function applyBrandChrome(k: { colors: { value: string; roles?: string[] }[] }) {
   const accent = k.colors.find((c) => c.roles?.includes('cta')) || k.colors.find((c) => c.roles?.includes('accent'));
-  if (accent) {
-    document.documentElement.style.setProperty('--accent', accent.value);
-    document.documentElement.style.setProperty('--accent-ink', accent.value);
-  }
+  if (accent) document.documentElement.style.setProperty('--brand', accent.value);
 }
 
 const GEN_STAGES = [

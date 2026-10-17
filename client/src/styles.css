@@ -9,8 +9,9 @@
   --muted: #837a70;
   --line: #eadfd3;
   --line-2: #f3ece2;
-  --accent: #ee5a24;
-  --accent-ink: #d64a16;
+  --accent: #f05c22;   /* GetCrux orange — the app's own identity, fixed */
+  --accent-ink: #d84a12;
+  --brand: #f05c22;     /* active genome's colour — scoped accents only */
   --radius: 16px;
   --shadow: 0 1px 2px rgba(61, 46, 33, 0.05), 0 10px 30px rgba(61, 46, 33, 0.07);
   --display: 'Archivo', 'DM Sans', sans-serif;
@@ -30,10 +31,11 @@ body {
 
 /* header */
 .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 6px 2px 20px; }
-.brandmark { font-family: var(--display); font-weight: 800; font-size: 23px; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 12px; }
+.brandmark { font-family: var(--display); font-weight: 800; font-size: 23px; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 12px; text-transform: lowercase; }
+.brandmark::after { content: '.'; color: var(--accent); margin-left: -10px; }
 .brandmark::before { content: '❋'; color: var(--accent); margin-right: 2px; }
 .brandmark .tag { font-family: Inter, sans-serif; font-weight: 600; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
-.genome { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px 6px 10px; box-shadow: var(--shadow); }
+.genome { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); background: var(--panel); border: 1.5px solid color-mix(in srgb, var(--brand) 45%, var(--line)); border-radius: 999px; padding: 6px 14px 6px 10px; box-shadow: var(--shadow); }
 .genome img { height: 16px; width: auto; }
 .genome b { color: var(--ink); font-weight: 600; }
 .brandsel { border: none; background: none; font: inherit; font-weight: 700; color: var(--ink); cursor: pointer; outline: none; padding: 2px 0; }
@@ -62,8 +64,8 @@ body {
 .controls select { font-family: Inter, sans-serif; font-size: 13px; color: var(--ink); border: 1px solid var(--line); border-radius: 9px; padding: 6px 8px; background: #fff; cursor: pointer; }
 .go {
   margin-left: auto; background: var(--charcoal); color: #fff; border: none; border-radius: 999px;
-  font-family: Inter, sans-serif; font-weight: 600; font-size: 13.5px; letter-spacing: 0.02em;
-  padding: 12px 26px; cursor: pointer; transition: 140ms ease; white-space: nowrap;
+  font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 13px 26px; cursor: pointer; transition: 140ms ease; white-space: nowrap;
 }
 .go::after { content: ' →'; }
 .go:hover:not(:disabled) { background: var(--accent); transform: translateY(-1px); }

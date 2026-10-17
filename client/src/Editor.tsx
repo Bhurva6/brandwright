@@ -226,10 +226,7 @@ export default function Editor() {
       st.getState().setKit(toKit);
       // theme the chrome to the new brand
       const accent = toKit.colors.find((c: any) => c.roles?.includes('cta')) || toKit.colors.find((c: any) => c.roles?.includes('accent'));
-      if (accent) {
-        document.documentElement.style.setProperty('--accent', accent.value);
-        document.documentElement.style.setProperty('--accent-ink', accent.value);
-      }
+      if (accent) document.documentElement.style.setProperty('--brand', accent.value);
       st.getState().addBranches([reskinned], `Re-skin → ${toKit.name}`);
       st.getState().switchBranch(useStore.getState().repo.branches.at(-1)!.name);
     } finally {

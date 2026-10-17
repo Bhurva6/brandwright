@@ -99,13 +99,60 @@ export function normalizeDesign(raw, brand, preset, opts = {}) {
     }
   }
 
-  return {
+  const spec = {
     id: (opts.keepIds && raw.id) || sid('d'),
     name: raw.name || 'Design',
     note: raw.note || raw.strategy || '',
     canvas: { w: W, h: H, preset: preset.id, background: resolveColor(raw.background, cmap, '#FFFFFF') },
     layers,
   };
+  if (opts.tidy !== false) resolveCollisions(spec);
+  return spec;
+}
+
+/**
+ * Deterministic tidy pass: readable layers (text/pill/featureList/logo) never
+ * overlap each other and always sit inside the canvas. The model proposes;
+ * geometry disposes.
+ */
+export function resolveCollisions(spec) {
+  const W = spec.canvas.w, H = spec.canvas.h;
+  const pad = Math.round(Math.min(W, H) * 0.02);
+  const readable = spec.layers.filter((l) => ['text', 'pill', 'featureList', 'logo'].includes(l.type));
+
+  // clamp into the canvas first
+  for (const l of readable) {
+    const b = l.box;
+    b.w = Math.min(b.w, W - pad * 2);
+    b.h = Math.min(b.h, H - pad * 2);
+    b.x = Math.max(pad, Math.min(b.x, W - b.w - pad));
+    b.y = Math.max(pad, Math.min(b.y, H - b.h - pad));
+  }
+
+  const overlap = (a, b) => {
+    const w = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+    const h = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+    return w > 0 && h > 0 ? w * h : 0;
+  };
+
+  // top-to-bottom: anything colliding with an earlier layer gets pushed below it
+  const placed = [];
+  for (const l of [...readable].sort((a, b) => a.box.y - b.box.y)) {
+    for (let guard = 0; guard < 8; guard++) {
+      const hit = placed.find((p) => {
+        const minA = Math.min(p.box.w * p.box.h, l.box.w * l.box.h);
+        return minA > 0 && overlap(p.box, l.box) / minA > 0.12;
+      });
+      if (!hit) break;
+      l.box.y = hit.box.y + hit.box.h + Math.round(H * 0.015);
+      if (l.box.y + l.box.h > H - pad) {
+        // ran out of room below — shrink to fit the remaining band
+        l.box.y = Math.min(l.box.y, H - pad - l.box.h);
+        break;
+      }
+    }
+    placed.push(l);
+  }
 }
 
 /** Convert a px DesignSpec back to the agent's fractional format (keeps ids). */
