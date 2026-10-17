@@ -56,8 +56,10 @@ export default function Landing() {
     const els = rootRef.current?.querySelectorAll('.rv:not(.hero-rv)');
     if (!els?.length) return;
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('in')),
-      { threshold: 0.12, rootMargin: '0px 0px -14% 0px' },
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      }),
+      { threshold: 0.06, rootMargin: '0px 0px -8% 0px' },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
@@ -134,7 +136,7 @@ export default function Landing() {
       </section>
 
       {/* ===== dark showcase: the critic shows its work ===== */}
-      <section className="ld-dark rv" aria-label="The critic shows its work">
+      <section className="ld-dark" aria-label="The critic shows its work">
         <div className="ld-k light rv">The critic shows its work</div>
         <div className="ldsA">
           <div className="mockwrap rv rv-left">
@@ -180,7 +182,7 @@ export default function Landing() {
       </section>
 
       {/* ===== dark showcase: layers, never pixels ===== */}
-      <section className="ld-dark rv" aria-label="Layers, never pixels">
+      <section className="ld-dark" aria-label="Layers, never pixels">
         <div className="ld-k light rv">Layers, never pixels</div>
         <div className="ldsB">
           <div className="xpshow rv">

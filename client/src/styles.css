@@ -678,7 +678,7 @@ button .icx, label .icx, .mini .icx { margin-right: 2px; }
   padding: 7px 14px; border-radius: 8px; white-space: nowrap;
   transition: transform 500ms cubic-bezier(0.2, 1.4, 0.35, 1) 450ms, opacity 240ms ease 450ms;
 }
-.in .mock-stamp, .mockwrap.in .mock-stamp { transform: rotate(-5deg) scale(1); opacity: 1; }
+.mockwrap.in .mock-stamp { transform: rotate(-5deg) scale(1); opacity: 1; }
 
 .mockad { position: relative; display: flex; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.5); aspect-ratio: 300/380; }
 .ma-left { width: 44%; background: #121a4e; color: #fff; padding: 20px 14px; display: flex; flex-direction: column; }
@@ -697,8 +697,8 @@ button .icx, label .icx, .mini .icx { margin-right: 2px; }
 .ma-circles ellipse { fill: none; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 460; stroke-dashoffset: 460; transform: rotate(-4deg); transform-origin: center; }
 .ma-circles .c1 { stroke: #5b8def; }
 .ma-circles .c2 { stroke: var(--accent); }
-.in .ma-circles .c1 { animation: draw 900ms cubic-bezier(0.4, 0, 0.3, 1) 700ms forwards; }
-.in .ma-circles .c2 { animation: draw 900ms cubic-bezier(0.4, 0, 0.3, 1) 1050ms forwards; }
+.mockwrap.in .ma-circles .c1 { animation: draw 900ms cubic-bezier(0.4, 0, 0.3, 1) 700ms forwards; }
+.mockwrap.in .ma-circles .c2 { animation: draw 900ms cubic-bezier(0.4, 0, 0.3, 1) 1050ms forwards; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
 .ldsA-notes { display: flex; flex-direction: column; gap: 16px; }
@@ -715,14 +715,14 @@ button .icx, label .icx, .mini .icx { margin-right: 2px; }
 /* layers showcase */
 .ldsB { display: grid; grid-template-columns: 1fr minmax(240px, 380px); gap: clamp(22px, 4vw, 56px); align-items: center; }
 @media (max-width: 760px) { .ldsB { grid-template-columns: 1fr; } }
-.xpshow { perspective: 1200px; display: flex; justify-content: center; padding: 30px 0 10px; }
+.xpshow { perspective: 1200px; display: flex; justify-content: center; padding: 80px 0 10px; }
 .xpstage { position: relative; width: 240px; height: 300px; transform: rotateX(55deg) rotateZ(-32deg); transform-style: preserve-3d; }
 .xpstage .pl {
   position: absolute; inset: 0; border-radius: 10px; transform: translateZ(0);
   transition: transform 900ms cubic-bezier(0.25, 0.9, 0.3, 1) calc(var(--i) * 70ms);
   display: flex; align-items: center; justify-content: center; font-style: normal;
 }
-.rv.in .xpstage .pl, .xpshow.in .xpstage .pl { transform: translateZ(calc(var(--i) * 26px)); }
+.xpshow.in .xpstage .pl { transform: translateZ(calc(var(--i) * 24px)); }
 .pl.outline { border: 1px solid rgba(255,255,255,0.18); }
 .pl.navy { background: #121a4e; width: 46%; inset: 0 auto 0 0; border-radius: 10px 0 0 10px; }
 .pl.pale { background: #cfe6f8; width: 56%; inset: 0 0 0 auto; border-radius: 0 10px 10px 0; }
