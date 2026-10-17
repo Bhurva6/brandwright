@@ -11,14 +11,17 @@ export interface Score {
   pass: boolean;
 }
 
-/** Keep the URL in step with the app's view — real pages: /, /editor, /library */
+/** Keep the URL in step with the app's view — real pages: /, /studio, /editor, /library */
 export const nav = (path: string) => {
   if (typeof window !== 'undefined' && window.location.pathname !== path) window.history.pushState({}, '', path);
 };
 
+export type View = 'landing' | 'home' | 'editor' | 'library';
+export const PATHS: Record<View, string> = { landing: '/', home: '/studio', editor: '/editor', library: '/library' };
+
 interface State {
   kit?: BrandKit;
-  view: 'home' | 'editor' | 'library';
+  view: View;
   designs: DesignSpec[];
   scores: Record<string, Score>; // design id -> Performance Lens score
   repo: Repo;
@@ -37,7 +40,7 @@ interface State {
 
   openEditor: (design: DesignSpec) => void;
   closeEditor: () => void;
-  setView: (v: 'home' | 'editor' | 'library') => void;
+  setView: (v: View) => void;
   switchBranch: (name: string) => void;
   select: (id?: string) => void;
 
@@ -53,7 +56,7 @@ interface State {
 }
 
 export const useStore = create<State>((set, get) => ({
-  view: 'home',
+  view: 'landing',
   designs: [],
   scores: {},
   repo: emptyRepo(),
@@ -111,12 +114,12 @@ export const useStore = create<State>((set, get) => ({
   },
 
   closeEditor: () => {
-    nav('/');
+    nav(PATHS.home);
     set({ view: 'home', working: undefined, selectedId: undefined, viewingCommit: undefined, dirty: false });
   },
 
   setView: (v) => {
-    nav(v === 'home' ? '/' : '/' + v);
+    nav(PATHS[v]);
     set({ view: v });
   },
 

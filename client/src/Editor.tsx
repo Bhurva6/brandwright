@@ -478,7 +478,7 @@ export default function Editor() {
   return (
     <div className="ed">
       {toast && <div className="toast">{toast}</div>}
-      <Coachmarks key={replayTour} steps={EDITOR_STEPS} storageKey="bw_tour_editor" run={replayTour > 0} onClose={() => setReplayTour(0)} />
+      <Coachmarks key={replayTour} steps={EDITOR_STEPS} storageKey="bw_tour_editor_v2" run={replayTour > 0} onClose={() => setReplayTour(0)} />
       {/* ===== top bar ===== */}
       <div className="ed-top">
         <button className="ghost" onClick={() => st.getState().closeEditor()}>← Gallery</button>
@@ -515,7 +515,7 @@ export default function Editor() {
         <button className="ghost" onClick={exportPack} disabled={!!lensBusy} title="Zip with every placement size + copy sheet + brand-compliance report">
           📦 Export pack
         </button>
-        <select className="ghost resel" value={exportFmt} onChange={(e) => setExportFmt(e.target.value)} title="Export format">
+        <select className="ghost resel fmtsel" value={exportFmt} onChange={(e) => setExportFmt(e.target.value)} title="Export format">
           <option value="png">PNG</option>
           <option value="jpeg">JPEG</option>
           <option value="svg">SVG</option>
@@ -728,7 +728,7 @@ export default function Editor() {
           )}
 
           {/* add layers */}
-          <div>
+          <div className="ed-addrow">
             <div className="ed-sectitle">Add</div>
             <div className="ed-row">
               {[

@@ -107,7 +107,7 @@ export const HOME_STEPS: CoachStep[] = [
   {
     target: '.genome',
     title: 'Pick a brand genome',
-    text: 'Brandwright learns a brand\'s DNA — colours, fonts, logos, voice, rules. Switch brands here, or ingest a brand new one from a folder of assets.',
+    text: 'Brandwright learns a brand\'s DNA — colours, fonts, logos, voice, rules. Five brands ship ready, or pick "＋ Ingest new brand" and teach it yours from a folder of assets.',
   },
   {
     target: '.composer textarea',
@@ -117,17 +117,22 @@ export const HOME_STEPS: CoachStep[] = [
   {
     target: '.chips',
     title: 'Or tap an example brief',
-    text: 'Each brand brings its own example briefs. One tap generates instantly.',
-  },
-  {
-    target: '.refstrip',
-    title: 'Remix a reference',
-    text: 'Pick any reference ad and Brandwright recreates its structure in the active brand\'s DNA — fresh copy, fresh imagery, same skeleton.',
+    text: 'Each brand brings its own example briefs. One tap generates instantly, scored live by the Performance Lens.',
   },
   {
     target: '.controls',
-    title: 'Variations become branches',
-    text: 'Ask for up to 8 creative directions per run. Every variation lands as a branch you can explore, edit and compare — like git, for design.',
+    title: 'Start your way',
+    text: 'Up to 8 variations per run — each lands as a branch. Or go manual: ⬜ Blank canvas builds from scratch, 📥 Import edits an existing design, and 🚀 Campaign makes 3 concepts × every placement size in one go.',
+  },
+  {
+    target: '.refstrip',
+    title: 'Remix any reference',
+    text: 'Pick a reference ad — or "+ Your reference" to describe one you\'ve seen — and Brandwright rebuilds its structure in the active brand\'s DNA.',
+  },
+  {
+    target: '.libbtn',
+    title: 'Nothing gets lost',
+    text: 'Every design you export lands in the Library, and your whole session — designs, branches, history — survives a refresh.',
   },
 ];
 
@@ -135,7 +140,12 @@ export const EDITOR_STEPS: CoachStep[] = [
   {
     target: '.ed-stagewrap',
     title: 'Everything is editable',
-    text: 'Click any element to select it. Drag to move, pull the corners to resize. Nothing here is a flat image — it\'s all live layers.',
+    text: 'Click to select, drag to move, pull corners to resize. Shortcuts too: ⌘C copy · ⌘V paste · ⌘D duplicate · ⌫ delete · arrows nudge · ⌘Z undo.',
+  },
+  {
+    target: '.ed-title',
+    title: 'Name it',
+    text: 'Click the title to rename the design — even the rename is a commit.',
   },
   {
     target: '.ed-chat',
@@ -145,21 +155,31 @@ export const EDITOR_STEPS: CoachStep[] = [
   {
     target: '.ed-lens',
     title: 'Performance Lens',
-    text: 'The critic agent scores every design against brand rules and ad-performance dimensions. Auto-fix repairs issues and shows the score climb.',
+    text: 'The critic agent scores the design on brand rules and ad-performance dimensions. 🛡 Auto-fix repairs issues and shows the score climb.',
+  },
+  {
+    target: '.ed-addrow',
+    title: 'Build by hand too',
+    text: 'Add headlines, imagery, shapes, blooms, CTAs — all snapped to brand tokens. 🖨 Print check previews how the inks shift in CMYK.',
   },
   {
     target: '.ed-branches',
     title: 'Branches = creative directions',
-    text: 'Each variation is a branch. Switch between them any time — nothing is ever lost.',
+    text: 'Each variation is a branch. Switch any time — nothing is ever lost.',
   },
   {
     target: '.ed-history',
     title: 'Every change is a commit',
-    text: 'Yours, the generator\'s, and the critic\'s edits all land in one history with semantic diffs. Click any version to view it; restore brings it back.',
+    text: 'Yours, the generator\'s and the critic\'s edits land in one history with semantic diffs. Click any version to view; restore brings it back.',
   },
   {
-    target: '.resel',
+    target: 'select.resel:not(.fmtsel)',
     title: 'The magic trick: re-skin',
-    text: 'Rebase this exact design onto a different brand — same skeleton, new DNA. Also up here: refresh a tired concept, and export a launch-ready pack.',
+    text: 'Rebase this exact design onto a different brand — same skeleton, new DNA. Next to it: ⟳ refresh a tired concept, 📦 export a launch pack.',
+  },
+  {
+    target: 'select.fmtsel',
+    title: 'Export anything',
+    text: 'PNG, JPEG, SVG, print-ready PDF — or 🎬 Motion, which renders your design as a layer-reveal video. Every export is kept in the Library.',
   },
 ];

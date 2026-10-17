@@ -220,6 +220,56 @@ select.resel { appearance: none; -webkit-appearance: none; }
   .top { flex-direction: column; align-items: flex-start; }
 }
 
+/* ===================== landing ===================== */
+.landing { position: relative; min-height: 100vh; overflow-x: hidden; max-width: 1240px; margin: 0 auto; padding: 22px clamp(16px, 3vw, 36px) 60px; }
+.land-blobs { position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+.land-blobs i {
+  position: absolute; display: block; border-radius: 46% 54% 55% 45% / 52% 46% 54% 48%;
+  opacity: 0.14; filter: blur(2px);
+  animation: blob-drift 22s ease-in-out infinite alternate;
+}
+.land-blobs i:nth-child(1) { width: 440px; height: 420px; background: var(--accent); top: -140px; right: -120px; }
+.land-blobs i:nth-child(2) { width: 320px; height: 300px; background: #1f65d6; bottom: 8%; left: -140px; animation-delay: -7s; animation-duration: 28s; }
+.land-blobs i:nth-child(3) { width: 220px; height: 210px; background: #f5c44d; top: 46%; right: 6%; animation-delay: -14s; animation-duration: 25s; }
+@keyframes blob-drift {
+  from { transform: translate(0, 0) rotate(0deg) scale(1); }
+  to { transform: translate(-50px, 46px) rotate(38deg) scale(1.12); }
+}
+.land-nav { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px 10px; }
+.land-links { display: flex; gap: 8px; }
+.land-hero { text-align: center; padding: clamp(48px, 9vh, 96px) 12px 40px; animation: fade-in 500ms ease both; }
+.land-eyebrow { font-family: var(--display); font-size: 12.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+.land-hero h1 {
+  font-family: var(--display); font-weight: 800; text-transform: uppercase;
+  font-size: clamp(38px, 7.4vw, 84px); line-height: 0.98; letter-spacing: 0.005em; margin: 0 0 22px;
+  animation: hero-rise 600ms cubic-bezier(0.2, 0.85, 0.3, 1) both;
+}
+@keyframes hero-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+.land-hero p { max-width: 58ch; margin: 0 auto 30px; font-size: clamp(15.5px, 2vw, 18px); line-height: 1.65; color: var(--muted); }
+.land-cta { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.go.big { font-size: 15.5px; padding: 15px 34px; animation: fade-in 700ms ease both; }
+.land-sub { font-size: 12.5px; color: var(--muted); }
+
+.land-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: clamp(28px, 6vh, 56px) 0; }
+.land-step { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 22px; animation: card-rise 500ms ease both; }
+.land-step:nth-child(2) { animation-delay: 90ms; }
+.land-step:nth-child(3) { animation-delay: 180ms; }
+.land-step .n { font-family: ui-monospace, monospace; font-size: 12px; font-weight: 700; color: var(--accent); }
+.land-step h3 { font-family: var(--display); font-size: 17px; margin: 8px 0 8px; }
+.land-step p { margin: 0; font-size: 13.8px; color: var(--muted); line-height: 1.6; }
+
+.land-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 13px; }
+.land-feat { background: var(--panel); border: 1px solid var(--line); border-radius: 13px; padding: 17px 18px; transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease; }
+.land-feat:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow); }
+.land-feat .ic { font-size: 20px; }
+.land-feat h3 { font-family: var(--display); font-size: 15px; margin: 9px 0 6px; }
+.land-feat p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+.land-foot { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; margin-top: clamp(32px, 7vh, 64px); padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+.brandmark.click { cursor: pointer; }
+.brandmark.click:hover::before { transform: rotate(90deg); }
+.brandmark::before { display: inline-block; transition: transform 300ms ease; }
+
 /* ===================== loaders & effects ===================== */
 .genwrap { animation: fade-in 260ms ease both; }
 .genstatus {

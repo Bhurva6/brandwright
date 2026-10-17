@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { DesignView, FluidDesignView } from './DesignView';
 import { getBrand, generateStream, runRemix, runAdapt } from './api';
 import type { DesignSpec } from './types';
-import { useStore, restoreSession } from './store';
+import { useStore, restoreSession, PATHS } from './store';
+import type { View } from './store';
 import { newId } from './vc';
 import Editor from './Editor';
+import Landing from './Landing';
 import { Coachmarks, HOME_STEPS } from './Coachmarks';
 import { listExports, removeExport } from './library';
 import type { LibraryItem } from './library';
@@ -341,13 +343,13 @@ export default function App() {
     if (view !== 'editor') listExports().then(setLib).catch(() => {});
   }, [view]);
 
-  // URL <-> view: /, /editor, /library are real pages (back/forward work)
+  // URL <-> view: /, /studio, /editor, /library are real pages (back/forward work)
   useEffect(() => {
     const fromPath = () => {
       const p = window.location.pathname;
-      const v = p === '/editor' ? 'editor' : p === '/library' ? 'library' : 'home';
+      const v: View = (Object.entries(PATHS).find(([, path]) => path === p)?.[0] as View) || 'landing';
       if (v === 'editor' && !useStore.getState().working) {
-        window.history.replaceState({}, '', '/');
+        window.history.replaceState({}, '', PATHS.home);
         useStore.setState({ view: 'home' });
       } else {
         useStore.setState({ view: v });
@@ -358,6 +360,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', fromPath);
   }, []);
 
+  if (view === 'landing') return <Landing />;
   if (view === 'editor') return <Editor />;
   if (view === 'library')
     return <LibraryPage lib={lib} onBack={() => st.getState().setView('home')} onDelete={(id) => removeExport(id).then(() => listExports().then(setLib))} />;
@@ -366,13 +369,13 @@ export default function App() {
     <div className="app">
       {toast && <div className="toast">{toast}</div>}
       {kit && (
-        <Coachmarks key={replayTour} steps={HOME_STEPS} storageKey="bw_tour_home" run={replayTour > 0} onClose={() => setReplayTour(0)} />
+        <Coachmarks key={replayTour} steps={HOME_STEPS} storageKey="bw_tour_home_v2" run={replayTour > 0} onClose={() => setReplayTour(0)} />
       )}
       <header className="top">
-        <div className="brandmark">
+        <div className="brandmark click" onClick={() => st.getState().setView('landing')} title="About Brandwright" role="link">
           Brandwright
-          <span className="tag">version control for brand design</span>
-          <button className="helpbtn" title="Replay the tour" onClick={() => setReplayTour((n) => n + 1)}>?</button>
+          <span className="tag">studio</span>
+          <button className="helpbtn" title="Replay the tour" onClick={(e) => { e.stopPropagation(); setReplayTour((n) => n + 1); }}>?</button>
           <button className="libbtn" title="Your exported designs" onClick={() => st.getState().setView('library')}>
             🖼 Library{lib.length ? ` · ${lib.length}` : ''}
           </button>
