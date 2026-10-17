@@ -133,6 +133,73 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ===== dark showcase: the critic shows its work ===== */}
+      <section className="ld-dark rv" aria-label="The critic shows its work">
+        <div className="ld-k light rv">The critic shows its work</div>
+        <div className="ldsA">
+          <div className="mockwrap rv rv-left">
+            <div className="mock-stamp">EXPORT LOCKED · 1 RULE BROKEN</div>
+            <div className="mockad">
+              <div className="ma-left">
+                <span className="ma-eyebrow">PAYROLL</span>
+                <p className="ma-body">Rosters, timesheets and pay runs that take minutes, not hours.</p>
+                <span className="ma-cta">Run payroll in minutes</span>
+                <span className="ma-logo">brand</span>
+              </div>
+              <div className="ma-right">
+                <span className="ma-spark">✦</span>
+                <div className="ma-h1">Payday, before the milk froths.</div>
+                <div className="ma-h2">Auto-calc pay rates, tax, super. Done.</div>
+                <ul className="ma-ticks"><li>AUTO PAY RUNS</li><li>STP LODGED</li><li>TIMESHEETS</li></ul>
+              </div>
+              <svg className="ma-circles" viewBox="0 0 300 380" aria-hidden="true">
+                <ellipse className="c1" cx="192" cy="150" rx="86" ry="52" />
+                <ellipse className="c2" cx="196" cy="196" rx="92" ry="48" />
+              </svg>
+            </div>
+          </div>
+          <div className="ldsA-notes">
+            <div className="note rv" style={{ transitionDelay: '120ms' }}>
+              <b className="nb">White to navy.</b>
+              <span>Headline recoloured to readable — 1.3 : 1 is below 3 : 1.</span>
+            </div>
+            <div className="note rv" style={{ transitionDelay: '240ms' }}>
+              <b className="no">Sits on the headline.</b>
+              <span>Overlap still blocks export until text is clear of text.</span>
+            </div>
+            <div className="note rv" style={{ transitionDelay: '360ms' }}>
+              <b>Suggestion.</b>
+              <span>Two headlines compete — the second is 81% the size of the main one.</span>
+            </div>
+            <div className="scorebig rv rv-scale" style={{ transitionDelay: '480ms' }}>
+              <b>79</b>
+              <div><strong>Brand score</strong><span>Would have scored 88. Capped — ships at 80, measured in the browser.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== dark showcase: layers, never pixels ===== */}
+      <section className="ld-dark rv" aria-label="Layers, never pixels">
+        <div className="ld-k light rv">Layers, never pixels</div>
+        <div className="ldsB">
+          <div className="xpshow rv">
+            <div className="xpstage">
+              {[0, 1, 2, 3].map((i) => <i key={'o' + i} className="pl outline" style={{ ['--i' as any]: i }} />)}
+              <i className="pl navy" style={{ ['--i' as any]: 4 }} />
+              <i className="pl pale" style={{ ['--i' as any]: 5 }} />
+              <i className="pl head" style={{ ['--i' as any]: 6 }}>Pay your team before the milk froths.</i>
+              <i className="pl pill" style={{ ['--i' as any]: 7 }}>Try it free</i>
+              <i className="pl spark" style={{ ['--i' as any]: 8 }}>✦</i>
+            </div>
+          </div>
+          <div className="ldsB-copy rv" style={{ transitionDelay: '200ms' }}>
+            <h3>Every design is a living stack.</h3>
+            <p>“Show layers” splits any canvas into its true 3D layers — labelled, draggable, honest. Because nothing here is a flat image.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="ld-stats rv rv-scale">
         {STATS.map((s) => (
           <div key={s.l} className="ld-stat">

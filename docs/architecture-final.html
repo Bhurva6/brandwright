@@ -44,109 +44,111 @@
   </header>
 
   <figure class="fig">
-    <svg viewBox="0 0 1120 640" role="img" aria-label="Brandwright system architecture">
+    <svg viewBox="0 0 1120 780" role="img" aria-label="Brandwright system architecture">
       <defs>
         <marker id="a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5 0 10z" fill="#1d1813"/></marker>
         <marker id="ag" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5 0 10z" fill="#0e8c8c"/></marker>
         <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5 0 10z" fill="#2d56e0"/></marker>
         <marker id="ao" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5 0 10z" fill="#f05c22"/></marker>
+        <style>.halo{stroke:#ffffff;stroke-width:7px;paint-order:stroke;stroke-linejoin:round}</style>
       </defs>
 
-      <!-- ===== 1 INGEST ===== -->
+      <!-- ================= 1 · LEARN ================= -->
       <text x="26" y="30" class="tm" font-size="11.5">1 · LEARN — any brand becomes a genome</text>
-      <rect class="node" x="26" y="42" width="128" height="58" rx="10"/>
-      <text x="90" y="67" text-anchor="middle" class="t" font-size="13" font-weight="600">Brand folder</text>
-      <text x="90" y="85" text-anchor="middle" class="t" font-size="11" fill="#837a70">/ingest · guided</text>
-      <path class="flow" d="M154 71h30" marker-end="url(#a)"/>
-      <rect class="node" x="188" y="38" width="250" height="66" rx="10"/>
-      <text x="202" y="60" class="t" font-size="12.5" font-weight="600">Ingest pipeline</text>
-      <text x="202" y="78" class="t" font-size="11" fill="#837a70">classify + optimise assets · sample palette</text>
-      <text x="202" y="94" class="t" font-size="11" fill="#837a70">DeepSeek infers fonts · voice · rules · briefs</text>
-      <path class="flow" d="M438 71h30" marker-end="url(#a)"/>
-      <rect x="472" y="36" width="190" height="70" rx="12" fill="var(--genome-soft)" stroke="var(--genome)" stroke-width="2"/>
-      <text x="567" y="64" text-anchor="middle" class="tb" font-size="16" fill="var(--genome)">BRAND GENOME</text>
-      <text x="567" y="86" text-anchor="middle" class="t" font-size="11" fill="#837a70">5 preloaded · +yours · learned rules</text>
+      <rect class="node" x="26" y="44" width="130" height="58" rx="10"/>
+      <text x="91" y="69" text-anchor="middle" class="t" font-size="13" font-weight="600">Brand folder</text>
+      <text x="91" y="87" text-anchor="middle" class="t" font-size="11" fill="#837a70">/ingest · guided</text>
+      <path class="flow" d="M156 73h30" marker-end="url(#a)"/>
+      <rect class="node" x="190" y="40" width="252" height="66" rx="10"/>
+      <text x="204" y="62" class="t" font-size="12.5" font-weight="600">Ingest pipeline</text>
+      <text x="204" y="80" class="t" font-size="11" fill="#837a70">classify + optimise assets · sample palette</text>
+      <text x="204" y="96" class="t" font-size="11" fill="#837a70">DeepSeek infers fonts · voice · rules · briefs</text>
+      <path class="flow" d="M442 73h30" marker-end="url(#a)"/>
+      <rect x="476" y="38" width="196" height="70" rx="12" fill="var(--genome-soft)" stroke="var(--genome)" stroke-width="2"/>
+      <text x="574" y="66" text-anchor="middle" class="tb" font-size="16" fill="var(--genome)">BRAND GENOME</text>
+      <text x="574" y="88" text-anchor="middle" class="t" font-size="11" fill="#837a70">5 preloaded · +yours · learned rules</text>
 
-      <!-- genome grounding feeds -->
-      <path d="M530 106C488 160 418 170 384 205" stroke="var(--genome)" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#ag)"/>
-      <text x="400" y="162" class="tm" font-size="10.5" fill="var(--genome)">grounds prompts + swatches</text>
-      <path d="M600 106C640 210 700 230 724 268" stroke="var(--genome)" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#ag)"/>
-      <text x="676" y="200" class="tm" font-size="10.5" fill="var(--genome)">rules → CI</text>
+      <!-- genome grounding feeds (labels sit clear of the lines, with halos) -->
+      <path d="M520 108C470 150 420 170 392 216" stroke="var(--genome)" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#ag)"/>
+      <text x="268" y="166" class="tm halo" font-size="11" fill="var(--genome)">grounds prompts + swatches</text>
+      <path d="M640 108C700 180 790 190 905 216" stroke="var(--genome)" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#ag)"/>
+      <text x="766" y="156" class="tm halo" font-size="11" fill="var(--genome)">rules → brand CI</text>
 
-      <!-- ===== 2 AGENT LOOP ===== -->
-      <text x="26" y="196" class="tm" font-size="11.5">2 · CREATE — two agents, one honesty guard</text>
-      <rect x="26" y="208" width="520" height="150" rx="14" fill="none" stroke="var(--line)" stroke-width="1.4" stroke-dasharray="4 4"/>
-      <rect class="node" x="44" y="228" width="190" height="54" rx="10"/>
-      <text x="139" y="250" text-anchor="middle" class="t" font-size="13" font-weight="600" fill="var(--repo)">Generator</text>
-      <text x="139" y="268" text-anchor="middle" class="tm" font-size="10.5">DeepSeek-V4-Pro · tool-calls</text>
-      <rect class="node" x="44" y="296" width="190" height="48" rx="10"/>
-      <text x="139" y="316" text-anchor="middle" class="t" font-size="13" font-weight="600" fill="var(--critic)">Critic</text>
-      <text x="139" y="333" text-anchor="middle" class="tm" font-size="10.5">Flash · WCAG+geometry+judge</text>
-      <rect class="node" x="330" y="228" width="190" height="54" rx="10"/>
-      <text x="425" y="250" text-anchor="middle" class="t" font-size="13" font-weight="600">GPT Image Flare</text>
-      <text x="425" y="268" text-anchor="middle" class="tm" font-size="10.5">text-free imagery · cached</text>
-      <path class="flow" d="M234 250h92" marker-end="url(#a)"/>
-      <text x="246" y="243" class="tm" font-size="10">generate_image</text>
-      <rect class="node" x="330" y="296" width="190" height="48" rx="10"/>
-      <text x="425" y="316" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Tidy + honesty guards</text>
-      <text x="425" y="333" text-anchor="middle" class="tm" font-size="10.5">no overlaps · no fake fixes</text>
-      <path class="flow" d="M234 320h92" marker-end="url(#a)"/>
+      <!-- ================= 2 · CREATE ================= -->
+      <text x="26" y="206" class="tm" font-size="11.5">2 · CREATE — two agents, one honesty guard</text>
+      <rect x="26" y="220" width="542" height="158" rx="14" fill="none" stroke="var(--line)" stroke-width="1.4" stroke-dasharray="4 4"/>
+      <rect class="node" x="46" y="240" width="194" height="56" rx="10"/>
+      <text x="143" y="263" text-anchor="middle" class="t" font-size="13" font-weight="600" fill="var(--repo)">Generator</text>
+      <text x="143" y="281" text-anchor="middle" class="tm" font-size="10.5">DeepSeek-V4-Pro · tool-calls</text>
+      <rect class="node" x="46" y="310" width="194" height="50" rx="10"/>
+      <text x="143" y="331" text-anchor="middle" class="t" font-size="13" font-weight="600" fill="var(--critic)">Critic</text>
+      <text x="143" y="348" text-anchor="middle" class="tm" font-size="10.5">Flash · WCAG+geometry+judge</text>
+      <rect class="node" x="354" y="240" width="194" height="56" rx="10"/>
+      <text x="451" y="263" text-anchor="middle" class="t" font-size="13" font-weight="600">GPT Image Flare</text>
+      <text x="451" y="281" text-anchor="middle" class="tm" font-size="10.5">text-free imagery · cached</text>
+      <path class="flow" d="M240 268h110" marker-end="url(#a)"/>
+      <text x="295" y="260" text-anchor="middle" class="tm halo" font-size="10">generate_image</text>
+      <rect class="node" x="354" y="310" width="194" height="50" rx="10"/>
+      <text x="451" y="331" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Tidy + honesty guards</text>
+      <text x="451" y="348" text-anchor="middle" class="tm" font-size="10.5">no overlaps · no fake fixes</text>
+      <path class="flow" d="M240 335h110" marker-end="url(#a)"/>
 
-      <!-- DesignSpec IR callout -->
-      <rect x="586" y="252" width="196" height="84" rx="12" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
-      <text x="684" y="280" text-anchor="middle" class="tb" font-size="15" fill="var(--accent)">DesignSpec IR</text>
-      <text x="684" y="300" text-anchor="middle" class="t" font-size="11" fill="#837a70">structured layers, never pixels</text>
-      <text x="684" y="318" text-anchor="middle" class="t" font-size="11" fill="#837a70">editable · diffable · on-brand</text>
-      <path class="flow" d="M546 286c14 0 22 6 40 10" marker-end="url(#a)"/>
+      <!-- DesignSpec IR -->
+      <rect x="612" y="262" width="200" height="86" rx="12" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+      <text x="712" y="291" text-anchor="middle" class="tb" font-size="15" fill="var(--accent)">DesignSpec IR</text>
+      <text x="712" y="311" text-anchor="middle" class="t" font-size="11" fill="#837a70">structured layers, never pixels</text>
+      <text x="712" y="329" text-anchor="middle" class="t" font-size="11" fill="#837a70">editable · diffable · on-brand</text>
+      <path class="flow" d="M568 300h40" marker-end="url(#a)"/>
 
-      <!-- ===== 3 REPO ===== -->
-      <text x="836" y="196" class="tm" font-size="11.5">3 · VERSION — git for design</text>
-      <rect x="816" y="208" width="278" height="150" rx="14" fill="var(--repo-soft)" stroke="var(--repo)" stroke-width="2"/>
-      <text x="955" y="236" text-anchor="middle" class="tb" font-size="16" fill="var(--repo)">DESIGN REPO</text>
-      <text x="955" y="258" text-anchor="middle" class="t" font-size="11.5">commit DAG · branches = variations</text>
-      <text x="955" y="276" text-anchor="middle" class="t" font-size="11.5">semantic diff · checkout · restore</text>
-      <text x="955" y="294" text-anchor="middle" class="t" font-size="11.5">re-skin = rebase onto another genome</text>
-      <text x="955" y="312" text-anchor="middle" class="t" font-size="11.5">authors: human · generator · critic</text>
-      <text x="955" y="334" text-anchor="middle" class="tm" font-size="10.5">persists across refresh (IndexedDB)</text>
-      <path d="M782 294h30" stroke="var(--repo)" stroke-width="2.2" fill="none" marker-end="url(#ar)"/>
-      <text x="786" y="286" class="tm" font-size="10" fill="var(--repo)">commits</text>
+      <!-- ================= 3 · VERSION ================= -->
+      <text x="872" y="206" class="tm" font-size="11.5">3 · VERSION — git for design</text>
+      <rect x="852" y="220" width="242" height="158" rx="14" fill="var(--repo-soft)" stroke="var(--repo)" stroke-width="2"/>
+      <text x="973" y="248" text-anchor="middle" class="tb" font-size="16" fill="var(--repo)">DESIGN REPO</text>
+      <text x="973" y="272" text-anchor="middle" class="t" font-size="11.5">commit DAG · branches = variations</text>
+      <text x="973" y="290" text-anchor="middle" class="t" font-size="11.5">semantic diff · checkout · restore</text>
+      <text x="973" y="308" text-anchor="middle" class="t" font-size="11.5">re-skin = rebase onto another genome</text>
+      <text x="973" y="326" text-anchor="middle" class="t" font-size="11.5">authors: human · generator · critic</text>
+      <text x="973" y="350" text-anchor="middle" class="tm" font-size="10.5">persists across refresh (IndexedDB)</text>
+      <path d="M812 300h36" stroke="var(--repo)" stroke-width="2.2" fill="none" marker-end="url(#ar)"/>
+      <text x="830" y="290" text-anchor="middle" class="tm halo" font-size="10" fill="var(--repo)">commits</text>
 
-      <!-- ===== 4 SURFACES ===== -->
-      <text x="26" y="416" class="tm" font-size="11.5">4 · USE — pages and the editor</text>
-      <rect class="node" x="26" y="428" width="118" height="52" rx="10"/>
-      <text x="85" y="450" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Landing /</text>
-      <text x="85" y="467" text-anchor="middle" class="tm" font-size="10">the pitch</text>
-      <path class="flow" d="M144 454h26" marker-end="url(#a)"/>
-      <rect class="node" x="174" y="420" width="206" height="68" rx="10"/>
-      <text x="277" y="443" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Studio /studio</text>
-      <text x="277" y="460" text-anchor="middle" class="tm" font-size="10">brief · reference deck · remix</text>
-      <text x="277" y="476" text-anchor="middle" class="tm" font-size="10">campaign · blank · import · lens scores</text>
-      <path class="flow" d="M380 454h26" marker-end="url(#a)"/>
-      <rect class="node" x="410" y="420" width="230" height="68" rx="10"/>
-      <text x="525" y="443" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Editor /editor</text>
-      <text x="525" y="460" text-anchor="middle" class="tm" font-size="10">drag · copilot · shortcuts · auto-fix receipts</text>
-      <text x="525" y="476" text-anchor="middle" class="tm" font-size="10">exploded 3D layers · history · re-skin</text>
-      <path class="flow" d="M640 454h26" marker-end="url(#a)"/>
-      <rect class="node" x="670" y="420" width="206" height="68" rx="10"/>
-      <text x="773" y="443" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Native export engine</text>
-      <text x="773" y="460" text-anchor="middle" class="tm" font-size="10">draws the spec itself — no screenshots</text>
-      <text x="773" y="476" text-anchor="middle" class="tm" font-size="10">PNG · JPEG · PDF · Motion · Pack · CMYK</text>
-      <path class="flow" d="M876 454h26" marker-end="url(#a)"/>
-      <rect class="node" x="906" y="428" width="188" height="52" rx="10"/>
-      <text x="1000" y="450" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Drafts · Favourites</text>
-      <text x="1000" y="467" text-anchor="middle" class="tm" font-size="10">every export kept on-device</text>
+      <!-- CI note: on its own clear line under band 2/3 -->
+      <circle cx="620" cy="408" r="5" fill="var(--pass)"/>
+      <text x="632" y="412" class="tm" font-size="10.5">brand CI on every score · auto-fix only applies genuine gains</text>
 
-      <!-- repo <-> surfaces -->
-      <path d="M525 420C540 392 760 380 900 358" stroke="var(--repo)" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#ar)"/>
-      <text x="640" y="392" class="tm" font-size="10" fill="var(--repo)">every change = a commit · any version restores</text>
+      <!-- ================= 4 · USE ================= -->
+      <text x="26" y="478" class="tm" font-size="11.5">4 · USE — pages and the editor</text>
+      <rect class="node" x="26" y="492" width="112" height="56" rx="10"/>
+      <text x="82" y="515" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Landing /</text>
+      <text x="82" y="533" text-anchor="middle" class="tm" font-size="10">the pitch</text>
+      <path class="flow" d="M138 520h24" marker-end="url(#a)"/>
+      <rect class="node" x="166" y="484" width="196" height="72" rx="10"/>
+      <text x="264" y="506" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Studio /studio</text>
+      <text x="264" y="524" text-anchor="middle" class="tm" font-size="9.5">brief · reference deck · remix</text>
+      <text x="264" y="540" text-anchor="middle" class="tm" font-size="9.5">campaign · blank · import</text>
+      <path class="flow" d="M362 520h24" marker-end="url(#a)"/>
+      <rect class="node" x="390" y="484" width="212" height="72" rx="10"/>
+      <text x="496" y="506" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Editor /editor</text>
+      <text x="496" y="524" text-anchor="middle" class="tm" font-size="9.5">drag · copilot · auto-fix receipts</text>
+      <text x="496" y="540" text-anchor="middle" class="tm" font-size="9.5">exploded 3D layers · history</text>
+      <path class="flow" d="M602 520h24" marker-end="url(#a)"/>
+      <rect class="node" x="630" y="484" width="212" height="72" rx="10"/>
+      <text x="736" y="506" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Native export engine</text>
+      <text x="736" y="524" text-anchor="middle" class="tm" font-size="9.5">draws the spec — no screenshots</text>
+      <text x="736" y="540" text-anchor="middle" class="tm" font-size="9.5">PNG · JPEG · PDF · Motion · Pack</text>
+      <path class="flow" d="M842 520h24" marker-end="url(#a)"/>
+      <rect class="node" x="870" y="492" width="224" height="56" rx="10"/>
+      <text x="982" y="515" text-anchor="middle" class="t" font-size="12.5" font-weight="600">Drafts · Favourites</text>
+      <text x="982" y="533" text-anchor="middle" class="tm" font-size="10">every export kept on-device</text>
 
-      <!-- ===== 5 LEARNING LOOP ===== -->
-      <path d="M277 488C300 560 520 575 567 112" stroke="var(--accent)" stroke-width="1.8" fill="none" stroke-dasharray="6 4" marker-end="url(#ao)"/>
-      <text x="316" y="548" class="tm" font-size="11" fill="var(--accent)">5 · LEARN BACK — human edits are preference signals; a correction repeated 3× becomes a genome rule</text>
+      <!-- repo <-> editor: clean vertical drop on the right, label clear -->
+      <path d="M973 378v86" stroke="var(--repo)" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+      <text x="958" y="432" text-anchor="end" class="tm halo" font-size="10" fill="var(--repo)">every change = a commit · any version restores</text>
 
-      <!-- CI badge -->
-      <circle cx="700" cy="358" r="5" fill="var(--pass)"/>
-      <text x="710" y="362" class="tm" font-size="10.5">brand CI on every score · auto-fix only applies genuine gains</text>
+      <!-- ================= 5 · LEARN BACK ================= -->
+      <path d="M264 556C258 668 54 668 40 420C30 220 34 60 160 20C300 -8 520 6 566 30" stroke="var(--accent)" stroke-width="1.8" fill="none" stroke-dasharray="6 4" marker-end="url(#ao)"/>
+      <text x="96" y="640" class="tm halo" font-size="11" fill="var(--accent)">5 · LEARN BACK</text>
+      <text x="26" y="700" class="tm" font-size="11" fill="var(--accent)">human edits are preference signals — a correction repeated 3× becomes a genome rule</text>
     </svg>
     <figcaption><b>The whole system on one page.</b> The genome (teal) grounds generation and CI; agents emit a structured <b>DesignSpec</b> (orange), never pixels; the repo (blue) carries every change as an attributed commit; the pages put it in a designer's hands; and human edits feed rules back into the genome.</figcaption>
     <div class="legend">
