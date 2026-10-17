@@ -5,9 +5,13 @@
 > version spine, an auto-learned Brand Genome, a self-checking/self-improving
 > critic loop, and image reproducibility on top.
 
-**Status:** planning. Nothing is built yet. I implement only after an explicit
-go-ahead. Order of deliverables: working prototype first, then a 30-second
-launch video, then the presentation/demo.
+**Status: PROTOTYPE COMPLETE** (all phases 0–9 built and verified live).
+Working: create/edit/reference flows · editable canvas · version spine
+(branches/diff/restore) · Performance Lens + auto-fix · learning loop ·
+per-brand reference remix · re-skin · multi-placement pack export · live brand
+ingest · 5 bundled genomes (Xero + Coca-Cola/Spotify/Headspace/Airbnb with
+official marks) · Crux-inspired UI with motion polish.
+Remaining: demo script, 30-second launch video, presentation deck.
 
 ---
 
