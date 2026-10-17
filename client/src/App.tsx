@@ -8,6 +8,7 @@ import { newId } from './vc';
 import Editor from './Editor';
 import Landing from './Landing';
 import { Coachmarks, HOME_STEPS } from './Coachmarks';
+import { Icon } from './Icon';
 import { listExports, removeExport } from './library';
 import type { LibraryItem } from './library';
 
@@ -64,7 +65,7 @@ function LibraryPage({ lib, onBack, onDelete }: { lib: LibraryItem[]; onBack: ()
           Brandwright
           <span className="tag">library</span>
         </div>
-        <button className="ghost" onClick={onBack}>← Studio</button>
+        <button className="ghost" onClick={onBack}><Icon name="back" /> Studio</button>
       </header>
       <section className="libview">
         <div className="refstrip-title">Your exports <span>— every design you export is kept here, on this device</span></div>
@@ -101,7 +102,7 @@ export function ScoreBadge({ score, size = 'md' }: { score?: { total: number; pa
   const tone = pct >= 70 ? 'good' : pct >= 50 ? 'mid' : 'low';
   return (
     <span className={`lens ${tone} ${size}`} title={score.insight || 'Performance Lens score'}>
-      ⚡ {pct}
+      <Icon name="zap" size={11} /> {pct}
     </span>
   );
 }
@@ -122,6 +123,7 @@ export default function App() {
   const [refs, setRefs] = useState<RefAd[]>([]); // xero: curated image refs
   const [specRefs, setSpecRefs] = useState<any[]>([]); // other brands: live spec refs
   const [remixing, setRemixing] = useState('');
+  const [lightbox, setLightbox] = useState<{ kind: 'spec' | 'img'; spec?: DesignSpec; src?: string; label?: string } | null>(null);
   const [hosted, setHosted] = useState(false); // Vercel demo: read-only fs, no live ingest
 
   useEffect(() => {
@@ -368,6 +370,22 @@ export default function App() {
   return (
     <div className="app">
       {toast && <div className="toast">{toast}</div>}
+      {lightbox && (
+        <div className="lightbox" onClick={() => setLightbox(null)}>
+          <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
+            {lightbox.kind === 'img' ? (
+              <img src={lightbox.src} alt={lightbox.label || ''} />
+            ) : lightbox.spec ? (
+              <DesignView
+                spec={lightbox.spec}
+                kit={kit}
+                width={Math.min(window.innerWidth * 0.86, (window.innerHeight * 0.86) * (lightbox.spec.canvas.w / lightbox.spec.canvas.h))}
+              />
+            ) : null}
+          </div>
+          <button className="lightbox-x" onClick={() => setLightbox(null)} title="Close">✕</button>
+        </div>
+      )}
       {kit && (
         <Coachmarks key={replayTour} steps={HOME_STEPS} storageKey="bw_tour_home_v2" run={replayTour > 0} onClose={() => setReplayTour(0)} />
       )}
@@ -377,7 +395,7 @@ export default function App() {
           <span className="tag">studio</span>
           <button className="helpbtn" title="Replay the tour" onClick={(e) => { e.stopPropagation(); setReplayTour((n) => n + 1); }}>?</button>
           <button className="libbtn" title="Your exported designs" onClick={() => st.getState().setView('library')}>
-            🖼 Library{lib.length ? ` · ${lib.length}` : ''}
+            <Icon name="folder" size={13} /> Library{lib.length ? ` · ${lib.length}` : ''}
           </button>
         </div>
         {kit && (
@@ -452,14 +470,14 @@ export default function App() {
             </select>
           </label>
           <button className="ghost" disabled={busy || !!campaignBusy} onClick={openBlank} title="Start with an empty canvas and build by hand">
-            ⬜ Blank canvas
+            <Icon name="squarePlus" /> Blank canvas
           </button>
           <label className="ghost importbtn" title="Bring an existing design in and edit it">
-            📥 Import
+            <Icon name="upload" /> Import
             <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => e.target.files?.[0] && importImage(e.target.files[0])} />
           </label>
           <button className="ghost" disabled={busy || !!campaignBusy} onClick={runCampaign} title="3 concepts × every placement size — a full campaign in one go">
-            {campaignBusy ? `🚀 ${campaignBusy}` : '🚀 Campaign'}
+            <Icon name="rocket" /> {campaignBusy ? campaignBusy : 'Campaign'}
           </button>
           <button className="go" disabled={busy || !!campaignBusy} onClick={() => run()}>
             {status === 'thinking' ? 'Designing…' : status === 'rendering' ? 'Rendering…' : 'Generate'}
@@ -475,12 +493,18 @@ export default function App() {
           <div className="refstrip-row">
             {refs.map((r) => (
               <button key={r.id} className={'refcard' + (remixing === r.id ? ' busy' : '')} title={r.structure} disabled={busy || !!remixing} onClick={() => remix({ refId: r.id, key: r.id })}>
+                <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'img', src: r.src, label: r.label }); }}>
+                  <svg className="icx" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
+                </span>
                 <img src={r.src} alt={r.label} loading="lazy" />
                 <span>{remixing === r.id ? 'Remixing…' : r.label}</span>
               </button>
             ))}
             {specRefs.map((s) => (
               <button key={s.id} className={'refcard' + (remixing === s.id ? ' busy' : '')} title={s.note || s.name} disabled={busy || !!remixing} onClick={() => remix({ spec: s, key: s.id })}>
+                <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'spec', spec: s }); }}>
+                  <svg className="icx" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
+                </span>
                 <DesignView spec={s} kit={kit} width={98} />
                 <span>{remixing === s.id ? 'Remixing…' : s.name}</span>
               </button>
@@ -523,11 +547,14 @@ export default function App() {
         <div className="gallery">
           {designs.map((d) => (
             <button key={d.id} className="card click" onClick={() => st.getState().openEditor(d)}>
+              <span className="expbtn" title="View full screen" onClick={(e) => { e.stopPropagation(); setLightbox({ kind: 'spec', spec: d }); }}>
+                <Icon name="chevUp" size={0} /><svg className="icx" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"/></svg>
+              </span>
               <FluidDesignView spec={d} kit={kit} />
               <div className="meta">
                 <b>{d.name} <ScoreBadge score={scores[d.id]} /></b>
                 {d.note && <span>{d.note}</span>}
-                {scores[d.id]?.insight && <span className="insight">💡 {scores[d.id].insight}</span>}
+                {scores[d.id]?.insight && <span className="insight"><Icon name="bulb" size={12} /> {scores[d.id].insight}</span>}
                 <span className="open">Open in editor →</span>
               </div>
             </button>

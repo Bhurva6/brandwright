@@ -1,15 +1,16 @@
 // The front door: what Brandwright is, in one screen, before the studio.
 import { useStore } from './store';
+import { Icon } from './Icon';
 
 const FEATURES = [
-  { icon: '🧬', title: 'Brand Genome', text: 'Point it at any brand\'s asset folder — it learns the palette, type, logos, voice and rules, then designs inside them.' },
-  { icon: '⎇', title: 'Variations are branches', text: '"Create 4 like this" gives you 4 creative directions you can explore, edit and compare — like git, for design.' },
-  { icon: '⚡', title: 'Performance Lens', text: 'A critic agent scores every design on brand fidelity, contrast, hook and CTA strength — with one-line insights.' },
-  { icon: '🛡', title: 'Auto-fix', text: 'Off-brand or overlapping? The critic repairs the design and shows the score climb, commit by commit.' },
-  { icon: '⎌', title: 'Re-skin', text: 'Rebase a finished design onto a different brand. Same skeleton, new DNA — copy, colours, imagery all retarget.' },
-  { icon: '🚀', title: 'Campaign mode', text: 'Three concepts × every placement size in one run. A launch-ready set, not a single image.' },
-  { icon: '🎬', title: 'Motion export', text: 'Any design becomes a layer-reveal animation, rendered to video right in the browser.' },
-  { icon: '🖨', title: 'Print check', text: 'Simulate CMYK ink limits before anything goes to press — screen vs print, side by side.' },
+  { icon: 'dna', title: 'Brand Genome', text: 'Point it at any brand\'s asset folder — it learns the palette, type, logos, voice and rules, then designs inside them.' },
+  { icon: 'branch', title: 'Variations are branches', text: '"Create 4 like this" gives you 4 creative directions you can explore, edit and compare — like git, for design.' },
+  { icon: 'zap', title: 'Performance Lens', text: 'A critic agent scores every design on brand fidelity, contrast, hook and CTA strength — with one-line insights.' },
+  { icon: 'shield', title: 'Auto-fix', text: 'Off-brand or overlapping? The critic repairs the design and shows the score climb, commit by commit.' },
+  { icon: 'swap', title: 'Re-skin', text: 'Rebase a finished design onto a different brand. Same skeleton, new DNA — copy, colours, imagery all retarget.' },
+  { icon: 'rocket', title: 'Campaign mode', text: 'Three concepts × every placement size in one run. A launch-ready set, not a single image.' },
+  { icon: 'play', title: 'Motion export', text: 'Any design becomes a layer-reveal animation, rendered to video right in the browser.' },
+  { icon: 'printer', title: 'Print check', text: 'Simulate CMYK ink limits before anything goes to press — screen vs print, side by side.' },
 ];
 
 const STEPS = [
@@ -62,7 +63,7 @@ export default function Landing() {
       <section className="land-grid">
         {FEATURES.map((f) => (
           <div key={f.title} className="land-feat">
-            <span className="ic">{f.icon}</span>
+            <span className="ic"><Icon name={f.icon} size={20} /></span>
             <h3>{f.title}</h3>
             <p>{f.text}</p>
           </div>

@@ -12,18 +12,19 @@ import { useStore, useLog } from './store';
 import type { Score } from './store';
 import { LayerView } from './Layers';
 import { diffSpecs, diffSummary, specOf, newId } from './vc';
-import { editDesign, regenImage, runCritic, runAutofix, runRefresh, runAdapt, runReskin, getBrand } from './api';
+import { editDesign, regenImage, runCritic, runAutofix, runRefresh, runAdapt, runReskin, runRemoveBg, getBrand } from './api';
 import { ScoreBadge } from './App';
 import { Coachmarks, EDITOR_STEPS } from './Coachmarks';
 import { saveExport } from './library';
+import { Icon } from './Icon';
 import type { Layer } from './types';
 
 let layerClipboard: Layer | null = null; // copy/paste buffer (survives branch switches)
 
 const LAYER_ICON: Record<string, string> = {
-  background: '▦', image: '🖼', text: 'T', shape: '◆', bloom: '❋', charm: '✦', logo: '™', pill: '⬭', featureList: '☑',
+  background: 'square', image: 'image', text: 'type', shape: 'diamond', bloom: 'flower', charm: 'sparkle', logo: 'badge', pill: 'capsule', featureList: 'listChecks',
 };
-const AUTHOR_ICON = { human: '👤', generator: '✨', critic: '🛡' } as const;
+const AUTHOR_ICON = { human: 'user', generator: 'sparkles', critic: 'shield' } as const;
 
 export default function Editor() {
   const kit = useStore((s) => s.kit);
@@ -244,7 +245,7 @@ export default function Editor() {
       await exportPackInner();
     } catch (e: any) {
       console.error('export pack failed', e);
-      useStore.setState({ toast: '📦 Export pack failed: ' + (e?.message || e) });
+      useStore.setState({ toast: 'Export pack failed: ' + (e?.message || e) });
       setTimeout(() => useStore.setState({ toast: undefined }), 6000);
     } finally {
       setLensBusy('');
@@ -315,7 +316,6 @@ export default function Editor() {
     if (!node) return;
     const opts = { width: working.canvas.w, height: working.canvas.h, style: { transform: 'none' as const }, pixelRatio: 1 };
     try {
-      if (exportFmt === 'motion') return await exportMotion();
       if (exportFmt === 'jpeg') return download(await toJpeg(node, { ...opts, quality: 0.92, backgroundColor: '#fff' }), 'jpg');
       if (exportFmt === 'svg') return download(await toSvg(node, opts), 'svg');
       const dataUrl = await toPng(node, opts);
@@ -330,7 +330,7 @@ export default function Editor() {
       // every raster export lands in the Library so nothing is ever lost
       try {
         await saveExport({ id: newId('x'), name: working.name, brand: kit.name, preset: working.canvas.preset, at: Date.now(), dataUrl });
-        useStore.setState({ toast: '🖼 Saved to Library' });
+        useStore.setState({ toast: 'Saved to Library' });
         setTimeout(() => useStore.setState({ toast: undefined }), 3000);
       } catch { /* best-effort */ }
     } catch (e: any) {
@@ -349,7 +349,7 @@ export default function Editor() {
       ['text'],
       ['pill', 'featureList', 'logo'],
     ];
-    useStore.setState({ toast: '🎬 Rendering motion…' });
+    useStore.setState({ toast: 'Rendering motion…' });
     // cumulative stage frames
     const frames: HTMLImageElement[] = [];
     for (let g = 0; g < groups.length; g++) {
@@ -396,7 +396,7 @@ export default function Editor() {
     rec.stop();
     await done;
     download(URL.createObjectURL(new Blob(chunks, { type: 'video/webm' })), 'webm');
-    useStore.setState({ toast: '🎬 Motion exported (WebM)' });
+    useStore.setState({ toast: 'Motion exported (WebM)' });
     setTimeout(() => useStore.setState({ toast: undefined }), 3500);
   }
 
@@ -430,10 +430,22 @@ export default function Editor() {
     st.getState().commitWorking('human', `Added ${l.type}`);
   }
 
+  function addPhoto(file: File) {
+    if (!file.type.startsWith('image/')) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      const W = working.canvas.w, H = working.canvas.h;
+      const l: any = { id: newId('l'), type: 'image', box: { x: Math.round(W * 0.2), y: Math.round(H * 0.2), w: Math.round(W * 0.6), h: Math.round(H * 0.6) }, src: rd.result as string, fit: 'contain', status: 'ready' };
+      st.setState({ working: { ...working, layers: [...working.layers, l] }, selectedId: l.id, dirty: false });
+      st.getState().commitWorking('human', 'Placed photo');
+    };
+    rd.readAsDataURL(file);
+  }
+
   // ----- CMYK print check ---------------------------------------------------
   const [printPrev, setPrintPrev] = useState<{ screen: string; print: string } | null>(null);
   async function printCheck() {
-    useStore.setState({ toast: '🖨 Simulating print…' });
+    useStore.setState({ toast: 'Simulating print…' });
     const screen = await renderSpecPng(working, kit);
     const img = new Image();
     img.src = screen;
@@ -481,11 +493,11 @@ export default function Editor() {
       <Coachmarks key={replayTour} steps={EDITOR_STEPS} storageKey="bw_tour_editor_v2" run={replayTour > 0} onClose={() => setReplayTour(0)} />
       {/* ===== top bar ===== */}
       <div className="ed-top">
-        <button className="ghost" onClick={() => st.getState().closeEditor()}>← Gallery</button>
+        <button className="ghost" onClick={() => st.getState().closeEditor()}><Icon name="back" /> Gallery</button>
         <div className="ed-branches">
           {repo.branches.map((b) => (
             <button key={b.name} className={'bchip' + (b.name === branch ? ' on' : '')} onClick={() => st.getState().switchBranch(b.name)}>
-              ⎇ {b.name}
+              <Icon name="branch" size={12} /> {b.name}
             </button>
           ))}
         </div>
@@ -498,7 +510,7 @@ export default function Editor() {
           onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
         />
         <button className="ghost" onClick={refreshConcept} disabled={!!lensBusy} title="Creative fatigue? Generate fresh executions of this concept as new branches">
-          {lensBusy === 'refresh' ? 'Working…' : '⟳ Refresh concept'}
+          {lensBusy === 'refresh' ? 'Working…' : <><Icon name="refresh" /> Refresh</>}
         </button>
         <select
           className="ghost resel"
@@ -507,20 +519,23 @@ export default function Editor() {
           onChange={(e) => reskinTo(e.target.value)}
           title="Rebase this design onto a different brand — same skeleton, new DNA"
         >
-          <option value="" disabled>⎌ Re-skin to…</option>
+          <option value="" disabled>Re-skin to…</option>
           {brandList.filter((b) => b.id !== kit.id).map((b) => (
             <option key={b.id} value={b.id}>{b.name}</option>
           ))}
         </select>
         <button className="ghost" onClick={exportPack} disabled={!!lensBusy} title="Zip with every placement size + copy sheet + brand-compliance report">
-          📦 Export pack
+          <Icon name="package" /> Pack
+        </button>
+        <button className="ghost" onClick={exportMotion} disabled={!!lensBusy} title="Render this design as a layer-reveal video (WebM)">
+          <Icon name="play" /> Motion
         </button>
         <select className="ghost resel fmtsel" value={exportFmt} onChange={(e) => setExportFmt(e.target.value)} title="Export format">
           <option value="png">PNG</option>
           <option value="jpeg">JPEG</option>
           <option value="svg">SVG</option>
           <option value="pdf">PDF</option>
-          <option value="motion">🎬 Motion</option>
+          
         </select>
         <button className="go" onClick={exportPng}>Export</button>
         <button className="helpbtn" title="Replay the editor tour" onClick={() => setReplayTour((n) => n + 1)}>?</button>
@@ -529,7 +544,7 @@ export default function Editor() {
       {printPrev && (
         <div className="printprev" onClick={() => setPrintPrev(null)}>
           <div className="printprev-card" onClick={(e) => e.stopPropagation()}>
-            <div className="ed-sectitle">🖨 Print check — screen (RGB) vs simulated print (CMYK)</div>
+            <div className="ed-sectitle"><Icon name="printer" /> Print check — screen (RGB) vs simulated print (CMYK)</div>
             <div className="printprev-row">
               <figure><img src={printPrev.screen} alt="screen" /><figcaption>Screen</figcaption></figure>
               <figure><img src={printPrev.print} alt="print" /><figcaption>Print (simulated)</figcaption></figure>
@@ -548,66 +563,18 @@ export default function Editor() {
       )}
 
       <div className="ed-main">
-        {/* ===== canvas ===== */}
-        <div className="ed-canvas" ref={wrapRef} onPointerDown={() => st.getState().select(undefined)}>
-          <div
-            className="ed-stagewrap"
-            style={{ width: working.canvas.w * scale, height: working.canvas.h * scale }}
-          >
-            <div
-              ref={stageRef}
-              className="dv-stage ed-stage"
-              style={{ width: working.canvas.w, height: working.canvas.h, transform: `scale(${scale})`, background: working.canvas.background }}
-            >
-              {working.layers.map((l) => (
-                <LayerView key={l.id} l={l} kit={kit} />
-              ))}
-              {/* hitboxes above the art, in canvas coordinates */}
-              {working.layers.filter((l) => l.type !== 'background').map((l) => (
-                <div
-                  key={'hit' + l.id}
-                  className={'ed-hit' + (l.id === selectedId ? ' sel' : '')}
-                  style={{ left: l.box.x, top: l.box.y, width: l.box.w, height: l.box.h, ['--hs' as any]: `${2 / scale}px` }}
-                  onPointerDown={(e) => startDrag(e, l, 'move')}
-                >
-                  {l.id === selectedId && !viewingCommit && (
-                    <>
-                      {(['nw', 'ne', 'sw', 'se'] as const).map((h) => (
-                        <div key={h} className={'ed-handle ' + h} style={{ width: 14 / scale, height: 14 / scale }} onPointerDown={(e) => startDrag(e, l, h)} />
-                      ))}
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* ===== inspector ===== */}
         <aside className="ed-side" onPointerDown={(e) => e.stopPropagation()}>
-          <div className="ed-chat">
-            <div className="ed-sectitle">Copilot</div>
-            <div className="ed-chatrow">
-              <input
-                value={chat}
-                onChange={(e) => setChat(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && runChat()}
-                placeholder='e.g. "make the headline bigger and use the yellow pill"'
-                disabled={chatBusy || !!viewingCommit}
-              />
-              <button className="go" onClick={runChat} disabled={chatBusy || !!viewingCommit}>{chatBusy ? '…' : 'Apply'}</button>
-            </div>
-            {chatErr && <div className="ed-err">{chatErr}</div>}
-          </div>
-
           <div className="ed-lens">
             <div className="ed-sectitle">
               Performance Lens {lens && <ScoreBadge score={lens} />}
               <span className="ed-actions">
                 <button className="mini" onClick={checkLens} disabled={!!lensBusy}>{lensBusy === 'check' ? '…' : 'Check'}</button>
-                <button className="mini fix" onClick={autofix} disabled={!!lensBusy}>{lensBusy === 'fix' ? 'Fixing…' : '🛡 Auto-fix'}</button>
+                <button className="mini fix" onClick={autofix} disabled={!!lensBusy}>{lensBusy === 'fix' ? 'Fixing…' : <><Icon name="shield" size={12} /> Auto-fix</>}</button>
               </span>
             </div>
+
+
             {lens && (
               <>
                 <div className="ed-dims">
@@ -628,11 +595,11 @@ export default function Editor() {
           {selected ? (
             <div className="ed-props">
               <div className="ed-sectitle">
-                {LAYER_ICON[selected.type]} {selected.type}
+                <Icon name={LAYER_ICON[selected.type]} /> {selected.type}
                 <span className="ed-actions">
-                  <button title="Send backward" onClick={() => { st.getState().reorderLayer(selected.id, -1); commitNow('Reordered layers'); }}>↓</button>
-                  <button title="Bring forward" onClick={() => { st.getState().reorderLayer(selected.id, 1); commitNow('Reordered layers'); }}>↑</button>
-                  <button title="Delete" onClick={() => { st.getState().removeLayer(selected.id); commitNow(`Removed ${selected.type}`); }}>🗑</button>
+                  <button title="Send backward" onClick={() => { st.getState().reorderLayer(selected.id, -1); commitNow('Reordered layers'); }}><Icon name="chevDown" size={13} /></button>
+                  <button title="Bring forward" onClick={() => { st.getState().reorderLayer(selected.id, 1); commitNow('Reordered layers'); }}><Icon name="chevUp" size={13} /></button>
+                  <button title="Delete" onClick={() => { st.getState().removeLayer(selected.id); commitNow(`Removed ${selected.type}`); }}><Icon name="trash" size={13} /></button>
                 </span>
               </div>
 
@@ -732,13 +699,17 @@ export default function Editor() {
             <div className="ed-sectitle">Add</div>
             <div className="ed-row">
               {[
-                ['text', 'T Headline'], ['body', '¶ Body'], ['image', '🖼 Image'], ['shape', '◆ Shape'],
-                ['bloom', '❋ Bloom'], ['charm', '✦ Charm'], ['pill', '⬭ CTA'], ['featureList', '☑ Features'], ['logo', '™ Logo'],
-              ].filter(([t]) => !['bloom', 'charm'].includes(t) || kit.assets.some((a) => a.category === t)).map(([t, label]) => (
-                <button key={t} className="mini" disabled={!!viewingCommit} onClick={() => addLayer(t)}>{label}</button>
+                ['text', 'type', 'Headline'], ['body', 'type', 'Body'], ['image', 'image', 'Image'], ['shape', 'diamond', 'Shape'],
+                ['bloom', 'flower', 'Bloom'], ['charm', 'sparkle', 'Charm'], ['pill', 'capsule', 'CTA'], ['featureList', 'listChecks', 'Features'], ['logo', 'badge', 'Logo'],
+              ].filter(([t]) => !['bloom', 'charm'].includes(t) || kit.assets.some((a) => a.category === t)).map(([t, ic, label]) => (
+                <button key={t} className="mini" disabled={!!viewingCommit} onClick={() => addLayer(t)}><Icon name={ic} size={12} /> {label}</button>
               ))}
+              <label className="mini filelab" title="Place your own photo on the canvas">
+                <Icon name="camera" size={12} /> Photo
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => e.target.files?.[0] && addPhoto(e.target.files[0])} />
+              </label>
             </div>
-            <button className="mini" style={{ marginTop: 8 }} onClick={printCheck} title="Simulate how the inks will shift in CMYK print">🖨 Print check</button>
+            <button className="mini" style={{ marginTop: 8 }} onClick={printCheck} title="Simulate how the inks will shift in CMYK print"><Icon name="printer" size={12} /> Print check</button>
           </div>
 
           {/* layers */}
@@ -746,13 +717,50 @@ export default function Editor() {
             <div className="ed-sectitle">Layers</div>
             {[...working.layers].reverse().map((l) => (
               <button key={l.id} className={'ed-layerrow' + (l.id === selectedId ? ' on' : '')} onClick={() => st.getState().select(l.id)}>
-                <span className="ic">{LAYER_ICON[l.type] || '·'}</span>
+                <span className="ic"><Icon name={LAYER_ICON[l.type] || 'square'} size={13} /></span>
                 <span className="nm">{l.type === 'text' ? (l.text || 'text').slice(0, 26) : l.type === 'pill' ? `CTA · ${l.text}` : l.type}</span>
               </button>
             ))}
           </div>
 
           {/* history */}
+        </aside>
+        {/* ===== canvas ===== */}
+        <div className="ed-canvas" ref={wrapRef} onPointerDown={() => st.getState().select(undefined)}>
+          <div
+            className="ed-stagewrap"
+            style={{ width: working.canvas.w * scale, height: working.canvas.h * scale }}
+          >
+            <div
+              ref={stageRef}
+              className="dv-stage ed-stage"
+              style={{ width: working.canvas.w, height: working.canvas.h, transform: `scale(${scale})`, background: working.canvas.background }}
+            >
+              {working.layers.map((l) => (
+                <LayerView key={l.id} l={l} kit={kit} />
+              ))}
+              {/* hitboxes above the art, in canvas coordinates */}
+              {working.layers.filter((l) => l.type !== 'background').map((l) => (
+                <div
+                  key={'hit' + l.id}
+                  className={'ed-hit' + (l.id === selectedId ? ' sel' : '')}
+                  style={{ left: l.box.x, top: l.box.y, width: l.box.w, height: l.box.h, ['--hs' as any]: `${2 / scale}px` }}
+                  onPointerDown={(e) => startDrag(e, l, 'move')}
+                >
+                  {l.id === selectedId && !viewingCommit && (
+                    <>
+                      {(['nw', 'ne', 'sw', 'se'] as const).map((h) => (
+                        <div key={h} className={'ed-handle ' + h} style={{ width: 14 / scale, height: 14 / scale }} onPointerDown={(e) => startDrag(e, l, h)} />
+                      ))}
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* ===== history (right) ===== */}
+        <aside className="ed-right" onPointerDown={(e) => e.stopPropagation()}>
           <div className="ed-history">
             <div className="ed-sectitle">History <span className="cnt">{history.length}</span></div>
             {history.map((c) => {
@@ -760,7 +768,7 @@ export default function Editor() {
               const viewing = viewingCommit ? viewingCommit === c.id : head;
               return (
                 <button key={c.id} className={'ed-commit' + (viewing ? ' on' : '')} onClick={() => st.getState().checkout(c.id)}>
-                  <span className="dot" data-author={c.author}>{AUTHOR_ICON[c.author]}</span>
+                  <span className="dot" data-author={c.author}><Icon name={AUTHOR_ICON[c.author]} size={13} /></span>
                   <span className="msg">
                     {c.message}
                     <small>{diffFor(c.id) || (c.parents.length ? '' : 'initial design')}</small>
@@ -772,6 +780,23 @@ export default function Editor() {
           </div>
         </aside>
       </div>
+
+      {/* ===== copilot (bottom bar) ===== */}
+      <div className="ed-chat ed-chatbar" onPointerDown={(e) => e.stopPropagation()}>
+        <div className="ed-sectitle">Copilot</div>
+        <div className="ed-chatrow">
+          <input
+            value={chat}
+            onChange={(e) => setChat(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && runChat()}
+            placeholder='e.g. "make the headline bigger and use the yellow pill"'
+            disabled={chatBusy || !!viewingCommit}
+          />
+          <button className="go" onClick={runChat} disabled={chatBusy || !!viewingCommit}>{chatBusy ? '…' : 'Apply'}</button>
+        </div>
+        {chatErr && <div className="ed-err">{chatErr}</div>}
+      </div>
+
     </div>
   );
 }
@@ -799,6 +824,25 @@ async function renderSpecPng(spec: DesignSpec, kit: BrandKit): Promise<string> {
 function ImageTools({ l, onCommit, w, h }: { l: Layer; onCommit: (m: string) => void; w: number; h: number }) {
   const st = useStore;
   const [busy, setBusy] = useState(false);
+  const [bgBusy, setBgBusy] = useState(false);
+
+  async function removeBg() {
+    if (bgBusy || !l.src) return;
+    setBgBusy(true);
+    useStore.setState({ toast: 'Removing background…' });
+    try {
+      const { url } = await runRemoveBg({ src: l.src });
+      const next = [...new Set([...(l.candidates as string[] || [l.src]), url])];
+      st.getState().updateLayer(l.id, { src: url, fit: 'contain', candidates: next });
+      onCommit('Removed background');
+      useStore.setState({ toast: 'Background removed' });
+    } catch (e: any) {
+      useStore.setState({ toast: 'Remove background failed: ' + (e?.message || e) });
+    } finally {
+      setBgBusy(false);
+      setTimeout(() => useStore.setState({ toast: undefined }), 3500);
+    }
+  }
   const takes = useRef(1);
   const candidates: string[] = useMemo(() => (l.candidates as string[]) || (l.src ? [l.src] : []), [l.candidates, l.src]);
 
@@ -828,8 +872,13 @@ function ImageTools({ l, onCommit, w, h }: { l: Layer; onCommit: (m: string) => 
         onBlur={() => onCommit('Edited image prompt')}
       />
       <button className="go wide" style={{ marginTop: 8 }} onClick={reroll} disabled={busy || !l.prompt}>
-        {busy ? 'Generating…' : l.src ? '🎲 Re-roll image' : '✨ Generate image'}
+        {busy ? 'Generating…' : l.src ? <><Icon name="shuffle" /> Re-roll image</> : <><Icon name="sparkles" /> Generate image</>}
       </button>
+      {l.src && (
+        <button className="mini wide" style={{ marginTop: 8, width: '100%' }} onClick={removeBg} disabled={bgBusy} title="Cut the subject out onto a transparent background">
+          <Icon name="scissors" size={12} /> {bgBusy ? 'Removing…' : 'Remove background'}
+        </button>
+      )}
       {candidates.length > 1 && (
         <>
           <div className="ed-sectitle sm">Takes — every good render is kept</div>

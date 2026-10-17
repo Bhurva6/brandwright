@@ -1,11 +1,45 @@
 // Image generation via GPT Image Flare, with content-addressed caching,
 // bounded concurrency, and retry/backoff. Parallel-friendly by design.
+import { toFile } from 'openai';
 import { image, MODELS } from './openai.mjs';
 import { createLimiter, withRetry } from './queue.mjs';
 import { hashKey, hasBlob, putBlob, blobUrl, blobPath } from './store.mjs';
 import fs from 'fs';
 
 const limit = createLimiter(Number(process.env.IMAGE_CONCURRENCY || 4));
+
+/** Load the bytes behind an image layer's src — data URL or local blob path. */
+export function readImageSource(src) {
+  if (typeof src !== 'string') throw new Error('no image source');
+  if (src.startsWith('data:')) return Buffer.from(src.split(',')[1], 'base64');
+  if (src.startsWith('/assets/blobs/')) {
+    const hash = src.split('/').pop().replace(/\.png$/, '');
+    return fs.readFileSync(blobPath(hash));
+  }
+  throw new Error('unsupported image source');
+}
+
+/** Cut the subject out onto a transparent background via the image-edit API. */
+export async function removeBackground(src) {
+  const buf = readImageSource(src);
+  const file = await toFile(buf, 'layer.png', { type: 'image/png' });
+  const call = (model) => image.images.edit({
+    model,
+    image: file,
+    prompt: 'Isolate the main subject perfectly and remove the background completely. Output ONLY the subject on a fully transparent background. Do not alter the subject.',
+    background: 'transparent',
+    size: '1024x1024',
+  });
+  let r;
+  try {
+    r = await withRetry(() => call(MODELS.image), { tries: 2 });
+  } catch {
+    r = await withRetry(() => call('gpt-image-1'), { tries: 2 }); // older edit-capable fallback
+  }
+  const d = r.data[0];
+  const out = d.b64_json ? Buffer.from(d.b64_json, 'base64') : Buffer.from(await (await fetch(d.url)).arrayBuffer());
+  return 'data:image/png;base64,' + out.toString('base64');
+}
 
 // Flare supports 1024x1024, 1024x1536, 1536x1024. Map any canvas to the nearest.
 export function sizeForCanvas(w, h) {

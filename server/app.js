@@ -7,7 +7,7 @@ import { listBrands, loadBrand, saveBrand, BRANDS_DIR } from './lib/brand.mjs';
 import { ingestFolder, samplePalette } from './lib/ingest.mjs';
 import { inferGenome } from './lib/infer.mjs';
 import { generateDesigns, editDesign } from './lib/agent.mjs';
-import { generateImage, sizeForCanvas } from './lib/image.mjs';
+import { generateImage, sizeForCanvas, removeBackground } from './lib/image.mjs';
 import { critique, repairInstruction } from './lib/critic.mjs';
 import { BLOB_DIR } from './lib/store.mjs';
 
@@ -104,6 +104,13 @@ app.post('/api/edit', async (req, res) => {
     if (!spec || !instruction?.trim()) return res.status(400).json({ error: 'spec and instruction required' });
     const { spec: next } = await editDesign({ brand, spec, instruction });
     await fillImages([next]);
+    // instruction asks for a background removal? apply it right here
+    if (/remove[^.]{0,24}(background|bg)|transparent background|cut[- ]?out|bg removal/i.test(instruction)) {
+      const target = next.layers.filter((l) => l.type === 'image' && l.src).pop();
+      if (target) {
+        try { target.src = await removeBackground(target.src); target.fit = 'contain'; } catch (e) { console.error('auto removebg', e.message); }
+      }
+    }
     res.json({ spec: next });
   } catch (e) {
     console.error('edit', e);
@@ -365,6 +372,18 @@ app.post('/api/reskin', async (req, res) => {
     res.json({ spec: reskinned });
   } catch (e) {
     console.error('reskin', e);
+    res.status(500).json({ error: String(e?.message || e) });
+  }
+});
+
+// Background removal for an image layer (also auto-applied by /api/edit).
+app.post('/api/removebg', async (req, res) => {
+  try {
+    const { src } = req.body || {};
+    if (!src) return res.status(400).json({ error: 'src required' });
+    res.json({ url: await removeBackground(src) });
+  } catch (e) {
+    console.error('removebg', e);
     res.status(500).json({ error: String(e?.message || e) });
   }
 });

@@ -107,7 +107,7 @@ export const HOME_STEPS: CoachStep[] = [
   {
     target: '.genome',
     title: 'Pick a brand genome',
-    text: 'Brandwright learns a brand\'s DNA — colours, fonts, logos, voice, rules. Five brands ship ready, or pick "＋ Ingest new brand" and teach it yours from a folder of assets.',
+    text: 'Brandwright learns a brand\'s DNA — colours, fonts, logos, voice, rules. Five brands ship ready, or pick "+ Ingest new brand" and teach it yours from a folder of assets.',
   },
   {
     target: '.composer textarea',
@@ -122,7 +122,7 @@ export const HOME_STEPS: CoachStep[] = [
   {
     target: '.controls',
     title: 'Start your way',
-    text: 'Up to 8 variations per run — each lands as a branch. Or go manual: ⬜ Blank canvas builds from scratch, 📥 Import edits an existing design, and 🚀 Campaign makes 3 concepts × every placement size in one go.',
+    text: 'Up to 8 variations per run — each lands as a branch. Or go manual: Blank canvas builds from scratch, Import edits an existing design, and Campaign makes 3 concepts × every placement size in one go.',
   },
   {
     target: '.refstrip',
@@ -155,12 +155,12 @@ export const EDITOR_STEPS: CoachStep[] = [
   {
     target: '.ed-lens',
     title: 'Performance Lens',
-    text: 'The critic agent scores the design on brand rules and ad-performance dimensions. 🛡 Auto-fix repairs issues and shows the score climb.',
+    text: 'The critic agent scores the design on brand rules and ad-performance dimensions. Auto-fix repairs issues and shows the score climb.',
   },
   {
     target: '.ed-addrow',
     title: 'Build by hand too',
-    text: 'Add headlines, imagery, shapes, blooms, CTAs — all snapped to brand tokens. 🖨 Print check previews how the inks shift in CMYK.',
+    text: 'Add headlines, imagery, shapes, blooms, CTAs — all snapped to brand tokens. Print check previews how the inks shift in CMYK.',
   },
   {
     target: '.ed-branches',
@@ -175,11 +175,11 @@ export const EDITOR_STEPS: CoachStep[] = [
   {
     target: 'select.resel:not(.fmtsel)',
     title: 'The magic trick: re-skin',
-    text: 'Rebase this exact design onto a different brand — same skeleton, new DNA. Next to it: ⟳ refresh a tired concept, 📦 export a launch pack.',
+    text: 'Rebase this exact design onto a different brand — same skeleton, new DNA. Next to it: refresh a tired concept, export a launch pack.',
   },
   {
     target: 'select.fmtsel',
     title: 'Export anything',
-    text: 'PNG, JPEG, SVG, print-ready PDF — or 🎬 Motion, which renders your design as a layer-reveal video. Every export is kept in the Library.',
+    text: 'PNG, JPEG, SVG, print-ready PDF — or Motion, which renders your design as a layer-reveal video. Every export is kept in the Library.',
   },
 ];

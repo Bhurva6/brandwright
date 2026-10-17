@@ -177,7 +177,7 @@ export const useStore = create<State>((set, get) => ({
           if (j.learnedRule) {
             // the genome just got smarter — refresh it and tell the designer
             fetch(`/api/brand/${s.kit!.id}`).then((r) => r.json()).then((k) => set({ kit: k }));
-            set({ toast: `🧠 Genome learned: “${j.learnedRule}”` });
+            set({ toast: `Genome learned: “${j.learnedRule}”` });
             setTimeout(() => set({ toast: undefined }), 6000);
           }
         })
