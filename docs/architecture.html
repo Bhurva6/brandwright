@@ -1,0 +1,386 @@
+<title>Brandwright Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #F4F6FA;
+    --surface: #FFFFFF;
+    --surface-2: #EBEFF6;
+    --ink: #151B2B;
+    --muted: #596泊;
+    --muted: #5A6578;
+    --line: #D4DAE6;
+    --line-strong: #B9C2D4;
+    --accent: #2D56E0;        /* commits / the version spine */
+    --accent-soft: #E3E9FD;
+    --human: #3A4458;         /* author: designer */
+    --agent: #2D56E0;         /* author: generator agent */
+    --critic: #B2459A;        /* author: critic auto-fix */
+    --pass: #0E9E66;
+    --fail: #D14343;
+    --warn: #C07C1C;
+    --genome: #0E8C8C;        /* the brand genome */
+    --genome-soft: #D5EEEE;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #0C111C;
+      --surface: #141B29;
+      --surface-2: #1B2333;
+      --ink: #E7EBF4;
+      --muted: #97A2B6;
+      --line: #28324400;
+      --line: #283244;
+      --line-strong: #3A4559;
+      --accent: #6188FF;
+      --accent-soft: #1C274A;
+      --human: #AEB7C8;
+      --agent: #6188FF;
+      --critic: #DA7DC4;
+      --pass: #35C488;
+      --fail: #E5736B;
+      --warn: #E0A64E;
+      --genome: #3FC4C4;
+      --genome-soft: #123232;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0C111C;
+    --surface: #141B29;
+    --surface-2: #1B2333;
+    --ink: #E7EBF4;
+    --muted: #97A2B6;
+    --line: #283244;
+    --line-strong: #3A4559;
+    --accent: #6188FF;
+    --accent-soft: #1C274A;
+    --human: #AEB7C8;
+    --agent: #6188FF;
+    --critic: #DA7DC4;
+    --pass: #35C488;
+    --fail: #E5736B;
+    --warn: #E0A64E;
+    --genome: #3FC4C4;
+    --genome-soft: #123232;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: clamp(28px, 5vw, 64px) clamp(18px, 4vw, 40px) 80px; }
+
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+  header { margin-bottom: 40px; }
+  .ref {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px; color: var(--muted);
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--surface);
+  }
+  .ref b { color: var(--accent); font-weight: 600; }
+  h1 {
+    font-family: "Archivo", sans-serif; font-weight: 800;
+    font-size: clamp(30px, 6vw, 52px); line-height: 1.02;
+    letter-spacing: -0.02em; margin: 18px 0 10px; text-wrap: balance;
+  }
+  h1 .tag { display: block; font-size: clamp(15px, 2.4vw, 20px); font-weight: 600; color: var(--genome); margin-top: 8px; letter-spacing: 0; }
+  .lede { font-size: clamp(16px, 2.1vw, 19px); color: var(--muted); max-width: 64ch; margin: 0; }
+
+  h2 {
+    font-family: "Archivo", sans-serif; font-weight: 700;
+    font-size: clamp(19px, 3vw, 25px); letter-spacing: -0.01em;
+    margin: 56px 0 6px;
+  }
+  .sub { color: var(--muted); margin: 0 0 22px; max-width: 70ch; }
+
+  /* git → design mapping */
+  .map { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); }
+  .map-row { display: grid; grid-template-columns: 150px 1fr; gap: 0; border-top: 1px solid var(--line); }
+  .map-row:first-child { border-top: 0; }
+  .map-g { padding: 12px 16px; background: var(--surface-2); font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 14px; color: var(--accent); display: flex; align-items: center; }
+  .map-d { padding: 12px 16px; }
+  .map-d b { font-weight: 600; }
+  .map-d span { color: var(--muted); }
+
+  figure { margin: 0; }
+  .fig-shell {
+    border: 1px solid var(--line); border-radius: 16px;
+    background: var(--surface); padding: 20px clamp(12px, 2.5vw, 26px) 10px;
+    overflow-x: auto;
+  }
+  .fig-shell svg { display: block; width: 100%; height: auto; min-width: 680px; color: var(--ink); }
+  figcaption { color: var(--muted); font-size: 14px; margin-top: 12px; padding: 0 4px; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* svg primitives */
+  .node { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+  .node-2 { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.5; }
+  .spine { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .genomebox { fill: var(--genome-soft); stroke: var(--genome); stroke-width: 2; }
+  .group { fill: none; stroke: var(--line-strong); stroke-width: 1.4; stroke-dasharray: 4 4; }
+  .t { font-family: "IBM Plex Sans", sans-serif; fill: var(--ink); }
+  .tm { font-family: "IBM Plex Mono", monospace; }
+  .lbl { font-family: "IBM Plex Mono", monospace; fill: var(--muted); font-size: 12px; }
+  .title-s { font-family: "Archivo", sans-serif; font-weight: 700; }
+  .flow { stroke: var(--ink); stroke-width: 1.7; fill: none; }
+  .flow-accent { stroke: var(--accent); stroke-width: 2.4; fill: none; }
+  .feed { stroke: var(--genome); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+
+  /* judging */
+  .wins { display: grid; grid-template-columns: repeat(auto-fit, minmax(188px, 1fr)); gap: 12px; }
+  .win { border: 1px solid var(--line); border-radius: 12px; padding: 15px 16px; background: var(--surface); }
+  .win .n { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); font-weight: 600; }
+  .win h3 { font-family: "Archivo", sans-serif; font-size: 16px; margin: 4px 0 6px; font-weight: 700; }
+  .win p { margin: 0; font-size: 14px; color: var(--muted); }
+
+  footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; font-family: "IBM Plex Mono", monospace; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="ref">challenge <b>&#47;&#47;</b> agentic image editor</span>
+    <h1>Brandwright
+      <span class="tag">Version control for brand design.</span>
+    </h1>
+    <p class="lede">An AI copilot inside an image editor that learns any brand's DNA, composes editable on-brand designs, critiques its own work, and tracks every change — human or agent — as commits in one shared history.</p>
+  </header>
+
+  <h2>The idea: git, mapped onto design</h2>
+  <p class="sub">Because every design is structured data (a <span class="mono">DesignSpec</span>), the primitives of version control become native design operations. This is what makes the rest possible.</p>
+  <div class="map">
+    <div class="map-row"><div class="map-g">commit</div><div class="map-d"><b>A snapshot of the DesignSpec.</b> <span>Human edits, generator edits, and critic fixes all commit to one timeline.</span></div></div>
+    <div class="map-row"><div class="map-g">branch</div><div class="map-d"><b>"Create 4 like this" = 4 branches.</b> <span>Each variation is a distinct creative direction, explored in parallel.</span></div></div>
+    <div class="map-row"><div class="map-g">diff</div><div class="map-d"><b>A semantic diff, not a pixel diff.</b> <span>"headline &#9998; &middot; ink&rarr;blue &middot; +charm" &mdash; you see what changed in design terms.</span></div></div>
+    <div class="map-row"><div class="map-g">ci</div><div class="map-d"><b>The Critic Loop checks every commit against brand rules.</b> <span>Green passes; red auto-fixes before you see it.</span></div></div>
+    <div class="map-row"><div class="map-g">rebase</div><div class="map-d"><b>Re-skin: replay a design onto a different brand genome.</b> <span>Near-free, because specs are brand-abstract.</span></div></div>
+    <div class="map-row"><div class="map-g">revert</div><div class="map-d"><b>Jump to any version; blame shows who touched each layer.</b> <span>Non-destructive and fully reviewable.</span></div></div>
+  </div>
+
+  <h2>System architecture</h2>
+  <p class="sub">Four subsystems, one contract. A <b>Brand Genome</b> is ingested from any brand's assets; a human and a two-agent loop <b>commit</b> structured designs to a versioned <b>repo</b>; every commit is gated by <b>brand CI</b> derived from that genome; the canvas renders the working tree.</p>
+  <figure>
+    <div class="fig-shell">
+      <svg viewBox="0 0 1000 560" role="img" aria-label="Brandwright system architecture: brand assets are ingested into a Brand Genome; a designer and an agent loop of generator plus critic commit DesignSpecs to a versioned design repo; each commit is checked by brand CI against the genome; the canvas renders the active commit and exports.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--ink)"></path>
+          </marker>
+          <marker id="a1b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+          </marker>
+          <marker id="a1g" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--genome)"></path>
+          </marker>
+        </defs>
+
+        <!-- ================= INGEST BAND ================= -->
+        <text x="30" y="30" class="lbl">1 &middot; INGEST &mdash; point it at any brand</text>
+        <rect class="node" x="30" y="44" width="150" height="66" rx="10"></rect>
+        <text x="105" y="72" text-anchor="middle" class="t" font-size="14" font-weight="600">Brand assets</text>
+        <text x="105" y="91" text-anchor="middle" class="t" font-size="12" fill="var(--muted)">folder / PDF</text>
+
+        <path class="flow" d="M180,77 H214" marker-end="url(#a1)"></path>
+
+        <rect class="node-2" x="222" y="40" width="300" height="74" rx="10"></rect>
+        <text x="238" y="62" class="t" font-size="13" font-weight="600">Ingest pipeline</text>
+        <text x="238" y="81" class="t" font-size="12" fill="var(--muted)">&middot; sample palette &rarr; tokens  &middot; catalog + classify assets</text>
+        <text x="238" y="99" class="t" font-size="12" fill="var(--muted)">&middot; DeepSeek infers fonts &middot; rules &middot; voice &middot; layouts</text>
+
+        <path class="flow" d="M522,77 H556" marker-end="url(#a1)"></path>
+
+        <rect class="genomebox" x="564" y="40" width="190" height="74" rx="12"></rect>
+        <text x="659" y="70" text-anchor="middle" class="title-s" font-size="16" fill="var(--genome)">Brand Genome</text>
+        <text x="659" y="92" text-anchor="middle" class="t" font-size="12" fill="var(--muted)">the active BrandKit</text>
+
+        <!-- genome feeds -->
+        <path class="feed" d="M620,114 C600,150 540,165 505,196" marker-end="url(#a1g)"></path>
+        <text x="520" y="150" class="lbl" fill="var(--genome)">grounds prompt + rules</text>
+        <path class="feed" d="M660,114 C690,250 320,300 272,452" marker-end="url(#a1g)"></path>
+        <text x="702" y="250" class="lbl" fill="var(--genome)">rules</text>
+
+        <!-- ================= AUTHORS + REPO ================= -->
+        <text x="30" y="214" class="lbl">2 &middot; AUTHORS &mdash; human + agent loop</text>
+
+        <!-- designer -->
+        <rect class="node" x="30" y="236" width="150" height="58" rx="10"></rect>
+        <text x="105" y="261" text-anchor="middle" class="t" font-size="14" font-weight="600" fill="var(--human)">Designer</text>
+        <text x="105" y="280" text-anchor="middle" class="t" font-size="12" fill="var(--muted)">canvas edits</text>
+
+        <!-- agent loop group -->
+        <rect class="group" x="222" y="196" width="540" height="160" rx="14"></rect>
+        <text x="238" y="216" class="lbl">AGENT LOOP &mdash; generate &rarr; critique &rarr; fix</text>
+
+        <rect class="node" x="240" y="232" width="190" height="52" rx="10"></rect>
+        <text x="335" y="254" text-anchor="middle" class="t" font-size="13.5" font-weight="600" fill="var(--agent)">Generator</text>
+        <text x="335" y="272" text-anchor="middle" class="tm" font-size="11.5" fill="var(--muted)">DeepSeek-V4-Pro</text>
+
+        <rect class="node" x="240" y="296" width="190" height="46" rx="10"></rect>
+        <text x="335" y="317" text-anchor="middle" class="t" font-size="13.5" font-weight="600" fill="var(--critic)">Critic</text>
+        <text x="335" y="333" text-anchor="middle" class="t" font-size="11.5" fill="var(--muted)">brand audit &rarr; auto-fix</text>
+
+        <rect class="node" x="560" y="258" width="180" height="56" rx="10"></rect>
+        <text x="650" y="282" text-anchor="middle" class="t" font-size="13.5" font-weight="600">GPT Image Flare</text>
+        <text x="650" y="300" text-anchor="middle" class="t" font-size="11.5" fill="var(--muted)">hero imagery</text>
+
+        <path class="flow" d="M430,262 C480,262 505,280 556,283" marker-end="url(#a1)"></path>
+        <text x="455" y="258" class="lbl">generate_image</text>
+        <path class="flow" d="M556,300 C505,312 470,300 432,300" marker-end="url(#a1)"></path>
+        <text x="470" y="320" class="lbl">image</text>
+
+        <!-- repo -->
+        <text x="628" y="406" class="lbl">3 &middot; VERSIONED REPO</text>
+        <rect class="spine" x="360" y="420" width="360" height="92" rx="12"></rect>
+        <text x="540" y="454" text-anchor="middle" class="title-s" font-size="17" fill="var(--accent)">Design Repo</text>
+        <text x="540" y="477" text-anchor="middle" class="t" font-size="12.5" fill="var(--ink)">commit DAG of DesignSpec snapshots</text>
+        <text x="540" y="496" text-anchor="middle" class="tm" font-size="11" fill="var(--muted)">branches &middot; diff &middot; merge &middot; revert</text>
+
+        <!-- commits into repo -->
+        <path class="flow-accent" d="M105,294 C105,400 300,430 356,452" marker-end="url(#a1b)"></path>
+        <text x="120" y="360" class="lbl" fill="var(--accent)">commit</text>
+        <path class="flow-accent" d="M492,356 C500,390 510,404 520,418" marker-end="url(#a1b)"></path>
+        <text x="524" y="390" class="lbl" fill="var(--accent)">commit</text>
+
+        <!-- ================= OUTPUTS ================= -->
+        <!-- brand CI -->
+        <rect class="node-2" x="30" y="420" width="232" height="92" rx="12"></rect>
+        <text x="46" y="446" class="t" font-size="13.5" font-weight="600">Brand CI</text>
+        <text x="46" y="465" class="t" font-size="11.5" fill="var(--muted)">checks each commit vs Genome</text>
+        <circle cx="52" cy="486" r="5" fill="var(--pass)"></circle><text x="63" y="490" class="tm" font-size="11" fill="var(--muted)">pass</text>
+        <circle cx="110" cy="486" r="5" fill="var(--fail)"></circle><text x="121" y="490" class="tm" font-size="11" fill="var(--muted)">fail &rarr; auto-fix</text>
+        <path class="flow" d="M360,476 H266" marker-end="url(#a1)"></path>
+        <text x="280" y="468" class="lbl">on commit</text>
+
+        <!-- canvas + export -->
+        <rect class="node" x="740" y="420" width="230" height="92" rx="12"></rect>
+        <text x="756" y="446" class="t" font-size="13.5" font-weight="600">Canvas &mdash; working tree</text>
+        <text x="756" y="465" class="t" font-size="11.5" fill="var(--muted)">editable layers (Konva)</text>
+        <text x="756" y="492" class="t" font-size="11.5" fill="var(--muted)">&rarr; export PNG / spec</text>
+        <path class="flow" d="M720,466 H736" marker-end="url(#a1)"></path>
+        <text x="724" y="434" class="lbl" text-anchor="middle">checkout</text>
+      </svg>
+    </div>
+    <figcaption><b>Data flow.</b> The genome (teal) grounds the agents and CI; the repo spine (blue) carries every commit; CI gates each one before it reaches the canvas. Swap the genome and the entire copilot retargets &mdash; no code changes.</figcaption>
+  </figure>
+
+  <h2>The version model</h2>
+  <p class="sub">What the designer actually sees: one base, four directions, a self-healing history, and a re-skin that costs almost nothing.</p>
+  <figure>
+    <div class="fig-shell">
+      <svg viewBox="0 0 1000 430" role="img" aria-label="A commit graph: a base commit branches into four creative directions; one branch shows a generator commit, a red-then-green critic auto-fix, and a human commit, with a semantic diff callout; a rebase arrow re-skins the branch onto a second brand.">
+        <defs>
+          <marker id="a2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--ink)"></path>
+          </marker>
+          <marker id="a2c" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--critic)"></path>
+          </marker>
+        </defs>
+
+        <!-- base -->
+        <line class="flow-accent" x1="40" y1="70" x2="150" y2="70"></line>
+        <circle cx="70" cy="70" r="10" fill="var(--accent)"></circle>
+        <text x="70" y="46" text-anchor="middle" class="tm" font-size="12" fill="var(--ink)">base</text>
+        <text x="70" y="98" text-anchor="middle" class="lbl">the brief</text>
+
+        <!-- branch fan -->
+        <path class="flow-accent" d="M150,70 C185,70 185,120 220,120"></path>
+        <path class="flow-accent" d="M150,70 C185,70 185,190 220,190"></path>
+        <path class="flow-accent" d="M150,70 C185,70 185,260 220,260"></path>
+        <path class="flow-accent" d="M150,70 C185,70 185,330 220,330"></path>
+        <text x="152" y="60" class="lbl" fill="var(--accent)">branch &times;4 &mdash; "create 4 like this"</text>
+
+        <!-- branch 1,3,4 (compact) -->
+        <g>
+          <line class="flow" x1="220" y1="120" x2="470" y2="120" stroke="var(--line-strong)"></line>
+          <circle cx="250" cy="120" r="8" class="node" stroke="var(--agent)"></circle>
+          <circle cx="330" cy="120" r="8" class="node" stroke="var(--agent)"></circle>
+          <circle cx="250" cy="135" r="3.5" fill="var(--pass)"></circle>
+          <circle cx="330" cy="135" r="3.5" fill="var(--pass)"></circle>
+          <text x="484" y="124" class="t" font-size="13" font-weight="600">typographic</text>
+        </g>
+        <g>
+          <line class="flow" x1="220" y1="260" x2="470" y2="260" stroke="var(--line-strong)"></line>
+          <circle cx="250" cy="260" r="8" class="node" stroke="var(--agent)"></circle>
+          <circle cx="330" cy="260" r="8" class="node" stroke="var(--agent)"></circle>
+          <circle cx="250" cy="275" r="3.5" fill="var(--pass)"></circle>
+          <circle cx="330" cy="275" r="3.5" fill="var(--pass)"></circle>
+          <text x="484" y="264" class="t" font-size="13" font-weight="600">illustration</text>
+        </g>
+        <g>
+          <line class="flow" x1="220" y1="330" x2="470" y2="330" stroke="var(--line-strong)"></line>
+          <circle cx="250" cy="330" r="8" class="node" stroke="var(--agent)"></circle>
+          <circle cx="330" cy="330" r="8" class="node" stroke="var(--agent)"></circle>
+          <circle cx="250" cy="345" r="3.5" fill="var(--pass)"></circle>
+          <circle cx="330" cy="345" r="3.5" fill="var(--pass)"></circle>
+          <text x="484" y="334" class="t" font-size="13" font-weight="600">product / data</text>
+        </g>
+
+        <!-- branch 2 (expanded: the self-healing history) -->
+        <line class="flow" x1="220" y1="190" x2="620" y2="190" stroke="var(--line-strong)" stroke-width="2"></line>
+        <!-- agent commit -->
+        <circle cx="250" cy="190" r="9" class="node" stroke="var(--agent)" stroke-width="2"></circle>
+        <circle cx="250" cy="208" r="4" fill="var(--fail)"></circle>
+        <text x="250" y="166" text-anchor="middle" class="lbl" fill="var(--agent)">agent</text>
+        <!-- critic fix -->
+        <circle cx="400" cy="190" r="9" fill="var(--critic)" stroke="var(--critic)" stroke-width="2"></circle>
+        <circle cx="400" cy="208" r="4" fill="var(--pass)"></circle>
+        <text x="400" y="166" text-anchor="middle" class="lbl" fill="var(--critic)">critic fix</text>
+        <path d="M268,190 H382" class="flow" stroke="var(--critic)" stroke-dasharray="4 3" marker-end="url(#a2c)"></path>
+        <!-- human commit -->
+        <circle cx="560" cy="190" r="9" class="node" stroke="var(--human)" stroke-width="2"></circle>
+        <circle cx="560" cy="208" r="4" fill="var(--pass)"></circle>
+        <text x="560" y="166" text-anchor="middle" class="lbl" fill="var(--human)">human</text>
+        <text x="636" y="194" class="t" font-size="13" font-weight="600">photo-led</text>
+
+        <!-- diff callout between agent and human -->
+        <rect x="300" y="238" width="250" height="60" rx="9" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.2"></rect>
+        <text x="314" y="258" class="tm" font-size="11.5" fill="var(--accent)" font-weight="600">diff  base..head</text>
+        <text x="314" y="276" class="t" font-size="11.5" fill="var(--ink)">headline &#9998;  &middot;  ink &rarr; blue</text>
+        <text x="314" y="291" class="t" font-size="11.5" fill="var(--ink)">+ charm  &middot;  logo &rarr; white variant</text>
+        <line x1="250" y1="200" x2="330" y2="238" class="flow" stroke="var(--line-strong)" stroke-dasharray="3 3"></line>
+        <line x1="560" y1="200" x2="520" y2="238" class="flow" stroke="var(--line-strong)" stroke-dasharray="3 3"></line>
+
+        <!-- rebase / re-skin -->
+        <path d="M569,190 C640,190 660,120 720,120" class="flow" stroke="var(--genome)" stroke-width="2" marker-end="url(#a1g)"></path>
+        <text x="648" y="140" class="lbl" fill="var(--genome)">rebase onto Brand B</text>
+        <rect class="genomebox" x="724" y="96" width="150" height="48" rx="10"></rect>
+        <text x="799" y="118" text-anchor="middle" class="t" font-size="12.5" font-weight="600" fill="var(--genome)">re-skinned</text>
+        <text x="799" y="134" text-anchor="middle" class="t" font-size="11" fill="var(--muted)">same spec, new brand</text>
+
+        <!-- legend -->
+        <g>
+          <text x="40" y="392" class="lbl">AUTHORS</text>
+          <circle cx="128" cy="388" r="6" class="node" stroke="var(--agent)" stroke-width="2"></circle><text x="140" y="392" class="t" font-size="12" fill="var(--muted)">generator</text>
+          <circle cx="230" cy="388" r="6" fill="var(--critic)"></circle><text x="242" y="392" class="t" font-size="12" fill="var(--muted)">critic</text>
+          <circle cx="300" cy="388" r="6" class="node" stroke="var(--human)" stroke-width="2"></circle><text x="312" y="392" class="t" font-size="12" fill="var(--muted)">human</text>
+          <text x="430" y="392" class="lbl">BRAND CI</text>
+          <circle cx="516" cy="388" r="5" fill="var(--pass)"></circle><text x="527" y="392" class="t" font-size="12" fill="var(--muted)">pass</text>
+          <circle cx="576" cy="388" r="5" fill="var(--fail)"></circle><text x="587" y="392" class="t" font-size="12" fill="var(--muted)">fail</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption><b>One base, four directions, a self-healing branch.</b> The generator's first commit fails brand CI (red); the critic commits a fix (green); the designer refines by hand. The semantic diff reads in design terms, and a <b>rebase</b> re-skins the whole branch onto another brand for the cost of one replay.</figcaption>
+  </figure>
+
+  <h2>Why it wins, by judging criterion</h2>
+  <div class="wins">
+    <div class="win"><div class="n">01</div><h3>Output quality</h3><p>Brand rules enforced on the data model + a critic that auto-fixes every commit. On-brand is provable, not hoped for.</p></div>
+    <div class="win"><div class="n">02</div><h3>System design</h3><p>A versioned DAG of structured specs, written by three authors, gated by generated CI. One coherent, novel idea.</p></div>
+    <div class="win"><div class="n">03</div><h3>Speed &amp; features</h3><p>Branches, semantic diff, merge, revert, CI, re-skin, 3 modes &mdash; all fall out of the one spine.</p></div>
+    <div class="win"><div class="n">04</div><h3>UI / UX flow</h3><p>A commit graph designers already understand, over a live editable canvas. Review and adjust, exactly as briefed.</p></div>
+    <div class="win"><div class="n">05</div><h3>Presentation</h3><p>"Git for brand design" lands in one sentence, and the re-skin demos like a magic trick.</p></div>
+  </div>
+
+  <footer>brandwright &middot; getcrux ai hackathon &middot; deepseek-v4-pro + gpt image flare</footer>
+</div>

@@ -1,0 +1,356 @@
+<title>Brandwright Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #F4F6FA; --surface: #FFFFFF; --surface-2: #ECEFF6;
+    --ink: #151B2B; --muted: #5A6578; --line: #D7DCE7; --line-strong: #BAC3D4;
+    --accent: #2D56E0; --accent-soft: #E4E9FD;
+    --genome: #0E8C8C; --genome-soft: #D6EEEE;
+    --pass: #0E9E66; --fail: #D14343; --warn: #B5791A;
+    --human: #3A4458; --critic: #AD4593;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0C111C; --surface: #141B29; --surface-2: #1B2333;
+      --ink: #E7EBF4; --muted: #97A2B6; --line: #283244; --line-strong: #3A4559;
+      --accent: #6188FF; --accent-soft: #1C274A;
+      --genome: #3FC4C4; --genome-soft: #123232;
+      --pass: #35C488; --fail: #E5736B; --warn: #E0A64E;
+      --human: #AEB7C8; --critic: #DA7DC4;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0C111C; --surface: #141B29; --surface-2: #1B2333;
+    --ink: #E7EBF4; --muted: #97A2B6; --line: #283244; --line-strong: #3A4559;
+    --accent: #6188FF; --accent-soft: #1C274A;
+    --genome: #3FC4C4; --genome-soft: #123232;
+    --pass: #35C488; --fail: #E5736B; --warn: #E0A64E;
+    --human: #AEB7C8; --critic: #DA7DC4;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: clamp(26px,5vw,60px) clamp(18px,4vw,40px) 72px; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px; font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px; color: var(--muted); padding: 5px 11px; border: 1px solid var(--line);
+    border-radius: 999px; background: var(--surface);
+  }
+  .chip b { color: var(--accent); font-weight: 600; }
+  h1 { font-family: "Archivo", sans-serif; font-weight: 800; font-size: clamp(32px,6.5vw,56px);
+       line-height: 1.0; letter-spacing: -0.025em; margin: 18px 0 6px; }
+  .tagline { font-size: clamp(16px,2.6vw,21px); font-weight: 600; color: var(--genome); margin: 0 0 18px; }
+  .lede { font-size: clamp(16px,2.1vw,18.5px); color: var(--ink); max-width: 68ch; margin: 0; }
+  .for { margin-top: 14px; font-size: 13px; color: var(--muted); font-family: "IBM Plex Mono", monospace; }
+
+  h2 { font-family: "Archivo", sans-serif; font-weight: 700; font-size: clamp(20px,3.2vw,27px);
+       letter-spacing: -0.015em; margin: 54px 0 4px; display: flex; align-items: baseline; gap: 12px; }
+  h2 .k { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--accent); font-weight: 600; }
+  .sub { color: var(--muted); margin: 0 0 20px; max-width: 72ch; }
+
+  .pitch {
+    border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 12px 12px 0;
+    padding: 20px 22px; margin: 22px 0 0; font-size: 16.5px; box-shadow: 0 1px 0 var(--line);
+  }
+  .pitch b { color: var(--accent); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .tscroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  th, td { text-align: left; padding: 11px 15px; border-top: 1px solid var(--line); vertical-align: top; }
+  thead th { border-top: 0; background: var(--surface-2); font-family: "IBM Plex Mono", monospace;
+             font-size: 12px; letter-spacing: 0.02em; color: var(--muted); font-weight: 600; }
+  td .ok { color: var(--pass); font-weight: 700; }
+  td b { font-weight: 600; }
+  .phase-k { font-family: "IBM Plex Mono", monospace; color: var(--accent); font-weight: 600; white-space: nowrap; }
+  .m { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--genome); font-weight: 600; }
+
+  figure { margin: 24px 0 0; }
+  .fig { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 22px clamp(10px,2vw,22px) 12px; overflow-x: auto; }
+  .fig svg { display: block; width: 100%; height: auto; min-width: 640px; color: var(--ink); }
+  figcaption { color: var(--muted); font-size: 13.5px; margin-top: 12px; }
+  figcaption b { color: var(--ink); }
+
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap: 12px; margin-top: 8px; }
+  .card { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 15px 17px; }
+  .card .n { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); font-weight: 600; }
+  .card h3 { font-family: "Archivo", sans-serif; font-size: 16px; margin: 4px 0 6px; font-weight: 700; }
+  .card p { margin: 0; font-size: 13.5px; color: var(--muted); }
+
+  .addon { display: grid; grid-template-columns: 26px 1fr auto; gap: 12px; align-items: start;
+           padding: 13px 0; border-top: 1px solid var(--line); }
+  .addon:first-child { border-top: 0; }
+  .addon .i { font-family: "IBM Plex Mono", monospace; color: var(--muted); font-size: 13px; padding-top: 1px; }
+  .addon b { font-weight: 600; }
+  .addon p { margin: 3px 0 0; color: var(--muted); font-size: 13.5px; }
+  .pill { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 600; padding: 3px 9px;
+          border-radius: 999px; white-space: nowrap; height: fit-content; }
+  .pill.rec { color: var(--pass); background: color-mix(in srgb, var(--pass) 14%, transparent); }
+  .pill.opt { color: var(--muted); background: var(--surface-2); }
+
+  .scope { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 12px; }
+  .scope .box { border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; background: var(--surface); }
+  .scope .box .lab { font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; }
+  .scope .must .lab { color: var(--accent); } .scope .should .lab { color: var(--genome); } .scope .could .lab { color: var(--muted); }
+  .scope .box p { margin: 7px 0 0; font-size: 14px; }
+
+  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
+           color: var(--muted); font-size: 12.5px; font-family: "IBM Plex Mono", monospace;
+           display: flex; flex-wrap: wrap; gap: 6px 18px; }
+</style>
+
+<div class="wrap">
+  <span class="chip">getcrux ai hackathon <b>&#47;&#47;</b> agentic image editor</span>
+  <h1>Brandwright</h1>
+  <p class="tagline">Version control for brand design.</p>
+  <p class="lede">An <b>agentic</b> image editor that learns any brand's DNA, composes editable on-brand designs, critiques and improves its own work, and tracks every change &mdash; human or agent &mdash; as commits in one shared history.</p>
+  <p class="for">prepared for the team &middot; design owner: Kunal &middot; build: Bhurva + Claude</p>
+
+  <div class="pitch">
+    <b>In one paragraph.</b> Brandwright is an AI copilot that lives inside an image editor and treats brand design the way engineers treat code. You point it at any brand's asset folder and it learns that brand into a living "genome": the exact colours, fonts, logos and shapes, the tone of voice, and the layout patterns it reads off real example ads. From there you create new images, edit existing ones, or riff on a reference, and it lays everything out on a normal editable canvas so you can move things, retype copy, and swap assets by hand. The twist: every change, yours or the AI's, is saved as a version, like commits in git. Asking for "four different images like this" gives you four branches to explore side by side. A second AI quietly checks each version against the brand rules and fixes anything off before you see it, keeping score so the work improves pass after pass. Because it remembers which versions you keep and which you discard, it gets better at your brand the more you use it. Good renders are saved forever, and you can even drop a finished design onto a different brand and watch it re-skin itself. It runs on DeepSeek for the thinking and GPT Image Flare for the imagery.
+  </div>
+
+  <h2><span class="k">01</span> What makes it agentic</h2>
+  <p class="sub">The brief asks for an <i>agentic</i> image editor, so agency is the behaviour, not a label. Brandwright takes a goal and drives it to a finished, on-brand result through a tool-using loop, correcting itself along the way.</p>
+  <figure>
+    <div class="fig">
+      <svg viewBox="0 0 900 250" role="img" aria-label="The agent loop: a goal enters Perceive (which reads genome, canvas and history), then Plan, Act (tool calls), Observe (critic scores), and Correct (commits fixes). Correct loops back until brand CI is green, then exits as an on-brand, committed, editable design.">
+        <defs>
+          <marker id="pa" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink)"></path></marker>
+          <marker id="pacc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path></marker>
+          <marker id="pg" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--genome)"></path></marker>
+        </defs>
+
+        <text x="30" y="52" class="mono" font-size="12" fill="var(--muted)">reads: genome &middot; canvas &middot; history</text>
+        <path d="M94,58 V88" stroke="var(--genome)" stroke-width="1.5" fill="none" stroke-dasharray="5 4" marker-end="url(#pg)"></path>
+
+        <!-- boxes -->
+        <g font-family="Archivo, sans-serif">
+          <rect x="30"  y="92" width="128" height="60" rx="11" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"></rect>
+          <text x="94"  y="118" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">Perceive</text>
+          <text x="94"  y="137" text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">state + goal</text>
+
+          <rect x="202" y="92" width="128" height="60" rx="11" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5"></rect>
+          <text x="266" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">Plan</text>
+          <text x="266" y="137" text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">layout + copy</text>
+
+          <rect x="374" y="92" width="128" height="60" rx="11" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"></rect>
+          <text x="438" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="var(--accent)">Act</text>
+          <text x="438" y="137" text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">tool calls</text>
+
+          <rect x="546" y="92" width="128" height="60" rx="11" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5"></rect>
+          <text x="610" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="var(--critic)">Observe</text>
+          <text x="610" y="137" text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">critic scores</text>
+
+          <rect x="718" y="92" width="128" height="60" rx="11" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5"></rect>
+          <text x="782" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">Correct</text>
+          <text x="782" y="137" text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">commit fixes</text>
+        </g>
+
+        <path class="flow" d="M158,122 H200" stroke="var(--ink)" stroke-width="1.7" fill="none" marker-end="url(#pa)"></path>
+        <path d="M330,122 H372" stroke="var(--ink)" stroke-width="1.7" fill="none" marker-end="url(#pa)"></path>
+        <path d="M502,122 H544" stroke="var(--ink)" stroke-width="1.7" fill="none" marker-end="url(#pa)"></path>
+        <path d="M674,122 H716" stroke="var(--ink)" stroke-width="1.7" fill="none" marker-end="url(#pa)"></path>
+
+        <text x="438" y="79" text-anchor="middle" class="mono" font-size="10.5" fill="var(--muted)">generate_image &middot; add / edit / move layer</text>
+
+        <!-- loop back -->
+        <path d="M782,152 V196 H266 V154" stroke="var(--accent)" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#pacc)"></path>
+        <text x="524" y="214" text-anchor="middle" class="mono" font-size="11.5" fill="var(--accent)">loop until brand CI is green</text>
+
+        <!-- exit -->
+        <path d="M846,110 H884" stroke="var(--pass)" stroke-width="2" fill="none" marker-end="url(#pa)"></path>
+        <text x="865" y="100" text-anchor="middle" class="mono" font-size="10.5" fill="var(--pass)">done</text>
+      </svg>
+    </div>
+    <figcaption><b>One agent, one loop.</b> A generator proposes; a critic audits and triggers repair; they converse through commits. The three brief modes are the same loop under a different goal &mdash; create (a brief), edit (a change to the canvas), reference (recreate this structure in our brand).</figcaption>
+  </figure>
+
+  <h2><span class="k">02</span> Self-improvement: the loops that learn</h2>
+  <p class="sub">Two nested feedback loops. An <b>inner</b> loop improves one design pass after pass; an <b>outer</b> loop learns from what you keep and makes the whole system better over time. We are honest about scope: no model weights are trained in a hackathon. The learning lives in a reward function, its weights, and induced brand rules &mdash; all of which we update and version.</p>
+  <figure>
+    <div class="fig">
+      <svg viewBox="0 0 900 292" role="img" aria-label="Two feedback loops. Inner loop: the generator makes a design, the critic computes a reward R, and if R is below threshold the generator refines the weakest dimensions and re-commits. When R clears threshold the design ships to human review. Outer loop: accept, edit and revert signals feed a learner that reweights the reward and induces new genome rules; the versioned genome grounds the reward.">
+        <defs>
+          <marker id="l1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink)"></path></marker>
+          <marker id="l1a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path></marker>
+          <marker id="l1g" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--genome)"></path></marker>
+        </defs>
+
+        <!-- inner loop back arrow (drawn first, behind boxes) -->
+        <path d="M673,56 V22 H140 V44" stroke="var(--accent)" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#l1a)"></path>
+        <text x="408" y="16" text-anchor="middle" class="mono" font-size="11.5" fill="var(--accent)">no &mdash; refine the weakest dimensions (new commit)</text>
+
+        <g font-family="Archivo, sans-serif">
+          <rect x="55"  y="46" width="170" height="58" rx="11" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"></rect>
+          <text x="140" y="72"  text-anchor="middle" font-size="15" font-weight="700" fill="var(--accent)">Generator</text>
+          <text x="140" y="90"  text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">DeepSeek-V4-Pro</text>
+
+          <rect x="358" y="46" width="200" height="58" rx="11" fill="var(--surface)" stroke="var(--critic)" stroke-width="2"></rect>
+          <text x="458" y="72"  text-anchor="middle" font-size="15" font-weight="700" fill="var(--critic)">Critic &rarr; reward R</text>
+          <text x="458" y="90"  text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono" fill="var(--muted)">R = &Sigma; w&#7522;&middot;score&#7522;</text>
+
+          <rect x="614" y="58" width="118" height="34" rx="17" fill="var(--surface-2)" stroke="var(--line-strong)" stroke-width="1.5"></rect>
+          <text x="673" y="80"  text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">R &ge; &tau; ?</text>
+        </g>
+
+        <path d="M225,75 H354" stroke="var(--ink)" stroke-width="1.7" fill="none" marker-end="url(#l1)"></path>
+        <text x="289" y="67" text-anchor="middle" class="mono" font-size="10.5" fill="var(--muted)">design (commit)</text>
+        <path d="M558,75 H610" stroke="var(--ink)" stroke-width="1.7" fill="none" marker-end="url(#l1)"></path>
+
+        <!-- yes -> human review -->
+        <path d="M673,92 V198" stroke="var(--pass)" stroke-width="2" fill="none" marker-end="url(#l1)"></path>
+        <text x="686" y="150" class="mono" font-size="11" fill="var(--pass)">yes &rarr; ship</text>
+
+        <!-- bottom lane: outer loop -->
+        <g font-family="Archivo, sans-serif">
+          <rect x="560" y="200" width="185" height="58" rx="11" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5"></rect>
+          <text x="652" y="226" text-anchor="middle" font-size="14.5" font-weight="700" fill="var(--ink)">Human review</text>
+          <text x="652" y="244" text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">accept &middot; edit &middot; revert</text>
+
+          <rect x="300" y="200" width="212" height="58" rx="11" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5"></rect>
+          <text x="406" y="226" text-anchor="middle" font-size="14.5" font-weight="700" fill="var(--ink)">Learner</text>
+          <text x="406" y="244" text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">reweight w&#7522; &middot; induce rules</text>
+
+          <rect x="55"  y="200" width="185" height="58" rx="11" fill="var(--genome-soft)" stroke="var(--genome)" stroke-width="2"></rect>
+          <text x="147" y="226" text-anchor="middle" font-size="14.5" font-weight="700" fill="var(--genome)">Brand Genome</text>
+          <text x="147" y="244" text-anchor="middle" font-size="11" font-family="IBM Plex Sans" fill="var(--muted)">versioned rules + weights</text>
+        </g>
+
+        <path d="M558,229 H516" stroke="var(--ink)" stroke-width="1.7" fill="none" marker-end="url(#l1)"></path>
+        <text x="537" y="221" text-anchor="middle" class="mono" font-size="10" fill="var(--muted)">signals</text>
+        <path d="M298,229 H246" stroke="var(--ink)" stroke-width="1.7" fill="none" marker-end="url(#l1)"></path>
+        <text x="272" y="221" text-anchor="middle" class="mono" font-size="10" fill="var(--muted)">writes</text>
+
+        <!-- genome grounds the reward -->
+        <path d="M172,200 C210,150 330,130 420,106" stroke="var(--genome)" stroke-width="1.6" fill="none" stroke-dasharray="5 4" marker-end="url(#l1g)"></path>
+        <text x="250" y="150" class="mono" font-size="10.5" fill="var(--genome)">grounds reward</text>
+      </svg>
+    </div>
+    <figcaption><b>Inner loop (top): reward-guided refinement.</b> The generator and critic converse through commits until the reward clears threshold &tau;. <b>Outer loop (bottom): preference learning.</b> What you keep, edit and revert reweights the reward and induces new genome rules, so the brand guidelines self-update and the update history is itself inspectable.</figcaption>
+  </figure>
+
+  <div class="cols" style="margin-top:20px;">
+    <div class="card"><div class="n">inner loop</div><h3>Reward-guided refinement</h3><p>RLAIF-style: the critic scores a design, the generator edits the weakest dimensions and re-commits. Loop until R clears &tau; or stops improving. Each pass is a commit, so the reward curve is visible on the branch.</p></div>
+    <div class="card"><div class="n">outer loop</div><h3>Preference learning</h3><p>Accept / edit / revert are implicit preferences (chosen &#8831; rejected), DPO-style signal without the training cost. They reweight the reward and, on repeat, induce explicit genome rules.</p></div>
+    <div class="card"><div class="n">transfer</div><h3>Warm starts across brands</h3><p>The reward is defined over abstract dimensions, so weights and rules learned on one brand seed priors for the next. It gets smarter overall, not just per-brand.</p></div>
+  </div>
+
+  <div class="tscroll" style="margin-top:16px;">
+    <table>
+      <thead><tr><th>Reward dimension</th><th>How it's measured</th><th>Signal</th></tr></thead>
+      <tbody>
+        <tr><td>Palette fidelity</td><td>&Delta;E colour distance of used colours vs genome tokens</td><td class="mono">deterministic</td></tr>
+        <tr><td>Contrast / legibility</td><td>WCAG contrast ratio on every text layer</td><td class="mono">deterministic</td></tr>
+        <tr><td>Logo clear-space &amp; safe zones</td><td>Geometry checks against the genome's spacing rules</td><td class="mono">deterministic</td></tr>
+        <tr><td>Layout-archetype match</td><td>Similarity to archetypes mined from the reference ads</td><td class="mono">hybrid</td></tr>
+        <tr><td>Hierarchy &amp; visual balance</td><td>DeepSeek-Flash as judge</td><td class="mono">model</td></tr>
+        <tr><td>Voice / copy fit</td><td>DeepSeek-Flash as judge vs the genome's voice</td><td class="mono">model</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sub" style="margin-top:10px;">Reward mixes exact metrics with model judgement: <span class="mono">R(spec) = &Sigma; w&#7522; &middot; score&#7522;</span>. The deterministic terms keep it grounded; the learned weights <span class="mono">w&#7522;</span> are what the outer loop tunes to the designer's taste.</p>
+
+  <h2><span class="k">03</span> Technical depth</h2>
+  <p class="sub">The parts that make this a real system, not a wrapper around an image API.</p>
+  <div class="cols">
+    <div class="card"><div class="n">IR</div><h3>DesignSpec as an IR</h3><p>The agent targets a structured intermediate representation; a renderer lowers it to pixels, like a compiler. Pixels are never the source of truth, so everything stays editable, diffable, and brand-constrained.</p></div>
+    <div class="card"><div class="n">diff</div><h3>Semantic diff over the IR</h3><p>Layer-identity matching + field-level comparison yields "headline &#9998;, ink&rarr;blue, +charm" instead of a meaningless pixel delta.</p></div>
+    <div class="card"><div class="n">store</div><h3>Content-addressed assets</h3><p>Every render is stored by hash and referenced from commits. A liked image is pinned forever; reproducibility is structural, not luck.</p></div>
+    <div class="card"><div class="n">constraints</div><h3>Valid-by-construction</h3><p>Colours, fonts and logos can only come from the active genome. The agent searches a constrained space, so most brand violations are impossible, not just discouraged.</p></div>
+    <div class="card"><div class="n">reward</div><h3>Hybrid reward model</h3><p>Deterministic metrics (&Delta;E, WCAG, geometry) + LLM-as-judge. Exact checks where possible, semantic judgement where needed.</p></div>
+    <div class="card"><div class="n">infra</div><h3>Rate-limit-aware orchestration</h3><p>A queue with backoff, response caching, and pre-generated demo assets so the shared 429 limits never stall a live run.</p></div>
+  </div>
+
+  <h2><span class="k">04</span> Aligned with the brief, then more</h2>
+  <p class="sub">Every requirement is covered by the core editor. Version control, the genome, and the loops sit on top as the reason it stands out.</p>
+  <div class="tscroll">
+    <table>
+      <thead><tr><th>The brief asks for</th><th>Covered by</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>AI copilot inside an image editor</td><td>Agentic chat copilot + editable canvas</td><td class="ok">&check;</td></tr>
+        <tr><td>Create new images</td><td>Create mode</td><td class="ok">&check;</td></tr>
+        <tr><td>Edit existing designs</td><td>Edit mode + <b>import an existing design/image</b> + history</td><td class="ok">&check;</td></tr>
+        <tr><td>Designs inspired by references</td><td>Reference mode (recreate structure in-brand)</td><td class="ok">&check;</td></tr>
+        <tr><td>Start from a blank canvas</td><td>Blank-canvas start + manual layers + agent assist</td><td class="ok">&check;</td></tr>
+        <tr><td>Follow brand guidelines</td><td>Brand Genome + enforcement + critic CI</td><td class="ok">&check;</td></tr>
+        <tr><td>Use the asset library</td><td>Auto-cataloged logos / shapes / charms</td><td class="ok">&check;</td></tr>
+        <tr><td>Editable canvas to review &amp; adjust</td><td>Konva layers: move, retype, recolor, swap, export</td><td class="ok">&check;</td></tr>
+        <tr><td>"Create 4 different like this"</td><td>Variations = branches, explored side by side</td><td class="ok">&check;</td></tr>
+        <tr><td>DeepSeek + GPT Image Flare</td><td>Used exactly as provided</td><td class="ok">&check;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="k">05</span> The build plan</h2>
+  <p class="sub">Dependency-ordered, not clock-bound. The spine comes first, so we are never polishing a feature on a broken core. Each milestone is independently demoable.</p>
+  <div class="tscroll">
+    <table>
+      <thead><tr><th>Phase</th><th>What</th><th>Milestone</th></tr></thead>
+      <tbody>
+        <tr><td class="phase-k">0 &middot; Pre-flight</td><td>Smoke-test DeepSeek + GPT Image Flare; settle the reproducibility &amp; vision unknowns</td><td class="m">&mdash;</td></tr>
+        <tr><td class="phase-k">1 &middot; Foundations</td><td>Shared types, server shell (keys, 429 queue, blob store), client shell</td><td class="m">&mdash;</td></tr>
+        <tr><td class="phase-k">2 &middot; Spine</td><td>prompt &rarr; DesignSpec &rarr; editable Konva canvas &rarr; export</td><td class="m">M1</td></tr>
+        <tr><td class="phase-k">3 &middot; Genome ingest</td><td>Point at any brand folder, it configures itself; Xero preloaded</td><td class="m">M2</td></tr>
+        <tr><td class="phase-k">4 &middot; Image + reproducibility</td><td>Content-addressed blobs, per-layer regen, candidate trays</td><td class="m">M3</td></tr>
+        <tr><td class="phase-k">5 &middot; Version spine</td><td>Commits, branches (= variations), semantic diff, history UI</td><td class="m">M3</td></tr>
+        <tr><td class="phase-k">6 &middot; Critic + CI + learning</td><td>Score &rarr; auto-fix &rarr; rising score; preferences learned into the genome</td><td class="m">M4</td></tr>
+        <tr><td class="phase-k">7 &middot; Modes</td><td>Edit ("talk to the canvas") + reference-inspired</td><td class="m">M5</td></tr>
+        <tr><td class="phase-k">8 &middot; Re-skin</td><td>Rebase a design onto another brand (the magic trick)</td><td class="m">M5</td></tr>
+        <tr><td class="phase-k">8b &middot; Multi-placement</td><td>Auto-resize one design to square / story / banner / Meta feed, safe-zone aware</td><td class="m">M5</td></tr>
+        <tr><td class="phase-k">8c &middot; Campaign mode</td><td>Generate a full set: N concepts &times; M placements in one run</td><td class="m">M5</td></tr>
+        <tr><td class="phase-k">9 &middot; Polish</td><td>Studio-grade UX, live compliance badge, error states</td><td class="m">M6</td></tr>
+        <tr><td class="phase-k">10 &middot; Demo</td><td>Scripted flow, 30-second launch video, deck</td><td class="m">M6</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="k">06</span> Scope tiers</h2>
+  <p class="sub">So we always have something to show. We can stop at any milestone and still have a coherent story.</p>
+  <div class="scope">
+    <div class="box must"><span class="lab">MUST &middot; phases 0&ndash;5</span><p>Brief floor + our spine: create + editable canvas + export, genome auto-ingest, image reproducibility, variations as branches with semantic diff.</p></div>
+    <div class="box should"><span class="lab">SHOULD &middot; phases 6&ndash;7</span><p>The win: critic loop + CI + self-learning, plus the edit and reference modes. Includes brand-voice copywriting, accessibility in CI, and the why-it's-on-brand rationale.</p></div>
+    <div class="box could"><span class="lab">COULD &middot; phase 8+</span><p>The flourish: re-skin onto another brand, multi-placement resize, campaign/batch mode, reference-from-upload, motion export, and a second live-ingested brand.</p></div>
+  </div>
+
+  <h2><span class="k">07</span> Added features <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);font-weight:500;">(all locked in)</span></h2>
+  <div style="border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:6px 18px;">
+    <div class="addon"><span class="i">1</span><div><b>Multi-placement resize</b><p>One design auto-adapted to square / story / banner / Meta feed, respecting safe zones (we have Xero's Meta safe-zone asset). &rarr; new Phase 8b.</p></div><span class="pill opt">medium</span></div>
+    <div class="addon"><span class="i">2</span><div><b>Brand-voice copywriting</b><p>The agent writes on-brand headlines and CTAs, not just layout. &rarr; folds into the agent, Phase 2.</p></div><span class="pill rec">cheap</span></div>
+    <div class="addon"><span class="i">3</span><div><b>Accessibility / contrast in CI</b><p>WCAG contrast + legibility on every commit. &rarr; folds into Brand CI, Phase 6.</p></div><span class="pill rec">cheap</span></div>
+    <div class="addon"><span class="i">4</span><div><b>"Why it's on-brand" rationale</b><p>The agent explains each choice. &rarr; folds into the critic, Phase 6.</p></div><span class="pill rec">cheap</span></div>
+    <div class="addon"><span class="i">5</span><div><b>Reference recreation from upload</b><p>Drop any competitor ad, recreate it in-brand (the brief's reference-recreations resource). &rarr; extends reference mode, Phase 7.</p></div><span class="pill opt">medium</span></div>
+    <div class="addon"><span class="i">6</span><div><b>Campaign / batch mode</b><p>A whole set (N concepts &times; M placements) in one go. &rarr; new Phase 8c.</p></div><span class="pill opt">medium</span></div>
+    <div class="addon"><span class="i">7</span><div><b>Motion export</b><p>A short animated version of an ad, great for the launch video. &rarr; Phase 10.</p></div><span class="pill opt">stretch</span></div>
+  </div>
+
+  <h2><span class="k">08</span> Why it wins, by judging criterion</h2>
+  <div class="cols">
+    <div class="card"><div class="n">01</div><h3>Output quality</h3><p>Brand rules enforced on the data model + a critic that auto-fixes every commit. On-brand is provable.</p></div>
+    <div class="card"><div class="n">02</div><h3>System design</h3><p>A versioned DAG of structured specs, three authors, generated CI. One coherent, novel idea.</p></div>
+    <div class="card"><div class="n">03</div><h3>Speed &amp; features</h3><p>Branches, diff, merge, revert, CI, re-skin, 3 modes &mdash; all fall out of one spine.</p></div>
+    <div class="card"><div class="n">04</div><h3>UI / UX</h3><p>A commit graph designers already understand, over a live editable canvas.</p></div>
+    <div class="card"><div class="n">05</div><h3>Presentation</h3><p>"Git for brand design" lands in one sentence; the re-skin demos like a magic trick.</p></div>
+  </div>
+
+  <h2><span class="k">09</span> Stack &amp; resources</h2>
+  <div class="cols">
+    <div class="card"><div class="n">client</div><h3>Vite + React + TS</h3><p>Konva canvas (editable layers, PNG export), Zustand state.</p></div>
+    <div class="card"><div class="n">server</div><h3>Node + Express</h3><p>Holds keys, 429 queue + retry, content-addressed asset store.</p></div>
+    <div class="card"><div class="n">models</div><h3>DeepSeek + Flare</h3><p>V4-Pro generator, V4.1-Flash critic/ingest, GPT Image Flare imagery.</p></div>
+    <div class="card"><div class="n">brand</div><h3>Any kit</h3><p>Auto-ingested genome. Xero preloaded as the example; nothing hardcoded.</p></div>
+  </div>
+
+  <footer>
+    <span>brandwright</span><span>version control for brand design</span><span>deepseek-v4-pro + gpt image flare</span><span>planning &middot; build gated on go-ahead</span>
+  </footer>
+</div>
